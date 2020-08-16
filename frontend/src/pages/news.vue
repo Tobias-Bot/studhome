@@ -8,8 +8,14 @@
             моя лента
           </span>
         </router-link>
-        <router-link class="nav-link" to="/news/main">
-          <span class="tab" @click="AllPostLoader">
+        <router-link
+          class="nav-link"
+          :to="{
+            name: 'AllPosts',
+            params: { topic: 'new' }
+          }"
+        >
+          <span class="tab">
             <i class="fas fa-rss"></i>
             свежее
           </span>
@@ -36,7 +42,7 @@
           class="nav-link tab"
           @mouseover="isMarkSection = true"
           @mouseout="isMarkSection = false"
-          @click="$refs.btn.click();"
+          @click="$refs.btn.click()"
         >
           <router-link hidden="true" to="/news/main">
             <span ref="btn"></span>
@@ -68,11 +74,11 @@ export default {
   },
   data: function() {
     return {
-      isMarkSection: false,
+      isMarkSection: false
     };
   },
   beforeDestroy() {
-    this.$store.commit('dropPostMarks');
+    this.$store.commit("dropPostMarks");
   },
   computed: {
     getDate() {
@@ -162,7 +168,7 @@ export default {
         .catch(function(e) {
           console.log(e);
         });
-    },
+    }
   }
 };
 </script>

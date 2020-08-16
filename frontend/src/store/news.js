@@ -43,7 +43,7 @@ export default {
       state.SearchTag = payload;
     },
     setPost(state, payload) {
-      state.posts = payload;
+      state.posts = state.posts.concat(payload);
     },
     setPhotoPost(state, payload) {
       state.photoPosts = payload;
@@ -244,6 +244,74 @@ export default {
 
         store.clear();
       };
-    }
+    },
+    MyNewsPostLoader(context, data) {
+      let token = context.getters.getToken;
+      let username = context.getters.getUserData.username;
+      let domain = context.getters.getDomain;
+
+      axios
+        .get(
+          `${domain}/api/v1/news/post/mysubs/all/?me=${username}&d=${data}`,
+          {
+            headers: { Authorization: "Token " + token }
+          }
+        )
+        .then(response => {
+          let posts = response.data;
+          context.commit("setMyNewsPost", posts);
+        })
+        .catch(function(e) {
+          console.log(e);
+        });
+    },
+    AllPostLoader(context, data) {
+      let token = context.getters.getToken;
+      let domain = context.getters.getDomain;
+
+      axios
+        .get(`${domain}/api/v1/news/post/all/?a=${data.top}&b=${data.bottom}`, {
+          headers: { Authorization: "Token " + token }
+        })
+        .then(response => {
+          let posts = response.data;
+          context.commit("setPost", posts);
+        })
+        .catch(function(e) {
+          console.log(e);
+        });
+    },
+    AllPostByTypeLoader(type) {
+      let token = this.$store.getters.getToken;
+
+      axios
+        .get("http://127.0.0.1:8000/api/v1/news/post/type/?q=|" + type + "|", {
+          headers: { Authorization: "Token " + token }
+        })
+        .then(response => {
+          let posts = response.data;
+
+          if (type == "note") this.$store.commit("setPost", posts);
+          if (type == "photo") this.$store.commit("setPost", posts);
+        })
+        .catch(function(e) {
+          console.log(e);
+        });
+    },
+    AllPopularPostLoader() {
+      let token = this.$store.getters.getToken;
+
+      axios
+        .get("http://127.0.0.1:8000/api/v1/news/post/popular/", {
+          headers: { Authorization: "Token " + token }
+        })
+        .then(response => {
+          let posts = response.data;
+          this.$store.commit("setPost", posts);
+        })
+        .catch(function(e) {
+          console.log(e);
+        });
+    },
   }
 };

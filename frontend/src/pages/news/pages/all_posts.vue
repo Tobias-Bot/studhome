@@ -1,5 +1,5 @@
 <template>
-  <div class="box-with-tools">
+  <div class="box-with-tools" ref="container" @scroll="LoadNewPosts">
     <div class="card-columns">
       <post
         v-for="(post, id) in posts"
@@ -21,15 +21,46 @@ export default {
   },
   data: function() {
     return {
-      isWriting: false
+      isWriting: false,
+      PostsLoadCount: 10,
     };
+  },
+  created() {
+    let topic = this.$route.params.topic;
+    this.PostLoader(topic);
   },
   computed: {
     posts() {
       return this.$store.getters.getPosts;
     }
   },
-  methods: {}
+  methods: {
+    LoadNewPosts() {
+      let block = this.$refs.container;
+      let Hmax = block.scrollHeight - block.clientHeight;
+      let h = block.scrollTop;
+      let topic = this.$route.params.topic;
+
+      if (h == Hmax) {
+        this.PostLoader(topic);
+      }
+    },
+    PostLoader(topic) {
+      let top = this.posts.length;
+      let bottom = top + this.PostsLoadCount;
+
+      let data = {
+        top,
+        bottom
+      }
+
+      switch (topic) {
+        case "new":
+          this.$store.dispatch('AllPostLoader', data);
+          break;
+      }
+    }
+  }
 };
 </script>
 

@@ -130,7 +130,13 @@ class CommentDestroyView(generics.DestroyAPIView):
 class PostListView(generics.ListAPIView):
     serializer_class = PostListSerializer
     model = serializer_class.Meta.model
-    queryset = Post.objects.all().order_by('-date')[:PostsPerPage]
+
+    def get_queryset(self):
+        a = int(self.request.GET.get("a"))
+        b = int(self.request.GET.get("b"))
+
+        queryset = Post.objects.all().order_by('-date')[a:b]
+        return queryset
 
 class PostByMarksListView(generics.ListAPIView):
     serializer_class = PostListSerializer

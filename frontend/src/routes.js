@@ -107,8 +107,8 @@ const router = new VueRouter({
         },
         {
           name: "AllPosts",
-          path: "main",
-          component: all_posts
+          path: "main/:topic",
+          component: all_posts,
         },
       ]
     },

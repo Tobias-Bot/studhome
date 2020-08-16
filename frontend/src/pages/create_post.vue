@@ -565,8 +565,8 @@ export default {
   margin-bottom: 3%;
   border-radius: 5px;
   outline: none;
-  font-size: 18px;
-  color: #323232;
+  font-size: 20px;
+  color: rgba(0, 0, 0, 0.9);
   box-shadow: 0px 3px 10px silver;
 }
 .note[placeholder]:empty:before {

@@ -162,8 +162,8 @@ export default {
 }
 
 .btnInWritingSection {
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
   position: relative;
   left: 50%;
   transform: translateX(-50%);
@@ -171,11 +171,11 @@ export default {
   padding-top: 5%;
   display: block;
   border-radius: 100px;
+  border: 2px solid white;
   background-color: white;
   color: rgba(0, 0, 0, 0.8);
-  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
-  font-size: 28px;
-  font-weight: 500;
+  box-shadow: 2px 5px 20px black;
+  font-size: 23px;
   text-align: center;
   text-decoration: none;
   transition: 0.2s all;
