@@ -73,6 +73,7 @@
           hidden="true"
           @change="handleFileUpload"
         />
+        <template v-if="pic || unsplash_pic">
         <hr />
         <span class="SettingTitle">затемнение фона {{ range }}</span>
         <input
@@ -95,22 +96,7 @@
           max="5"
           step="1"
         />
-        <hr />
-        <span class="SettingTitle">цвета интерфейса</span>
-        <button
-          type="button"
-          class="btn btn-light PicBtn btnOption"
-          :style="'border: 2px solid ' + Colors"
-          @click="$refs.inputBGColor.click()"
-        >
-          фон
-        </button>
-        <input
-          type="color"
-          ref="inputBGColor"
-          style="display: none;"
-          @input="setColors"
-        />
+        </template>
       </div>
     </div>
   </div>
@@ -129,7 +115,6 @@ export default {
         blur: 0,
         background: "",
         unsplash_background: "",
-        colors: '',
       },
       isChanged: false,
       localPhotoFile: "",
@@ -154,16 +139,11 @@ export default {
     pic() {
       return this.$store.getters.getUserSettings.background;
     },
+    unsplash_pic() {
+      return this.$store.getters.getUserSettings.unsplash_background;
+    },
     UserData() {
       return this.$store.getters.getUserData;
-    },
-    Colors() {
-      let str = this.$store.getters.getUserSettings.colors;
-      let colors = '|#FFFFFF|';
-      
-      str && (colors = str.substring(1, str.length - 1));
-
-      return colors;
     },
   },
   methods: {
@@ -176,7 +156,6 @@ export default {
       formData.append("user", user_id);
       formData.append("blackout", this.settings.blackout);
       formData.append("blur", this.settings.blur);
-      this.settings.colors && formData.append("colors", this.settings.colors);
       formData.append("background", this.localPhotoFile);
       formData.append("unsplash_background", this.settings.unsplash_background);
 
@@ -214,15 +193,9 @@ export default {
     },
     changeBlackOut() {
       this.settings.background = this.pic;
+      this.settings.unsplash_background = this.unsplash_pic;
       this.$store.commit("setUserSettings", this.settings);
       this.saveToDB(this.settings);
-    },
-    setColors() {
-      let BGColor = this.$refs.inputBGColor.value;
-
-      this.settings.colors = `|${BGColor}|`;
-
-      this.changeBlackOut();
     },
     changePicFromUnsplash() {
       let w = screen.width;

@@ -2,8 +2,8 @@
   <div class="card">
     <div class="card-header">
       <router-link
-        class="username"
         :to="{ name: 'profile', params: { username: post.username } }"
+        class="username"
         >{{ post.username }}</router-link
       >
       <template v-if="post.username !== UserData.username">
@@ -274,7 +274,7 @@ export default {
 .btnSubscribe {
   position: relative;
   display: inline-block;
-  color: rgba(0, 0, 0, 0.6);
+  color: rgba(0, 0, 0, 0.7);
   font-size: 14px;
 }
 .btnSubscribe:hover {

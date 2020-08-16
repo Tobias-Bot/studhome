@@ -9,40 +9,39 @@
     <nav
       id="main_header"
       class="navbar navbar-expand-lg navbar-light"
-      :style="BGColor"
     >
       <img src="./static/logo.png" id="logo" />
-      <span class="navbar-brand" :style="TextColor">studhome</span>
+      <span class="navbar-brand">studhome</span>
       <template v-if="IsAuthorized">
         <div class="btn-group" role="group">
           <router-link
             active-class="btn btn-active"
-            class="btn btn-dark"
+            class="btn btn-light"
             to="/home"
           >
             <span class="MainTabs">
               <i class="fas fa-home"></i>
-              <span style="color: white;">домой</span>
+              <span>домой</span>
             </span>
           </router-link>
           <router-link
             active-class="btn btn-active"
-            class="btn btn-dark"
+            class="btn btn-light"
             to="/news"
           >
             <span class="MainTabs">
               <i class="far fa-newspaper"></i>
-              <span style="color: white;">публикации</span>
+              <span>публикации</span>
             </span>
           </router-link>
           <router-link
             active-class="btn btn-active"
-            class="btn btn-dark"
+            class="btn btn-light"
             to="/search"
           >
             <span class="MainTabs">
               <i class="far fa-compass"></i>
-              <span style="color: white;">поиск</span>
+              <span>поиск</span>
             </span>
           </router-link>
         </div>
@@ -65,7 +64,6 @@
               @mouseout="isWritingSection = false"
             >
               <i class="fas fa-pencil-alt"></i>
-              <b>пост</b>
               <div v-show="isWritingSection" class="writeSlider">
                 <router-link
                   tag="div"
@@ -74,19 +72,15 @@
                   :to="{ name: 'CreatePost', params: { editMode: false } }"
                 >
                   <i class="far fa-file-alt"></i>
-                  1
                 </router-link>
                 <div class="btnInWritingSection">
                   <i class="fas fa-list"></i>
-                  2
                 </div>
                 <div class="btnInWritingSection">
                   <i class="far fa-sticky-note"></i>
-                  3
                 </div>
                 <div class="btnInWritingSection">
                   <i class="far fa-bell"></i>
-                  4
                 </div>
               </div>
             </div>
@@ -134,26 +128,6 @@ export default {
     ImgBlur() {
       return this.$store.getters.getUserSettings.blur;
     },
-    BGColor() {
-      return {
-        "background-color": this.ProfileColors[0]
-      };
-    },
-    TextColor() {
-      return {
-        color: this.ProfileColors[1]
-      };
-    },
-    ProfileColors() {
-      let str = this.$store.getters.getUserSettings.colors;
-      let colors = "|#FFFFFF|#323232|";
-
-      if (str) {
-        colors = str.substring(1, str.length - 1).split("|");
-      }
-
-      return colors;
-    },
     picLocalUrl() {
       return this.$store.getters.getUserSettings.background;
     },
@@ -173,7 +147,7 @@ export default {
 }
 
 .btn-active {
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .navbar-brand {
@@ -188,21 +162,23 @@ export default {
 }
 
 .btnInWritingSection {
-  width: 60%;
+  width: 50px;
+  height: 50px;
   position: relative;
   left: 50%;
   transform: translateX(-50%);
   margin: 20% 0 20% 0;
+  padding-top: 5%;
   display: block;
   border-radius: 100px;
   background-color: white;
   color: rgba(0, 0, 0, 0.8);
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
-  font-size: 25px;
+  font-size: 28px;
   font-weight: 500;
   text-align: center;
   text-decoration: none;
-  transition: 0.1s all;
+  transition: 0.2s all;
 }
 .btnInWritingSection:hover {
   cursor: pointer;

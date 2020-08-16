@@ -24,8 +24,7 @@ class Settings(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     blackout = models.CharField(max_length=4, default='0')
     blur = models.CharField(max_length=3, default='0')
-    background = models.ImageField(blank=True, upload_to='setting_covers/', default="")
-    colors = models.CharField(max_length=17, default="|#FFFFFF|")
+    background = models.ImageField(blank=True, null=True, upload_to='setting_covers/', default="")
     unsplash_background = models.TextField(max_length=300, default="", blank=True)
 
 @receiver(post_save, sender=User)
