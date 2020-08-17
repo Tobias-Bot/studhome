@@ -39,8 +39,11 @@ class SearchByTypePostList(generics.ListAPIView):
 
     def get_queryset(self):
         query = self.request.GET.get('q')
-        post_list = Post.objects.filter(type__icontains=query).order_by("-date")[:PostsPerPage]
-        return post_list
+        a = int(self.request.GET.get("a"))
+        b = int(self.request.GET.get("b"))
+
+        queryset = Post.objects.filter(type__icontains=query).order_by("-date")[a:b]
+        return queryset
 
 class SubscribeUserView(APIView):
     serializer_class = ProfileSerializer
@@ -160,7 +163,13 @@ class PostByMarksListView(generics.ListAPIView):
 class PopularPostListView(generics.ListAPIView):
     serializer_class = PostListSerializer
     model = serializer_class.Meta.model
-    queryset = Post.objects.order_by('-views', '-comments_count')[:PostsPerPage]
+
+    def get_queryset(self):
+        a = int(self.request.GET.get("a"))
+        b = int(self.request.GET.get("b"))
+
+        queryset = Post.objects.order_by('-views', '-comments_count')[a:b]
+        return queryset
 
 class UserPostsListView(generics.ListAPIView):
     serializer_class = PostListSerializer

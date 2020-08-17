@@ -43,7 +43,13 @@ export default {
       state.SearchTag = payload;
     },
     setPost(state, payload) {
-      state.posts = state.posts.concat(payload);
+      if (!payload.top) {
+        let len = state.posts.length;
+        state.posts.splice(0, len);
+        console.log("!", state.posts);
+      }
+
+      state.posts = state.posts.concat(payload.posts);
     },
     setPhotoPost(state, payload) {
       state.photoPosts = payload;
@@ -275,39 +281,41 @@ export default {
         })
         .then(response => {
           let posts = response.data;
-          context.commit("setPost", posts);
+          context.commit("setPost", { top: data.top, posts });
         })
         .catch(function(e) {
           console.log(e);
         });
     },
-    AllPostByTypeLoader(type) {
-      let token = this.$store.getters.getToken;
+    AllPostByTypeLoader(context, data) {
+      let token = context.getters.getToken;
+      let domain = context.getters.getDomain;
 
       axios
-        .get("http://127.0.0.1:8000/api/v1/news/post/type/?q=|" + type + "|", {
+        .get(`${domain}/api/v1/news/post/type/?q=|${data.value}|&a=${data.top}&b=${data.bottom}`, {
           headers: { Authorization: "Token " + token }
         })
         .then(response => {
           let posts = response.data;
 
-          if (type == "note") this.$store.commit("setPost", posts);
-          if (type == "photo") this.$store.commit("setPost", posts);
+          context.commit("setPost", { top: data.top, posts });
         })
         .catch(function(e) {
           console.log(e);
         });
     },
-    AllPopularPostLoader() {
-      let token = this.$store.getters.getToken;
+    AllPopularPostLoader(context, data) {
+      let token = context.getters.getToken;
+      let domain = context.getters.getDomain;
 
       axios
-        .get("http://127.0.0.1:8000/api/v1/news/post/popular/", {
+        .get(`${domain}/api/v1/news/post/popular/?a=${data.top}&b=${data.bottom}`, {
           headers: { Authorization: "Token " + token }
         })
         .then(response => {
           let posts = response.data;
-          this.$store.commit("setPost", posts);
+          
+          context.commit("setPost", { top: data.top, posts });
         })
         .catch(function(e) {
           console.log(e);

@@ -1,6 +1,12 @@
 <template>
   <div class="box-with-tools" ref="container" @scroll="LoadNewPosts">
-    <div class="card-columns">
+    <div v-if="!posts.length" class="loading">
+      <div class="spinner-border" role="status">
+      </div>
+      <br />
+      <span class="loadingText">секундочку...</span>
+    </div>
+    <div v-else class="card-columns">
       <post
         v-for="(post, id) in posts"
         :key="id"
@@ -22,27 +28,42 @@ export default {
   data: function() {
     return {
       isWriting: false,
-      PostsLoadCount: 10,
+      PostsLoadCount: 15,
+      load: true,
+      postsCountOld: 0
     };
   },
   created() {
     let topic = this.$route.params.topic;
+
     this.PostLoader(topic);
   },
   computed: {
     posts() {
-      return this.$store.getters.getPosts;
+      let posts = this.$store.getters.getPosts;
+
+      if (posts.length > this.postsCountOld) {
+        this.load = true;
+        this.postsCountOld = posts.length;
+      }
+
+      return posts;
     }
   },
   methods: {
     LoadNewPosts() {
       let block = this.$refs.container;
-      let Hmax = block.scrollHeight - block.clientHeight;
+      let Hmax = Math.floor((block.scrollHeight - block.clientHeight) * 0.3);
       let h = block.scrollTop;
       let topic = this.$route.params.topic;
 
-      if (h == Hmax) {
-        this.PostLoader(topic);
+      console.log(h, Hmax);
+
+      if (h > Hmax) {
+        this.load && this.PostLoader(topic);
+        this.load = false;
+      } else {
+        this.load = true;
       }
     },
     PostLoader(topic) {
@@ -51,12 +72,22 @@ export default {
 
       let data = {
         top,
-        bottom
-      }
+        bottom,
+        value: topic
+      };
 
       switch (topic) {
         case "new":
-          this.$store.dispatch('AllPostLoader', data);
+          this.$store.dispatch("AllPostLoader", data);
+          break;
+        case "popular":
+          this.$store.dispatch("AllPopularPostLoader", data);
+          break;
+        case "note":
+          this.$store.dispatch("AllPostByTypeLoader", data);
+          break;
+        case "photo":
+          this.$store.dispatch("AllPostByTypeLoader", data);
           break;
       }
     }
@@ -82,5 +113,25 @@ export default {
   .card-columns {
     column-count: 4;
   }
+}
+
+.loading {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 45%;
+  text-align: center;
+}
+
+.loadingText {
+  color: white;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.spinner-border {
+  width: 4rem;
+  height: 4rem;
+  color: white;
 }
 </style>

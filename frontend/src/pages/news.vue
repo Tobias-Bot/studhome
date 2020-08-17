@@ -15,25 +15,43 @@
             params: { topic: 'new' }
           }"
         >
-          <span class="tab">
+          <span class="tab" @click="PostLoader('new')">
             <i class="fas fa-rss"></i>
             свежее
           </span>
         </router-link>
-        <router-link class="nav-link" to="/news/main">
-          <span class="tab" @click="AllPopularPostLoader">
+        <router-link
+          class="nav-link"
+          :to="{
+            name: 'AllPosts',
+            params: { topic: 'popular' }
+          }"
+        >
+          <span class="tab" @click="PostLoader('popular')">
             <i class="fas fa-fire-alt"></i>
             популярное
           </span>
         </router-link>
-        <router-link class="nav-link" to="/news/main">
-          <span class="tab" @click="AllPostByTypeLoader('note')">
+        <router-link
+          class="nav-link"
+          :to="{
+            name: 'AllPosts',
+            params: { topic: 'note' }
+          }"
+        >
+          <span class="tab" @click="PostLoader('note')">
             <i class="fas fa-sticky-note"></i>
             текст
           </span>
         </router-link>
-        <router-link class="nav-link" to="/news/main">
-          <span class="tab" @click="AllPostByTypeLoader('photo')">
+        <router-link
+          class="nav-link"
+          :to="{
+            name: 'AllPosts',
+            params: { topic: 'photo' }
+          }"
+        >
+          <span class="tab" @click="PostLoader('photo')">
             <i class="fas fa-images"></i>
             фото
           </span>
@@ -74,7 +92,8 @@ export default {
   },
   data: function() {
     return {
-      isMarkSection: false
+      isMarkSection: false,
+      PostsLoadCount: 15,
     };
   },
   beforeDestroy() {
@@ -122,52 +141,30 @@ export default {
           console.log(e);
         });
     },
-    AllPostLoader() {
-      let token = this.$store.getters.getToken;
+    PostLoader(topic) {
+      let top = 0;
+      let bottom = top + this.PostsLoadCount;
 
-      axios
-        .get("http://127.0.0.1:8000/api/v1/news/post/all/", {
-          headers: { Authorization: "Token " + token }
-        })
-        .then(response => {
-          let posts = response.data;
-          this.$store.commit("setPost", posts);
-        })
-        .catch(function(e) {
-          console.log(e);
-        });
-    },
-    AllPostByTypeLoader(type) {
-      let token = this.$store.getters.getToken;
+      let data = {
+        top,
+        bottom,
+        value: topic
+      };
 
-      axios
-        .get("http://127.0.0.1:8000/api/v1/news/post/type/?q=|" + type + "|", {
-          headers: { Authorization: "Token " + token }
-        })
-        .then(response => {
-          let posts = response.data;
-
-          if (type == "note") this.$store.commit("setPost", posts);
-          if (type == "photo") this.$store.commit("setPost", posts);
-        })
-        .catch(function(e) {
-          console.log(e);
-        });
-    },
-    AllPopularPostLoader() {
-      let token = this.$store.getters.getToken;
-
-      axios
-        .get("http://127.0.0.1:8000/api/v1/news/post/popular/", {
-          headers: { Authorization: "Token " + token }
-        })
-        .then(response => {
-          let posts = response.data;
-          this.$store.commit("setPost", posts);
-        })
-        .catch(function(e) {
-          console.log(e);
-        });
+      switch (topic) {
+        case "new":
+          this.$store.dispatch("AllPostLoader", data);
+          break;
+        case "popular":
+          this.$store.dispatch("AllPopularPostLoader", data);
+          break;
+        case "note":
+          this.$store.dispatch("AllPostByTypeLoader", data);
+          break;
+        case "photo":
+          this.$store.dispatch("AllPostByTypeLoader", data);
+          break;
+      }
     }
   }
 };

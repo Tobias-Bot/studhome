@@ -1,18 +1,16 @@
 /* @import '~font-awesome/css/font-awesome.min.css'; */
 
 ::-webkit-scrollbar {
-  width: 7px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  border-radius: 5px;
-  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 1px;
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 ::-webkit-scrollbar-track {
-  border-radius: 5px;
-  background-color: rgba(0, 0, 0, 0.1);
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 body {
@@ -48,7 +46,7 @@ body {
   overflow-x: hidden;
   padding: 2% 150px 10% 150px;
   width: 100vw;
-  height: 90vh;
+  height: 100vh;
 }
 
 #main_header {
