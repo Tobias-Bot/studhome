@@ -60,11 +60,7 @@
           class="nav-link tab"
           @mouseover="isMarkSection = true"
           @mouseout="isMarkSection = false"
-          @click="$refs.btn.click()"
         >
-          <router-link hidden="true" to="/news/main">
-            <span ref="btn"></span>
-          </router-link>
           <i class="fas fa-tags"></i>
           метки
           <span class="sub_index" v-if="postMarksCount">{{
@@ -93,7 +89,7 @@ export default {
   data: function() {
     return {
       isMarkSection: false,
-      PostsLoadCount: 15,
+      PostsLoadCount: 15
     };
   },
   beforeDestroy() {

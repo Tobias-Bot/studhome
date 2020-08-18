@@ -1,10 +1,20 @@
 <template>
-  <div
-    :class="[selected ? postMarkSelected : postMark]"
-    @click="updatePostMarks(); PostMarksLoader();"
+  <router-link
+    :to="{
+      name: 'AllPosts',
+      params: { topic: name }
+    }"
   >
-    {{ name }}
-  </div>
+    <div
+      :class="[selected ? postMarkSelected : postMark]"
+      @click="
+        updatePostMarks();
+        PostMarksLoader();
+      "
+    >
+      {{ name }}
+    </div>
+  </router-link>
 </template>
 
 <script>
@@ -16,7 +26,8 @@ export default {
       selected: false,
 
       postMark: "postMark",
-      postMarkSelected: "postMarkSelected"
+      postMarkSelected: "postMarkSelected",
+      PostsLoadCount: 15,
     };
   },
   methods: {
@@ -24,7 +35,7 @@ export default {
       let vm = this;
 
       if (!this.selected) {
-        this.$store.commit("addPostMark", vm.name);
+        this.$store.commit("addPostMark", { name: vm.name, id: vm.index });
       } else {
         this.$store.commit("deletePostMark", vm.index);
       }
@@ -36,18 +47,16 @@ export default {
 
       if (marks.length) {
         let token = this.$store.getters.getToken;
+        let domain = this.$store.getters.getDomain;
+        let buf = marks.map(mark => mark.name);
 
         axios
-          .get(
-            "http://127.0.0.1:8000/api/v1/news/post/marks/?q=|" +
-              marks.join("|") +
-              "|",
-            {
-              headers: { Authorization: "Token " + token }
-            }
-          )
+          .get(`${domain}/api/v1/news/post/marks/?q=|${buf.join("|")}|`, {
+            headers: { Authorization: "Token " + token }
+          })
           .then(response => {
-            this.$store.commit("setPost", response.data);
+
+            this.$store.commit("setPost", { posts: response.data });
           })
           .catch(function(e) {
             console.log(e);

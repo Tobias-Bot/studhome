@@ -31,10 +31,14 @@ export default {
     },
     addPostMark(state, payload) {
       state.postMarks.push(payload);
+
+      console.log(state.postMarks);
     },
     deletePostMark(state, payload) {
       let index = state.postMarks.findIndex(mark => mark.id == payload);
       state.postMarks.splice(index, 1);
+
+      console.log(state.postMarks);
     },
     dropPostMarks(state) {
       state.postMarks.splice(0, state.postMarks.length);
