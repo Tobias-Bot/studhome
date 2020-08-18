@@ -2,15 +2,13 @@
   <router-link
     :to="{
       name: 'AllPosts',
-      params: { topic: name }
+      params: { topic: 'marks' }
     }"
+    style="text-decoration: none;"
   >
     <div
       :class="[selected ? postMarkSelected : postMark]"
-      @click="
-        updatePostMarks();
-        PostMarksLoader();
-      "
+      @click="updatePostMarks()"
     >
       {{ name }}
     </div>
@@ -27,7 +25,6 @@ export default {
 
       postMark: "postMark",
       postMarkSelected: "postMarkSelected",
-      PostsLoadCount: 15,
     };
   },
   methods: {
@@ -41,28 +38,9 @@ export default {
       }
 
       this.selected = !this.selected;
+
+      this.$emit('loadPostsByMarks');
     },
-    PostMarksLoader() {
-      let marks = this.$store.getters.getPostMarks;
-
-      if (marks.length) {
-        let token = this.$store.getters.getToken;
-        let domain = this.$store.getters.getDomain;
-        let buf = marks.map(mark => mark.name);
-
-        axios
-          .get(`${domain}/api/v1/news/post/marks/?q=|${buf.join("|")}|`, {
-            headers: { Authorization: "Token " + token }
-          })
-          .then(response => {
-
-            this.$store.commit("setPost", { posts: response.data });
-          })
-          .catch(function(e) {
-            console.log(e);
-          });
-      }
-    }
   }
 };
 </script>

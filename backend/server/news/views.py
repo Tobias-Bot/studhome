@@ -147,14 +147,17 @@ class PostByMarksListView(generics.ListAPIView):
 
     def get_queryset(self):
         query = self.request.GET.get('q')
+        a = int(self.request.GET.get("a"))
+        b = int(self.request.GET.get("b"))
+
         if (query):
             marks = query[1:-1].split("|")
             if (len(marks) == 1):
-                queryset = Post.objects.filter(marks__icontains=marks[0])[:PostsPerPage]
+                queryset = Post.objects.filter(marks__icontains=marks[0]).order_by('-date')[a:b]
             if (len(marks) == 2):
-                queryset = Post.objects.filter(Q(marks__icontains=marks[0]) | Q(marks__icontains=marks[1]))[:PostsPerPage]
+                queryset = Post.objects.filter(Q(marks__icontains=marks[0]) | Q(marks__icontains=marks[1])).order_by('-date')[a:b]
             if (len(marks) == 3):
-                queryset = Post.objects.filter(Q(marks__icontains=marks[0]) | Q(marks__icontains=marks[1]) | Q(marks__icontains=marks[2]))[:PostsPerPage]
+                queryset = Post.objects.filter(Q(marks__icontains=marks[0]) | Q(marks__icontains=marks[1]) | Q(marks__icontains=marks[2])).order_by('-date')[a:b]
         else:
             queryset = Post.objects.all().order_by('-date')[:PostsPerPage]
             

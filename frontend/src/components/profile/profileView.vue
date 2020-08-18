@@ -4,6 +4,7 @@
       <div class="row">
         <div class="col-4">
           <router-link
+            style="text-decoration: none;"
             :to="{
               name: 'profile',
               params: { username: blog.username }

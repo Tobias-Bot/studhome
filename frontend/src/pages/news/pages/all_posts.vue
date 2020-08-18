@@ -89,6 +89,9 @@ export default {
         case "photo":
           this.$store.dispatch("AllPostByTypeLoader", data);
           break;
+        case "marks":
+          this.$store.dispatch("PostsByMarksLoader", data);
+          break;
       }
     }
   }

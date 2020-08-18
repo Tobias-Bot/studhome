@@ -2,6 +2,7 @@
   <div class="card">
     <div class="card-header">
       <router-link
+        style="text-decoration: none;"
         :to="{ name: 'profile', params: { username: post.username } }"
       >
         <span class="username" @click="LoadProfile(post.username)">{{
@@ -117,7 +118,7 @@ export default {
   props: ["post", "post_index", "topic"],
   data: function() {
     return {
-      TagsViewCount: 5,
+      TagsViewCount: 5
     };
   },
   computed: {
@@ -125,7 +126,9 @@ export default {
       return this.$store.getters.getUserData;
     },
     tags() {
-      let tags = this.post.tags.substring(1, this.post.tags.length - 1).split("|");
+      let tags = this.post.tags
+        .substring(1, this.post.tags.length - 1)
+        .split("|");
       return tags;
     },
     inUserSubs() {
@@ -147,7 +150,11 @@ export default {
   },
   methods: {
     DeletePost(post_index, post_id, topic) {
-      this.$store.dispatch("deletePostFromServer", { post_index, post_id, topic });
+      this.$store.dispatch("deletePostFromServer", {
+        post_index,
+        post_id,
+        topic
+      });
     },
     Subscribe(sub_user, username) {
       let token = localStorage.getItem("token");
@@ -265,7 +272,7 @@ export default {
     },
     LoadProfile(username) {
       let isAdmin = username === this.UserData.username;
-      this.$store.dispatch("LoadProfile", { blog: '', isAdmin, username });
+      this.$store.dispatch("LoadProfile", { blog: "", isAdmin, username });
     }
   }
 };

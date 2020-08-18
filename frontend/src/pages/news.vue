@@ -67,9 +67,9 @@
             postMarksCount
           }}</span>
           <div v-show="isMarkSection" class="postsMarksSection">
-            <postMark :name="'книга'" :index="0"></postMark>
-            <postMark :name="'вопрос'" :index="1"></postMark>
-            <postMark :name="'видео'" :index="2"></postMark>
+            <postMark :name="'книга'" :index="0" @loadPostsByMarks="PostLoader('marks')"></postMark>
+            <postMark :name="'вопрос'" :index="1" @loadPostsByMarks="PostLoader('marks')"></postMark>
+            <postMark :name="'видео'" :index="2" @loadPostsByMarks="PostLoader('marks')"></postMark>
           </div>
         </span>
       </nav>
@@ -159,6 +159,9 @@ export default {
           break;
         case "photo":
           this.$store.dispatch("AllPostByTypeLoader", data);
+          break;
+        case "marks":
+          this.$store.dispatch("PostsByMarksLoader", data);
           break;
       }
     }

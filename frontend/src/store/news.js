@@ -50,7 +50,6 @@ export default {
       if (!payload.top) {
         let len = state.posts.length;
         state.posts.splice(0, len);
-        console.log("!", state.posts);
       }
 
       state.posts = state.posts.concat(payload.posts);
@@ -325,5 +324,26 @@ export default {
           console.log(e);
         });
     },
+    PostsByMarksLoader(context, data) {
+      let marks = context.getters.getPostMarks;
+
+      if (marks.length) {
+        let token = context.getters.getToken;
+        let domain = context.getters.getDomain;
+        let buf = marks.map(mark => mark.name);
+
+        axios
+          .get(`${domain}/api/v1/news/post/marks/?q=|${buf.join("|")}|&a=${data.top}&b=${data.bottom}`, {
+            headers: { Authorization: "Token " + token }
+          })
+          .then(response => {
+
+            context.commit("setPost", { posts: response.data, top: data.top });
+          })
+          .catch(function(e) {
+            console.log(e);
+          });
+      }
+    }
   }
 };
