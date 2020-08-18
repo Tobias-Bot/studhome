@@ -4,7 +4,7 @@
       <div class="spinner-border" role="status">
       </div>
       <br />
-      <span class="loadingText">секундочку...</span>
+      <span class="loadingText">одну секундочку...</span>
     </div>
     <div v-else class="card-columns">
       <post

@@ -80,10 +80,14 @@
                   </template>
                   <template v-if="Profile.bio || Profile.school">
                     <div class="bio">
-                      <span class="hint" style="text-align: left;">Обо мне</span>
+                      <span class="hint" style="text-align: left;"
+                        >Обо мне</span
+                      >
                       {{ Profile.bio }}
                       <hr />
-                      <span class="hint" style="text-align: left;">Школа/универ</span>
+                      <span class="hint" style="text-align: left;"
+                        >Школа/универ</span
+                      >
                       {{ Profile.school }}
                     </div>
                     <br />
@@ -204,9 +208,6 @@ export default {
       isLoading: false
     };
   },
-  created() {
-    this.LoadProfile();
-  },
   beforeDestroy() {
     this.$store.commit("dropUserPosts");
     this.$store.commit("dropUserSubs");
@@ -226,7 +227,7 @@ export default {
       let username = this.$route.params.username;
       let user = this.UserData.username;
 
-      return user == username ? true : false;
+      return user === username;
     },
     UserPosts() {
       return this.$store.getters.getUserPosts;
@@ -276,32 +277,30 @@ export default {
           this.isLoading = false;
         });
     },
-    LoadProfile() {
-      if (!this.isAdmin) {
-        let blog = this.$route.params.blog;
+    // LoadProfile() {
+    //   let blog = this.$route.params.blog;
 
-        if (blog) {
-          this.$store.commit("setCurrProfile", blog);
-        } else {
-          let token = localStorage.getItem("token");
-          let domain = this.$store.getters.getDomain;
-          let username = this.$route.params.username;
+    //   if (blog) {
+    //     this.$store.commit("setCurrProfile", blog);
+    //   } else if (!this.isAdmin) {
+    //     let token = localStorage.getItem("token");
+    //     let domain = this.$store.getters.getDomain;
+    //     let username = this.$route.params.username;
 
-          axios
-            .get(`${domain}/api/v1/home/profile/${username}/`, {
-              headers: {
-                Authorization: "Token " + token
-              }
-            })
-            .then(response => {
-              this.$store.commit("setCurrProfile", response.data[0]);
-            })
-            .catch(function(e) {
-              console.log(e);
-            });
-        }
-      }
-    }
+    //     axios
+    //       .get(`${domain}/api/v1/home/profile/${username}/`, {
+    //         headers: {
+    //           Authorization: "Token " + token
+    //         }
+    //       })
+    //       .then(response => {
+    //         this.$store.commit("setCurrProfile", response.data[0]);
+    //       })
+    //       .catch(function(e) {
+    //         console.log(e);
+    //       });
+    //   }
+    // }
   }
 };
 </script>

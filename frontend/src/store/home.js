@@ -304,6 +304,29 @@ export default {
           }
         };
       };
+    },
+    LoadProfile(context, data) {
+
+      if (data.blog) {
+        context.commit("setCurrProfile", data.blog);
+      } else if (!data.isAdmin) {
+        let token = localStorage.getItem("token");
+        let domain = context.getters.getDomain;
+        let username = data.username;
+
+        axios
+          .get(`${domain}/api/v1/home/profile/${username}/`, {
+            headers: {
+              Authorization: "Token " + token
+            }
+          })
+          .then(response => {
+            context.commit("setCurrProfile", response.data[0]);
+          })
+          .catch(function(e) {
+            console.log(e);
+          });
+      }
     }
   }
 };

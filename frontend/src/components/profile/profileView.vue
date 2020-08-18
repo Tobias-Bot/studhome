@@ -6,22 +6,24 @@
           <router-link
             :to="{
               name: 'profile',
-              params: { username: blog.username, blog: blog }
+              params: { username: blog.username }
             }"
           >
-            <img class="avatar" :src="blog.avatar" />
+            <img class="avatar" :src="blog.avatar" @click="LoadProfile(blog)" />
           </router-link>
         </div>
         <div class="col">
           <div class="block">
             <router-link
-              class="username"
               :to="{
                 name: 'profile',
                 params: { username: blog.username, blog: blog }
               }"
-              >{{ blog.username }}</router-link
             >
+              <span class="username" @click="LoadProfile(blog)">{{
+                blog.username
+              }}</span>
+            </router-link>
           </div>
           <div v-if="blog.status" class="block">
             <div class="status">{{ blog.status }}</div>
@@ -52,8 +54,17 @@ export default {
       maxLen: 100
     };
   },
-  computed: {},
-  methods: {}
+  computed: {
+    username() {
+      return this.$store.getters.getUserData.username;
+    }
+  },
+  methods: {
+    LoadProfile(blog) {
+      let isAdmin = blog.username === this.username;
+      this.$store.dispatch("LoadProfile", { blog, isAdmin });
+    }
+  }
 };
 </script>
 

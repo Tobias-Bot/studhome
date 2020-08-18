@@ -3,9 +3,11 @@
     <div class="card-header">
       <router-link
         :to="{ name: 'profile', params: { username: post.username } }"
-        class="username"
-        >{{ post.username }}</router-link
       >
+        <span class="username" @click="LoadProfile(post.username)">{{
+          post.username
+        }}</span>
+      </router-link>
       <template v-if="post.username !== UserData.username">
         <span
           v-if="!inUserSubs"
@@ -260,6 +262,10 @@ export default {
         .catch(function(e) {
           console.log(e);
         });
+    },
+    LoadProfile(username) {
+      let isAdmin = username === this.UserData.username;
+      this.$store.dispatch("LoadProfile", { blog: '', isAdmin, username });
     }
   }
 };
