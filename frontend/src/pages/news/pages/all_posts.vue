@@ -1,12 +1,11 @@
 <template>
   <div class="box-with-tools" ref="container" @scroll="LoadNewPosts">
     <div v-if="!posts.length" class="loading">
-      <div class="spinner-border" role="status">
-      </div>
+      <div class="spinner-border" role="status"></div>
       <br />
       <span class="loadingText">одну секундочку...</span>
     </div>
-    <div v-else class="card-columns">
+    <div v-else class="card-columns" ref="container_posts">
       <post
         v-for="(post, id) in posts"
         :key="id"
@@ -40,7 +39,17 @@ export default {
   },
   computed: {
     posts() {
+      let elem = this.$refs.container_posts;
       let posts = this.$store.getters.getPosts;
+      let hash = this.$store.getters.getHash;
+
+      if (elem && hash) {
+        elem.querySelector("#" + hash).scrollIntoView({
+          block: "center",
+          inline: "center",
+          behavior: "smooth"
+        });
+      }
 
       if (posts.length > this.postsCountOld) {
         this.load = true;
@@ -48,7 +57,7 @@ export default {
       }
 
       return posts;
-    }
+    },
   },
   methods: {
     LoadNewPosts() {
@@ -56,8 +65,6 @@ export default {
       let Hmax = Math.floor((block.scrollHeight - block.clientHeight) * 0.3);
       let h = block.scrollTop;
       let topic = this.$route.params.topic;
-
-      console.log(h, Hmax);
 
       if (h > Hmax) {
         this.load && this.PostLoader(topic);

@@ -276,7 +276,7 @@ export default {
           this.$store.commit("setUserSubs", response.data);
           this.isLoading = false;
         });
-    },
+    }
     // LoadProfile() {
     //   let blog = this.$route.params.blog;
 
@@ -347,9 +347,10 @@ export default {
 }
 
 .body {
+  position: relative;
   width: 100%;
   height: auto;
-  position: relative;
+  padding-top: 4%;
 }
 
 .readersCount {

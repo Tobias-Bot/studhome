@@ -122,8 +122,8 @@ export default {
 .box {
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 2% 18% 10% 18%;
-  height: 91.8vh;
+  padding: 7% 18% 10% 18%;
+  height: 100vh;
 }
 
 .block {

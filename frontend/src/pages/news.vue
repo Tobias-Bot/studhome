@@ -164,6 +164,8 @@ export default {
           this.$store.dispatch("PostsByMarksLoader", data);
           break;
       }
+
+      this.$store.commit('setHash', '');
     }
   }
 };

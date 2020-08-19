@@ -33,37 +33,58 @@ body {
   font-weight: 400;
 }
 
-.box {
-  width: 100vw;
-  height: 94.4vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 2% 150px 10% 150px;
-}
-
-.box-with-tools {
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 2% 150px 10% 150px;
+.BlackoutGlobal {
+  position: fixed;
+  z-index: -1;
   width: 100vw;
   height: 100vh;
 }
 
+.box {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 5% 150px 0 150px;
+}
+
+.box-with-tools {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 7% 150px 0 150px;
+}
+
 #main_header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   padding-left: 150px;
   padding-right: 150px;
   padding-top: 0.5%;
   background-color: white;
   box-shadow: 0px 0px 10px rgb(0, 0, 0, 0.8);
-  z-index: 2;
-  position: relative;
+  z-index: 3;
 }
 
 #main_header2 {
-  position: relative;
+  position: fixed;
   width: 100%;
+  top: 6%;
+  left: 0;
+  right: 0;
+  z-index: 2;
   padding-left: 340px;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.9);
 }
 
 #logo {

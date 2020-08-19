@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card" :id="'post-' + post_index">
     <div class="card-header">
       <router-link
         style="text-decoration: none;"
@@ -269,6 +269,8 @@ export default {
         .catch(function(e) {
           console.log(e);
         });
+
+        this.$store.commit('setHash', 'post-' + this.post_index);
     },
     LoadProfile(username) {
       let isAdmin = username === this.UserData.username;

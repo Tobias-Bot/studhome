@@ -117,9 +117,6 @@ export default {
   computed: {
     Style() {
       return {
-        width: "100%",
-        height: "100vh",
-        position: "absolute",
         background:
           "rgba(0, 0, 0, " + this.$store.getters.getUserSettings.blackout + ")",
         "z-index": -1

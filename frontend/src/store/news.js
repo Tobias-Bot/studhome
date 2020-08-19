@@ -9,9 +9,14 @@ export default {
     currentPost: {},
     postMarks: [],
     createdPostMarks: [],
-    currentComments: []
+    currentComments: [],
+
+    hash: '',
   },
   mutations: {
+    setHash(state, payload) {
+      state.hash = payload;
+    },
     dropCreatedPostMarks(state, payload) {
       let len = state.createdPostMarks.length;
       state.createdPostMarks.splice(payload, len);
@@ -100,6 +105,9 @@ export default {
     }
   },
   getters: {
+    getHash(state) {
+      return state.hash;
+    },
     getCreatedPostMarks(state) {
       return state.createdPostMarks;
     },
