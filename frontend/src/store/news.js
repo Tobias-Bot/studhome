@@ -352,6 +352,25 @@ export default {
             console.log(e);
           });
       }
-    }
+    },
+    addUserView(context, data) {
+      let token = localStorage.getItem("token");
+      let domain = context.getters.getDomain;
+
+      axios
+        .get(
+          `${domain}/api/v1/news/post_views_update/${data.post_id}/`,
+          {
+            headers: {
+              Authorization: "Token " + token
+            }
+          }
+        )
+        .catch(function(e) {
+          console.log(e);
+        });
+
+        context.commit('setHash', 'post-' + data.post_index);
+    },
   }
 };

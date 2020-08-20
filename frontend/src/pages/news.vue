@@ -165,7 +165,7 @@ export default {
           break;
       }
 
-      this.$store.commit('setHash', '');
+      this.$store.commit('setHash', 'top');
     }
   }
 };

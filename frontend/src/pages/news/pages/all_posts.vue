@@ -5,14 +5,17 @@
       <br />
       <span class="loadingText">одну секундочку...</span>
     </div>
-    <div v-else class="card-columns" ref="container_posts">
-      <post
-        v-for="(post, id) in posts"
-        :key="id"
-        :post="post"
-        :post_index="id"
-        :topic="'all'"
-      ></post>
+    <div v-else ref="container_posts">
+      <div id="top"></div>
+      <div class="card-columns">
+        <post
+          v-for="(post, id) in posts"
+          :key="id"
+          :post="post"
+          :post_index="id"
+          :topic="'all'"
+        ></post>
+      </div>
     </div>
   </div>
 </template>
@@ -47,8 +50,10 @@ export default {
         elem.querySelector("#" + hash).scrollIntoView({
           block: "center",
           inline: "center",
-          behavior: "smooth"
+          behavior: posts.length < 50 ? "smooth" : "auto"
         });
+
+        this.load && this.$store.commit("setHash", "");
       }
 
       if (posts.length > this.postsCountOld) {
@@ -57,12 +62,12 @@ export default {
       }
 
       return posts;
-    },
+    }
   },
   methods: {
     LoadNewPosts() {
       let block = this.$refs.container;
-      let Hmax = Math.floor((block.scrollHeight - block.clientHeight) * 0.3);
+      let Hmax = block && Math.floor((block.scrollHeight - block.clientHeight) * 0.3);
       let h = block.scrollTop;
       let topic = this.$route.params.topic;
 

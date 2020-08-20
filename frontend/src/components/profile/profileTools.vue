@@ -8,7 +8,7 @@
       role="dialog"
       aria-hidden="true"
     >
-      <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h4>Редактирование профиля</h4>
@@ -300,9 +300,10 @@ export default {
   padding: 2% 2% 2% 2%;
 }
 
-.modal-dialog-centered {
+.modal-dialog {
   position: absolute;
-  width: 35%;
-  right: 1%;
+  width: 40%;
+  right: 2%;
+  top: 5%;
 }
 </style>

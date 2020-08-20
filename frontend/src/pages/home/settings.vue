@@ -1,5 +1,5 @@
 <template>
-  <div class="box">
+  <div class="box-with-tools">
     <div class="card-columns">
       <design></design>
       <account></account>

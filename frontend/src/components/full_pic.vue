@@ -69,7 +69,7 @@ img {
   border-radius: 5px;
   position: absolute;
   top: 0;
-  bottom: 0;
+  bottom: 8%;
   margin: auto 0;
 }
 .img_horizontal {

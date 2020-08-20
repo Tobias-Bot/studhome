@@ -253,24 +253,13 @@ export default {
         });
     },
     addUserView(post_id) {
-      let token = localStorage.getItem("token");
+      let post_index = this.post_index;
+      let data = {
+        post_id,
+        post_index
+      }
 
-      axios
-        .get(
-          "http://127.0.0.1:8000/api/v1/news/post_views_update/" +
-            post_id +
-            "/",
-          {
-            headers: {
-              Authorization: "Token " + token
-            }
-          }
-        )
-        .catch(function(e) {
-          console.log(e);
-        });
-
-        this.$store.commit('setHash', 'post-' + this.post_index);
+      this.$store.dispatch('addUserView', data);
     },
     LoadProfile(username) {
       let isAdmin = username === this.UserData.username;
@@ -282,8 +271,7 @@ export default {
 
 <style scoped>
 .card {
-  margin-bottom: 5%;
-  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);
+  margin-bottom: 6%;
 }
 
 .btnSubscribe {

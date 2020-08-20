@@ -159,7 +159,7 @@ class PostByMarksListView(generics.ListAPIView):
             if (len(marks) == 3):
                 queryset = Post.objects.filter(Q(marks__icontains=marks[0]) | Q(marks__icontains=marks[1]) | Q(marks__icontains=marks[2])).order_by('-date')[a:b]
         else:
-            queryset = Post.objects.all().order_by('-date')[:PostsPerPage]
+            queryset = Post.objects.all().order_by('-date')[a:b]
             
         return queryset
     

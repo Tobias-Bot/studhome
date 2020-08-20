@@ -11,6 +11,7 @@
       :src="'http://127.0.0.1:8000' + item.image"
       class="image"
       alt="image"
+      @click="$store.commit('setHash', 'post-' + post_index);"
     />
   </router-link>
 </div>

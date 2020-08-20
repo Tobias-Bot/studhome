@@ -28,7 +28,7 @@ body {
 }
 
 .navbar-brand {
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.6);
   font-size: 20px;
   font-weight: 400;
 }
@@ -40,10 +40,25 @@ body {
   height: 100vh;
 }
 
+.card {
+  border: none;
+  border-radius: 6px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.modal-content {
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 5px 60px black;
+}
+
+.modal-backdrop {
+  display: none;
+}
+
 .box {
-  position: absolute;
+  position: fixed;
   top: 0;
-  bottom: 0;
   width: 100vw;
   height: 100vh;
   overflow-y: auto;
@@ -52,9 +67,8 @@ body {
 }
 
 .box-with-tools {
-  position: absolute;
+  position: fixed;
   top: 0;
-  bottom: 0;
   width: 100vw;
   height: 100vh;
   overflow-y: auto;

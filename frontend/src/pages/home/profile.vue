@@ -350,7 +350,7 @@ export default {
   position: relative;
   width: 100%;
   height: auto;
-  padding-top: 4%;
+  padding-top: 3%;
 }
 
 .readersCount {
