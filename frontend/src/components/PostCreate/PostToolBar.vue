@@ -102,7 +102,7 @@
         title="добавить текст"
         @click="$emit('switch-note-mode')"
       >
-        <i class="fas fa-file-signature"></i>
+        <i class="fas fa-envelope-open-text"></i>
         текст
       </button>
       <input

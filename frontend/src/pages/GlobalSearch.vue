@@ -1,5 +1,5 @@
 <template>
-  <div class="box">
+  <div class="box" ref="container" @scroll="LoadNewPosts">
     <div class="block">
       <input
         v-model="SearchText"
@@ -24,7 +24,7 @@
     <div v-if="!Posts.length && !Blogs.length" class="interests">
       <tag v-for="(tag, index) in Interests" :key="index" :text="tag"></tag>
     </div>
-    <div v-else class="block">
+    <div ref="container_posts" class="block">
       <div v-if="this.cat == 'публикации'" class="card-columns">
         <post
           v-for="(post, id) in Posts"
@@ -59,12 +59,38 @@ export default {
     return {
       SearchText: "",
       postsByInterests: [],
-      cat: ""
+      cat: "",
+
+      PostsLoadCount: 15,
+      load: true,
+      postsCountOld: 0
     };
   },
   computed: {
     Posts() {
-      return this.$store.getters.getSearchPost;
+      let elem = this.$refs.container_posts;
+      let posts = this.$store.getters.getSearchPost;
+      let hash = this.$store.getters.getHash;
+
+      console.log(elem);
+      console.log(hash);
+
+      if (elem && hash) {
+        elem.querySelector("#" + hash).scrollIntoView({
+          block: "center",
+          inline: "center",
+          behavior: posts.length < 50 ? "smooth" : "auto"
+        });
+
+        this.load && this.$store.commit("setHash", "");
+      }
+
+      if (posts.length > this.postsCountOld) {
+        this.load = true;
+        this.postsCountOld = posts.length;
+      }
+
+      return posts;
     },
     Blogs() {
       return this.$store.getters.getFoundProfiles;
@@ -97,15 +123,25 @@ export default {
   },
   methods: {
     FindData() {
+      let top = this.Posts.length;
+      let bottom = top + this.PostsLoadCount;
+
+      let data = {
+        top,
+        bottom
+      };
+
       this.cat = this.$refs.CategorySelector.value;
 
-      if (this.cat == "публикации") {
-        let text = `|${this.SearchText}|`;
-        this.$store.dispatch("FindData", text);
-      }
-      if (this.cat == "люди") {
-        let text = this.SearchText;
-        this.$store.dispatch("FindPeople", text);
+      switch (this.cat) {
+        case "публикации":
+          data.text = `|${this.SearchText}|`;
+          this.$store.dispatch("FindData", data);
+          break;
+        case "люди":
+          let text = this.SearchText;
+          this.$store.dispatch("FindPeople", text);
+          break;
       }
     },
     ClearInput() {
@@ -113,6 +149,20 @@ export default {
       this.$store.commit("dropFoundProfiles", 0);
       this.$store.commit("dropSearchPost", 0);
       this.SearchText = "";
+    },
+    LoadNewPosts() {
+      let block = this.$refs.container;
+      let Hmax =
+        block && Math.floor((block.scrollHeight - block.clientHeight) * 0.4);
+      let h = block.scrollTop;
+      let topic = this.$route.params.topic;
+
+      if (h > Hmax) {
+        this.load && this.FindData();
+        this.load = false;
+      } else {
+        this.load = true;
+      }
     }
   }
 };
@@ -139,16 +189,15 @@ export default {
 
 .category {
   position: relative;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0.5%;
   margin-bottom: 2%;
   font-size: 18px;
   font-weight: 500;
   border-radius: 5px;
   border: none;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  background-color: rgba(255, 255, 255, 0.9);
+  color: rgba(0, 0, 0, 0.9);
+  box-shadow: 0 6px 4px rgba(0, 0, 0, 0.6);
 }
 
 .MainInput {
@@ -158,9 +207,9 @@ export default {
   outline: none;
   border-radius: 5px;
   padding: 1% 8% 1% 1.5%;
-  margin-bottom: 3%;
+  margin-bottom: 1.5%;
   box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.8);
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(0, 0, 0, 0.8);
   font-size: 30px;
   font-weight: 600;
   color: white;
@@ -173,5 +222,11 @@ export default {
   bottom: 0;
   right: 1%;
   margin: auto 0;
+}
+
+.spinner-border {
+  width: 4rem;
+  height: 4rem;
+  color: white;
 }
 </style>

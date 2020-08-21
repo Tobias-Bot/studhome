@@ -71,16 +71,10 @@
                   style="text-decoration: none;"
                   :to="{ name: 'CreatePost', params: { editMode: false } }"
                 >
-                  <i class="far fa-file-alt"></i>
+                  <i class="fas fa-file-signature"></i>
                 </router-link>
                 <div class="btnInWritingSection">
-                  <i class="fas fa-list"></i>
-                </div>
-                <div class="btnInWritingSection">
-                  <i class="far fa-sticky-note"></i>
-                </div>
-                <div class="btnInWritingSection">
-                  <i class="far fa-bell"></i>
+                  <i class="fas fa-check-square"></i>
                 </div>
               </div>
             </div>
@@ -159,23 +153,23 @@ export default {
 }
 
 .btnInWritingSection {
-  width: 45px;
-  height: 45px;
+  width: 50px;
+  height: 50px;
   position: relative;
   left: 50%;
   transform: translateX(-50%);
   margin: 20% 0 20% 0;
-  padding-top: 5%;
+  padding-top: 10%;
   display: block;
   border-radius: 100px;
   border: 2px solid white;
   background-color: white;
-  color: rgba(0, 0, 0, 0.8);
+  color: rgba(0, 0, 0, 0.9);
   box-shadow: 2px 5px 20px black;
   font-size: 23px;
   text-align: center;
   text-decoration: none;
-  transition: 0.2s all;
+  transition: 0.1s all;
 }
 .btnInWritingSection:hover {
   cursor: pointer;

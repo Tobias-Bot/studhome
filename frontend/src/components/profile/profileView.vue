@@ -4,7 +4,6 @@
       <div class="row">
         <div class="col-4">
           <router-link
-            style="text-decoration: none;"
             :to="{
               name: 'profile',
               params: { username: blog.username }
@@ -20,6 +19,7 @@
                 name: 'profile',
                 params: { username: blog.username, blog: blog }
               }"
+              style="text-decoration: none;"
             >
               <span class="username" @click="LoadProfile(blog)">{{
                 blog.username
@@ -32,13 +32,6 @@
           <div v-else-if="blog.bio" class="block">
             <div class="status">{{ blog.bio.substring(0, maxLen) }}</div>
             <span v-if="blog.bio.length > maxLen">...</span>
-          </div>
-        </div>
-        <div class="col-2">
-          <div class="btn-group-vertical" role="group">
-            <button class="btn btn-ligth btn-sm btnOption"></button>
-            <button class="btn btn-ligth btn-sm btnOption"></button>
-            <button class="btn btn-ligth btn-sm btnOption"></button>
           </div>
         </div>
       </div>

@@ -17,7 +17,7 @@ urlpatterns = [
     path('post/by_interests/<str:tags>/', PostsByInterestsListView.as_view()),
     path('post/<int:post_id>/comment/<int:com_id>/', CommentDestroyView.as_view()),
     path('comment_update/<int:id>/', CommentUpdateView.as_view()),
-    path('search/', SearchPostList.as_view()),
+    path('search_posts/', SearchPostList.as_view()),
     path('search_people/', SearchProfilesList.as_view()),
     path('post/type/', SearchByTypePostList.as_view()),
     path('post/marks/', PostByMarksListView.as_view()),

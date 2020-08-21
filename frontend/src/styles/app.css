@@ -210,7 +210,7 @@ body {
 }
 
 .tag {
-  padding: 0% 1.5% 0.5% 1.5%;
+  padding: 0.3% 1.5% 0.5% 1.5%;
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 10px;
   text-align: center;
@@ -246,3 +246,23 @@ body {
   cursor: pointer;
   color: rgba(0, 0, 0, 0.8);
 }
+
+.loading {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 45%;
+  text-align: center;
+}
+
+.loadingText {
+  color: white;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+/* .spinner-border {
+  width: 4rem;
+  height: 4rem;
+  color: white;
+} */

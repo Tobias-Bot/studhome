@@ -69,7 +69,12 @@ export default {
       state.userProfile = payload;
     },
     setUserPosts(state, payload) {
-      state.userPosts = payload;
+      if (!payload.top) {
+        let len = state.userPosts.length;
+        state.userPosts.splice(0, len);
+      }
+
+      state.userPosts = state.userPosts.concat(payload.posts);
     },
     dropUserPosts(state) {
       state.userPosts.splice(0, state.userPosts.length);

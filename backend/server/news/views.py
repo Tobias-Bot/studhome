@@ -22,16 +22,20 @@ class SearchPostList(generics.ListAPIView):
 
     def get_queryset(self):
         tag = self.request.GET.get('q')
+        a = int(self.request.GET.get("a"))
+        b = int(self.request.GET.get("b"))
+
         title = tag[1:-1]
-        post_list = Post.objects.filter(Q(tags__icontains=tag) | Q(title__icontains=title))[:PostsPerPage]
-        return post_list
+        queryset = Post.objects.filter(Q(tags__icontains=tag) | Q(title__icontains=title))[a:b]
+        return queryset
 
 class SearchProfilesList(generics.ListAPIView):
     serializer_class = ProfileSerializer
 
     def get_queryset(self):
         name = self.request.GET.get('q')
-        queryset = Profile.objects.filter(username__icontains=name)
+
+        queryset = Profile.objects.filter(username__icontains=name)[:PostsPerPage]
         return queryset
 
 class SearchByTypePostList(generics.ListAPIView):
@@ -181,7 +185,10 @@ class UserPostsListView(generics.ListAPIView):
 
     def get_queryset(self):
         username = self.kwargs['username']
-        queryset = Post.objects.filter(username=username).order_by('-date')[:PostsPerPage]
+        a = int(self.request.GET.get("a"))
+        b = int(self.request.GET.get("b"))
+
+        queryset = Post.objects.filter(username=username).order_by('-date')[a:b]
         return queryset
 
 class BookMarksPostsListView(generics.ListAPIView):
@@ -242,9 +249,12 @@ class SubsPostsListView(generics.ListAPIView):
     def get_queryset(self):
         username = self.request.GET.get("me")
         date = self.request.GET.get("d")
+        a = int(self.request.GET.get("a"))
+        b = int(self.request.GET.get("b"))
+
         str = Profile.objects.get(username=username).subs_profiles[1:-1]
         names = str.split("|")
-        queryset = Post.objects.filter(username__in=names, date__gt=date).order_by("-date")[:PostsPerPage]
+        queryset = Post.objects.filter(username__in=names, date__gt=date).order_by("-date")[a:b]
         return queryset
 
 class CommentListView(generics.ListAPIView):

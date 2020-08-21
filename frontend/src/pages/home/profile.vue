@@ -1,5 +1,5 @@
 <template>
-  <div class="box">
+  <div class="box" ref="container" @scroll="LoadNewPosts">
     <div class="body">
       <div class="row">
         <div class="col-2">
@@ -60,11 +60,7 @@
         </div>
         <div class="col-8">
           <div class="tab-content">
-            <div
-              class="tab-pane fade show active"
-              id="description"
-              role="tabpanel"
-            >
+            <div class="tab-pane fade" id="description" role="tabpanel">
               <span class="username"
                 >{{ Profile.username }}
                 <span class="readersCount"
@@ -78,20 +74,24 @@
                     <br />
                     <br />
                   </template>
-                  <template v-if="Profile.bio || Profile.school">
-                    <div class="bio">
-                      <span class="hint" style="text-align: left;"
-                        >Обо мне</span
-                      >
-                      {{ Profile.bio }}
-                      <hr />
-                      <span class="hint" style="text-align: left;"
-                        >Школа/универ</span
-                      >
-                      {{ Profile.school }}
-                    </div>
-                    <br />
-                  </template>
+                  <div v-if="Profile.bio || Profile.school" class="bio">
+                    <span
+                      v-if="Profile.bio"
+                      class="hint"
+                      style="text-align: left;"
+                      >Обо мне</span
+                    >
+                    {{ Profile.bio }}
+                    <hr />
+                    <span
+                      v-if="Profile.school"
+                      class="hint"
+                      style="text-align: left;"
+                      >Школа/универ</span
+                    >
+                    {{ Profile.school }}
+                  </div>
+                  <br />
                   <tag
                     v-for="(tag, i) in userInterests"
                     :key="tag + i"
@@ -100,7 +100,7 @@
                 </div>
               </div>
             </div>
-            <div class="tab-pane fade" id="posts" role="tabpanel">
+            <div class="tab-pane fade" ref="container_posts" id="posts" role="tabpanel">
               <div class="infoBar">
                 записи: {{ Profile.posts_count }}
                 <template v-if="isLoading">
@@ -205,7 +205,10 @@ export default {
   },
   data() {
     return {
-      isLoading: false
+      isLoading: false,
+      PostsLoadCount: 10,
+      load: true,
+      postsCountOld: 0
     };
   },
   beforeDestroy() {
@@ -230,7 +233,26 @@ export default {
       return user === username;
     },
     UserPosts() {
-      return this.$store.getters.getUserPosts;
+      let elem = this.$refs.container_posts;
+      let posts = this.$store.getters.getUserPosts;
+      let hash = this.$store.getters.getHash;
+
+      if (elem && hash) {
+        elem.querySelector("#" + hash).scrollIntoView({
+          block: "center",
+          inline: "center",
+          behavior: posts.length < 40 ? "smooth" : "auto"
+        });
+
+        this.load && this.$store.commit("setHash", "");
+      }
+
+      if (posts.length > this.postsCountOld) {
+        this.load = true;
+        this.postsCountOld = posts.length;
+      }
+
+      return posts;
     },
     UserSubs() {
       return this.$store.getters.getUserSubs;
@@ -243,21 +265,41 @@ export default {
     }
   },
   methods: {
+    LoadNewPosts() {
+      let block = this.$refs.container;
+      let Hmax =
+        block && Math.floor((block.scrollHeight - block.clientHeight) * 0.3);
+      let h = block.scrollTop;
+      let topic = this.$route.params.topic;
+
+      if (h > Hmax) {
+        if (this.load) {
+          this.load = false;
+          this.LoadUserPosts();
+        }
+      } else {
+        this.load = true;
+      }
+    },
     LoadUserPosts() {
       if (this.Profile.posts_count) {
         this.isLoading = true;
+
+        let top = this.UserPosts.length;
+        let bottom = top + this.PostsLoadCount;
         let token = localStorage.getItem("token");
         let username = this.Profile.username;
+        let domain = this.$store.getters.getDomain;
 
         axios
           .get(
-            "http://127.0.0.1:8000/api/v1/news/post/list/" + username + "/",
+            `${domain}/api/v1/news/post/list/${username}/?a=${top}&b=${bottom}`,
             {
               headers: { Authorization: "Token " + token }
             }
           )
           .then(response => {
-            this.$store.commit("setUserPosts", response.data);
+            this.$store.commit("setUserPosts", { top, posts: response.data });
             this.isLoading = false;
           });
       }
@@ -277,30 +319,6 @@ export default {
           this.isLoading = false;
         });
     }
-    // LoadProfile() {
-    //   let blog = this.$route.params.blog;
-
-    //   if (blog) {
-    //     this.$store.commit("setCurrProfile", blog);
-    //   } else if (!this.isAdmin) {
-    //     let token = localStorage.getItem("token");
-    //     let domain = this.$store.getters.getDomain;
-    //     let username = this.$route.params.username;
-
-    //     axios
-    //       .get(`${domain}/api/v1/home/profile/${username}/`, {
-    //         headers: {
-    //           Authorization: "Token " + token
-    //         }
-    //       })
-    //       .then(response => {
-    //         this.$store.commit("setCurrProfile", response.data[0]);
-    //       })
-    //       .catch(function(e) {
-    //         console.log(e);
-    //       });
-    //   }
-    // }
   }
 };
 </script>
@@ -410,7 +428,7 @@ export default {
 
 .infoBar {
   width: 100%;
-  display: block;
+  display: inline-block;
   margin-bottom: 2%;
   background-color: white;
   border-radius: 5px;

@@ -11,7 +11,7 @@ export default {
     createdPostMarks: [],
     currentComments: [],
 
-    hash: '',
+    hash: ""
   },
   mutations: {
     setHash(state, payload) {
@@ -59,17 +59,13 @@ export default {
 
       state.posts = state.posts.concat(payload.posts);
     },
-    setPhotoPost(state, payload) {
-      state.photoPosts = payload;
-    },
-    setTextPost(state, payload) {
-      state.textPosts = payload;
-    },
-    setPopularPost(state, payload) {
-      state.popularPosts = payload;
-    },
     setMyNewsPost(state, payload) {
-      state.myNewsPosts = payload;
+      if (!payload.top) {
+        let len = state.myNewsPosts.length;
+        state.myNewsPosts.splice(0, len);
+      }
+
+      state.myNewsPosts = state.myNewsPosts.concat(payload.posts);
     },
     setPostsByMarks(state, payload) {
       state.postsByMarks = payload;
@@ -78,7 +74,12 @@ export default {
       state.posts.splice(payload, 1);
     },
     setSearchPost(state, payload) {
-      state.searchPosts = payload;
+      if (!payload.top) {
+        let len = state.searchPosts.length;
+        state.searchPosts.splice(0, len);
+      }
+
+      state.searchPosts = state.searchPosts.concat(payload.posts);
     },
     deleteSearchPost(state, payload) {
       state.searchPosts.splice(payload, 1);
@@ -123,15 +124,6 @@ export default {
     getPosts(state) {
       return state.posts;
     },
-    getPhotoPosts(state) {
-      return state.photoPosts;
-    },
-    getTextPosts(state) {
-      return state.textPosts;
-    },
-    getPopularPosts(state) {
-      return state.popularPosts;
-    },
     getMyNewsPosts(state) {
       return state.myNewsPosts;
     },
@@ -146,35 +138,36 @@ export default {
     }
   },
   actions: {
-    FindData(context, searchData) {
+    FindData(context, data) {
       let token = context.getters.getToken;
+      let domain = context.getters.getDomain;
 
       context.commit(
         "setSearchTag",
-        searchData.substring(1, searchData.length - 1)
+        data.text.substring(1, data.text.length - 1)
       );
 
       axios
-        .get("http://127.0.0.1:8000/api/v1/news/search/?q=" + searchData, {
+        .get(`${domain}/api/v1/news/search_posts/?q=${data.text}&a=${data.top}&b=${data.bottom}`, {
           headers: {
             Authorization: "Token " + token
           }
         })
         .then(response => {
-          context.commit("setSearchPost", response.data);
+          context.commit("setSearchPost", { top: data.top, posts: response.data });
         })
         .catch(function(e) {
           console.log(e);
         });
     },
-    FindPeople(context, searchData) {
+    FindPeople(context, data) {
       let token = context.getters.getToken;
       let domain = context.getters.getDomain;
 
-      context.commit("setSearchTag", searchData);
+      context.commit("setSearchTag", data.text);
 
       axios
-        .get(`${domain}/api/v1/news/search_people/?q=${searchData}`, {
+        .get(`${domain}/api/v1/news/search_people/?q=${data.text}`, {
           headers: {
             Authorization: "Token " + token
           }
@@ -264,19 +257,20 @@ export default {
     },
     MyNewsPostLoader(context, data) {
       let token = context.getters.getToken;
-      let username = context.getters.getUserData.username;
       let domain = context.getters.getDomain;
+      let username = context.getters.getUserProfile.username;
 
       axios
         .get(
-          `${domain}/api/v1/news/post/mysubs/all/?me=${username}&d=${data}`,
+          `${domain}/api/v1/news/post/mysubs/all/?me=${username}&d=${data.date}&a=${data.top}&b=${data.bottom}`,
           {
             headers: { Authorization: "Token " + token }
           }
         )
         .then(response => {
           let posts = response.data;
-          context.commit("setMyNewsPost", posts);
+
+          context.commit("setMyNewsPost", { top: data.top, posts });
         })
         .catch(function(e) {
           console.log(e);
@@ -303,9 +297,12 @@ export default {
       let domain = context.getters.getDomain;
 
       axios
-        .get(`${domain}/api/v1/news/post/type/?q=|${data.value}|&a=${data.top}&b=${data.bottom}`, {
-          headers: { Authorization: "Token " + token }
-        })
+        .get(
+          `${domain}/api/v1/news/post/type/?q=|${data.value}|&a=${data.top}&b=${data.bottom}`,
+          {
+            headers: { Authorization: "Token " + token }
+          }
+        )
         .then(response => {
           let posts = response.data;
 
@@ -320,12 +317,15 @@ export default {
       let domain = context.getters.getDomain;
 
       axios
-        .get(`${domain}/api/v1/news/post/popular/?a=${data.top}&b=${data.bottom}`, {
-          headers: { Authorization: "Token " + token }
-        })
+        .get(
+          `${domain}/api/v1/news/post/popular/?a=${data.top}&b=${data.bottom}`,
+          {
+            headers: { Authorization: "Token " + token }
+          }
+        )
         .then(response => {
           let posts = response.data;
-          
+
           context.commit("setPost", { top: data.top, posts });
         })
         .catch(function(e) {
@@ -341,11 +341,15 @@ export default {
         let buf = marks.map(mark => mark.name);
 
         axios
-          .get(`${domain}/api/v1/news/post/marks/?q=|${buf.join("|")}|&a=${data.top}&b=${data.bottom}`, {
-            headers: { Authorization: "Token " + token }
-          })
+          .get(
+            `${domain}/api/v1/news/post/marks/?q=|${buf.join("|")}|&a=${
+              data.top
+            }&b=${data.bottom}`,
+            {
+              headers: { Authorization: "Token " + token }
+            }
+          )
           .then(response => {
-
             context.commit("setPost", { posts: response.data, top: data.top });
           })
           .catch(function(e) {
@@ -358,19 +362,16 @@ export default {
       let domain = context.getters.getDomain;
 
       axios
-        .get(
-          `${domain}/api/v1/news/post_views_update/${data.post_id}/`,
-          {
-            headers: {
-              Authorization: "Token " + token
-            }
+        .get(`${domain}/api/v1/news/post_views_update/${data.post_id}/`, {
+          headers: {
+            Authorization: "Token " + token
           }
-        )
+        })
         .catch(function(e) {
           console.log(e);
         });
 
-        context.commit('setHash', 'post-' + data.post_index);
-    },
+      context.commit("setHash", "post-" + data.post_index);
+    }
   }
 };

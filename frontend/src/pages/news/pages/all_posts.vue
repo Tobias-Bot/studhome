@@ -130,20 +130,6 @@ export default {
   }
 }
 
-.loading {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 45%;
-  text-align: center;
-}
-
-.loadingText {
-  color: white;
-  font-size: 22px;
-  font-weight: 500;
-}
-
 .spinner-border {
   width: 4rem;
   height: 4rem;

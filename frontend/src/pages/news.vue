@@ -3,7 +3,7 @@
     <div id="main_header2">
       <nav class="nav">
         <router-link class="nav-link" to="/news/me">
-          <span class="tab" @click="MyNewsPostLoader">
+          <span class="tab" @click="PostLoader('me')">
             <i class="fas fa-poll-h"></i>
             моя лента
           </span>
@@ -96,47 +96,11 @@ export default {
     this.$store.commit("dropPostMarks");
   },
   computed: {
-    getDate() {
-      let date = new Date();
-      let month = date.getMonth();
-      let day = date.getDate();
-      let year = date.getFullYear();
-
-      if (!month) month++;
-      if (String(month).length == 1) month = "0" + month;
-      if (String(day).length == 1) day = "0" + day;
-
-      let result = year + "-" + month + "-" + day;
-
-      return result;
-    },
     postMarksCount() {
       return this.$store.getters.getPostMarks.length;
     }
   },
   methods: {
-    MyNewsPostLoader() {
-      let token = this.$store.getters.getToken;
-      let username = this.$store.getters.getUserData.username;
-
-      axios
-        .get(
-          "http://127.0.0.1:8000/api/v1/news/post/mysubs/all/?me=" +
-            username +
-            "&d=" +
-            this.getDate,
-          {
-            headers: { Authorization: "Token " + token }
-          }
-        )
-        .then(response => {
-          let posts = response.data;
-          this.$store.commit("setMyNewsPost", posts);
-        })
-        .catch(function(e) {
-          console.log(e);
-        });
-    },
     PostLoader(topic) {
       let top = 0;
       let bottom = top + this.PostsLoadCount;

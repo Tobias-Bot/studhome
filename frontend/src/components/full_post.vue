@@ -281,9 +281,6 @@ export default {
     let posts = this.$store.getters.getPosts;
     let myNewsPosts = this.$store.getters.getMyNewsPosts;
     let userPosts = this.$store.getters.getUserPosts;
-    let popularPosts = this.$store.getters.getPopularPosts;
-    let textPosts = this.$store.getters.getTextPosts;
-    let photoPosts = this.$store.getters.getPhotoPosts;
     let searchPosts = this.$store.getters.getSearchPost;
     let post_id = this.$route.params.post_id;
     let post = this.$route.params.post;
@@ -293,10 +290,7 @@ export default {
       (posts.length ||
         userPosts.length ||
         myNewsPosts.length ||
-        popularPosts.length ||
-        textPosts.length ||
-        searchPosts.length ||
-        photoPosts.length)
+        searchPosts.length)
     ) {
       this.$store.commit("setCurrentPost", post);
       this.CommentsLoader(post_id);
