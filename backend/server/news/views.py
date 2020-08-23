@@ -111,6 +111,7 @@ class ImageDestroyView(generics.DestroyAPIView):
 class CommentCreateView(generics.CreateAPIView):
     serializer_class = CommentSerializer
     permission_classes = (IsAuthenticated, )
+    
     # lookup_field = 'post_id'
     # queryset = Comment.objects.all()
 
@@ -286,8 +287,19 @@ class PostDetailView(generics.ListAPIView):
 
     def get_queryset(self):
         post_id = self.kwargs['post_id']
+        
         Post.objects.filter(id=post_id).update(views = F("views") + 1)
         queryset = Post.objects.filter(id=post_id)
+        return queryset
+
+class ImageDetailView(generics.ListAPIView):
+    serializer_class = ImageSerializer
+    permission_classes = (IsAuthenticated, )
+
+    def get_queryset(self):
+        img_id = self.kwargs['img_id']
+
+        queryset = Image.objects.filter(id=img_id)
         return queryset
 
 class PostViewsUpdate(APIView):

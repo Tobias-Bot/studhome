@@ -279,17 +279,6 @@ export default {
   margin-bottom: 6%;
 }
 
-.btnSubscribe {
-  position: relative;
-  display: inline-block;
-  color: rgba(0, 0, 0, 0.7);
-  font-size: 14px;
-}
-.btnSubscribe:hover {
-  cursor: pointer;
-  color: rgba(0, 0, 0, 0.8);
-}
-
 .post_header {
   position: absolute;
   right: 20px;

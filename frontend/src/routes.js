@@ -119,7 +119,7 @@ const router = new VueRouter({
     },
     {
       name: "pic",
-      path: "/pic_:post_id:pic_id",
+      path: "/pic_:pic_id",
       component: full_pic
     },
     {

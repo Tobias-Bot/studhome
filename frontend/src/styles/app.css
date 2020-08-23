@@ -236,7 +236,7 @@ body {
   width: 100%;
   margin-right: 1%;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 600;
   color: rgba(0, 0, 0, 0.5);
   text-decoration: none;
   word-wrap: nowrap;
@@ -259,6 +259,19 @@ body {
   color: white;
   font-size: 22px;
   font-weight: 500;
+}
+
+.btnSubscribe {
+  position: relative;
+  display: inline-block;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 16px;
+  transition: 0.4s all;
+}
+.btnSubscribe:hover {
+  cursor: pointer;
+  transform: rotate(-180deg);
+  color: rgba(0, 0, 0, 0.8);
 }
 
 /* .spinner-border {

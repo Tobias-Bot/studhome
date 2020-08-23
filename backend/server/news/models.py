@@ -31,6 +31,7 @@ class Image(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='images')
     text = models.TextField(max_length=1500, default='')
     image = models.ImageField(blank=True, upload_to='post_images/')
+    username = models.CharField(max_length=100)
 
 class Document(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)

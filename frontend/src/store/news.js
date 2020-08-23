@@ -7,6 +7,7 @@ export default {
     searchPosts: [],
 
     currentPost: {},
+    currentImage: {},
     postMarks: [],
     createdPostMarks: [],
     currentComments: [],
@@ -14,6 +15,9 @@ export default {
     hash: ""
   },
   mutations: {
+    setCurrImage(state, payload) {
+      state.currentImage = payload;
+    },
     setHash(state, payload) {
       state.hash = payload;
     },
@@ -106,6 +110,9 @@ export default {
     }
   },
   getters: {
+    getCurrImage(state) {
+      return state.currentImage;
+    },
     getHash(state) {
       return state.hash;
     },

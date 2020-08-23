@@ -491,6 +491,7 @@ export default {
     submitPhotos(token, post_id, img_index) {
       let formData = new FormData();
       formData.append("post", post_id);
+      formData.append("username", this.UserData.username);
       formData.append("text", this.files[img_index].text);
       formData.append("image", this.files[img_index].file);
 
