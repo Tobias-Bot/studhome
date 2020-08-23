@@ -5,6 +5,7 @@
         v-model="SearchText"
         class="form-control MainInput"
         placeholder="Что будем искать?"
+        @input="setSearchTag"
         @keyup.enter="FindData"
       />
       <button
@@ -24,8 +25,8 @@
     <div v-if="!Posts.length && !Blogs.length" class="interests">
       <tag v-for="(tag, index) in Interests" :key="index" :text="tag"></tag>
     </div>
-    <div ref="container_posts" class="block">
-      <div v-if="this.cat == 'публикации'" class="card-columns">
+    <div class="block" ref="content">
+      <div v-show="this.cat == 'публикации'" class="card-columns">
         <post
           v-for="(post, id) in Posts"
           :key="id"
@@ -34,7 +35,7 @@
           :topic="'search'"
         ></post>
       </div>
-      <div v-else-if="this.cat == 'люди'" class="card-columns">
+      <div v-show="this.cat == 'люди'" class="card-columns">
         <blog v-for="(profile, id) in Blogs" :key="id" :blog="profile"></blog>
       </div>
     </div>
@@ -54,6 +55,23 @@ export default {
   },
   mounted() {
     this.cat = this.$refs.CategorySelector.value;
+
+    let elem = this.$refs.content;
+    let posts = this.Posts;
+    let hash = this.$store.getters.getHash;
+
+    console.log(elem);
+    console.log(hash);
+
+    if (elem && hash) {
+      elem.querySelector("#" + hash).scrollIntoView({
+        block: "center",
+        inline: "center",
+        behavior: posts.length < 50 ? "smooth" : "auto"
+      });
+
+      this.load && this.$store.commit("setHash", "");
+    }
   },
   data() {
     return {
@@ -68,22 +86,8 @@ export default {
   },
   computed: {
     Posts() {
-      let elem = this.$refs.container_posts;
+      this.SearchText = this.$store.getters.getSearchTag;
       let posts = this.$store.getters.getSearchPost;
-      let hash = this.$store.getters.getHash;
-
-      console.log(elem);
-      console.log(hash);
-
-      if (elem && hash) {
-        elem.querySelector("#" + hash).scrollIntoView({
-          block: "center",
-          inline: "center",
-          behavior: posts.length < 50 ? "smooth" : "auto"
-        });
-
-        this.load && this.$store.commit("setHash", "");
-      }
 
       if (posts.length > this.postsCountOld) {
         this.load = true;
@@ -125,22 +129,22 @@ export default {
     FindData() {
       let top = this.Posts.length;
       let bottom = top + this.PostsLoadCount;
+      let text = this.$store.getters.getSearchTag;
 
       let data = {
         top,
-        bottom
+        bottom,
+        text,
       };
 
       this.cat = this.$refs.CategorySelector.value;
 
       switch (this.cat) {
         case "публикации":
-          data.text = `|${this.SearchText}|`;
           this.$store.dispatch("FindData", data);
           break;
         case "люди":
-          let text = this.SearchText;
-          this.$store.dispatch("FindPeople", text);
+          this.$store.dispatch("FindPeople", data.text);
           break;
       }
     },
@@ -163,6 +167,9 @@ export default {
       } else {
         this.load = true;
       }
+    },
+    setSearchTag() {
+      this.$store.commit('setSearchTag', this.SearchText);
     }
   }
 };

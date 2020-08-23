@@ -33,7 +33,7 @@ class SearchProfilesList(generics.ListAPIView):
     serializer_class = ProfileSerializer
 
     def get_queryset(self):
-        name = self.request.GET.get('q')
+        name = self.request.GET.get('q')[1:-1]
 
         queryset = Profile.objects.filter(username__icontains=name)[:PostsPerPage]
         return queryset

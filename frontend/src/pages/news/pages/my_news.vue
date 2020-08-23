@@ -6,6 +6,7 @@
       <span class="loadingText">ого, сколько тут всего..</span>
     </div>
     <div class="stream" ref="stream">
+      <div id="top"></div>
       <post
         v-for="(post, id) in posts"
         :key="id"
@@ -34,21 +35,27 @@ export default {
   created() {
     this.getData();
   },
+  mounted() {
+    let posts = this.$store.getters.getMyNewsPosts;
+    let elem = this.$refs.stream;
+    let hash = this.$store.getters.getHash;
+
+    console.log(elem);
+    console.log(hash);
+
+    if (elem && hash) {
+      elem.querySelector("#" + hash).scrollIntoView({
+        block: "center",
+        inline: "center",
+        behavior: posts.length < 30 ? "smooth" : "auto"
+      });
+
+      this.load && this.$store.commit("setHash", "");
+    }
+  },
   computed: {
     posts() {
       let posts = this.$store.getters.getMyNewsPosts;
-      let elem = this.$refs.stream;
-      let hash = this.$store.getters.getHash;
-
-      if (elem && hash) {
-        elem.querySelector("#" + hash).scrollIntoView({
-          block: "center",
-          inline: "center",
-          behavior: posts.length < 30 ? "smooth" : "auto"
-        });
-
-        this.load && this.$store.commit("setHash", "");
-      }
 
       if (posts.length > this.postsCountOld) {
         this.load = true;
@@ -79,8 +86,6 @@ export default {
         block && Math.floor((block.scrollHeight - block.clientHeight) * 0.6);
       let h = block.scrollTop;
 
-      console.log(h, Hmax);
-
       if (h > Hmax) {
         this.load && this.PostLoader();
         this.load = false;
@@ -102,15 +107,14 @@ export default {
       this.$store.dispatch("MyNewsPostLoader", data);
     },
     getData() {
-      let username = this.$store.getters.getUserProfile.username;
-
-      if (!username) {
-        setTimeout(() => {
+      let time = setInterval(() => {
+        let username = this.$store.getters.getUserProfile.username;
+        
+        if (username) {
+          clearInterval(time);
           this.PostLoader();
-        }, 1000);
-      } else {
-        this.PostLoader();
-      }
+        }
+      }, 100);
     }
   }
 };

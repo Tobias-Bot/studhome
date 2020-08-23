@@ -142,19 +142,20 @@ export default {
       let token = context.getters.getToken;
       let domain = context.getters.getDomain;
 
-      context.commit(
-        "setSearchTag",
-        data.text.substring(1, data.text.length - 1)
-      );
-
       axios
-        .get(`${domain}/api/v1/news/search_posts/?q=${data.text}&a=${data.top}&b=${data.bottom}`, {
-          headers: {
-            Authorization: "Token " + token
+        .get(
+          `${domain}/api/v1/news/search_posts/?q=|${data.text}|&a=${data.top}&b=${data.bottom}`,
+          {
+            headers: {
+              Authorization: "Token " + token
+            }
           }
-        })
+        )
         .then(response => {
-          context.commit("setSearchPost", { top: data.top, posts: response.data });
+          context.commit("setSearchPost", {
+            top: data.top,
+            posts: response.data
+          });
         })
         .catch(function(e) {
           console.log(e);
@@ -164,10 +165,10 @@ export default {
       let token = context.getters.getToken;
       let domain = context.getters.getDomain;
 
-      context.commit("setSearchTag", data.text);
+      context.commit("setSearchTag", data);
 
       axios
-        .get(`${domain}/api/v1/news/search_people/?q=${data.text}`, {
+        .get(`${domain}/api/v1/news/search_people/?q=${data}`, {
           headers: {
             Authorization: "Token " + token
           }
