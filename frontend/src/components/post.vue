@@ -263,6 +263,11 @@ export default {
     },
     LoadProfile(username) {
       let isAdmin = username === this.UserData.username;
+
+      this.$store.commit("dropUserPosts");
+      this.$store.commit("dropUserSubs");
+      this.$store.commit("setProfileTab", 'description');
+
       this.$store.dispatch("LoadProfile", { blog: "", isAdmin, username });
     }
   }

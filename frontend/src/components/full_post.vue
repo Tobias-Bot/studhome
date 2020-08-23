@@ -17,7 +17,7 @@
               class="username"
               style="text-align: center;"
               :to="{ name: 'profile', params: { username: CurrPost.username } }"
-              ><h5>{{ CurrPost.username }}</h5></router-link
+              ><h5 @click="loadProfile">{{ CurrPost.username }}</h5></router-link
             >
             <template v-if="CurrPost.username !== UserData.username">
               <button
@@ -350,6 +350,11 @@ export default {
       };
 
       this.$store.dispatch("deleteUserProfileFromSubs", data);
+    },
+    loadProfile() {
+      this.$store.commit("dropUserPosts");
+      this.$store.commit("dropUserSubs");
+      this.$store.commit("setProfileTab", 'description');
     }
   }
 };

@@ -10,97 +10,85 @@
             alt="avatar"
           />
           <br />
-          <div
-            class="nav flex-column nav-tabs"
-            id="v-pills-tab"
-            role="tablist"
-            aria-orientation="vertical"
+          <button
+            class="btn btn-light btnMain profileTab"
+            type="button"
+            @click="setTab('description')"
           >
-            <a
-              v-if="Profile.bio"
-              class="btn btn-lights btnMain"
-              data-toggle="tab"
-              href="#description"
-              role="tab"
-              aria-selected="true"
-              >описание</a
-            >
-            <a
-              v-if="Profile.posts_count"
-              class="btn btn-light btnMain"
-              type="button"
-              data-toggle="tab"
-              href="#posts"
-              role="tab"
-              aria-selected="false"
-              @click="LoadUserPosts"
-              >записи</a
-            >
-            <a
-              v-if="Profile.subs_profiles && Profile.subs_profiles.length > 1"
-              class="btn btn-light btnMain"
-              data-toggle="tab"
-              href="#blogs"
-              role="tab"
-              aria-selected="false"
-              @click="LoadUserSubsProfiles"
-              >подписки</a
-            >
-            <a
-              v-if="Profile.contacts"
-              class="btn btn-light btnMain"
-              id="v-pills-settings-tab"
-              data-toggle="tab"
-              href="#contacts"
-              role="tab"
-              aria-selected="false"
-              >контакты</a
-            >
-          </div>
+            описание
+          </button>
+          <button
+            v-if="Profile.posts_count"
+            class="btn btn-light btnMain profileTab"
+            type="button"
+            @click="
+              LoadUserPosts();
+              setTab('posts');
+            "
+          >
+            записи
+          </button>
+          <a
+            v-if="Profile.subs_profiles && Profile.subs_profiles.length > 1"
+            class="btn btn-light btnMain profileTab"
+            type="button"
+            @click="
+              LoadUserSubsProfiles();
+              setTab('blogs');
+            "
+            >подписки</a
+          >
+          <button
+            v-if="Profile.contacts"
+            class="btn btn-light btnMain profileTab"
+            type="button"
+            @click="setTab('contacts')"
+          >
+            контакты
+          </button>
         </div>
         <div class="col-8">
-          <div class="tab-content">
-            <div class="tab-pane fade" id="description" role="tabpanel">
-              <span class="username"
-                >{{ Profile.username }}
-                <span class="readersCount"
-                  >читают: {{ Profile.readers }}</span
-                ></span
-              >
-              <div class="card">
-                <div class="card-body">
-                  <template v-if="Profile.status">
-                    <span class="status">{{ Profile.status }}</span>
-                    <br />
-                    <br />
-                  </template>
-                  <div v-if="Profile.bio || Profile.school" class="bio">
-                    <span
-                      v-if="Profile.bio"
-                      class="hint"
-                      style="text-align: left;"
-                      >Обо мне</span
-                    >
-                    {{ Profile.bio }}
-                    <hr />
-                    <span
-                      v-if="Profile.school"
-                      class="hint"
-                      style="text-align: left;"
-                      >Школа/универ</span
-                    >
-                    {{ Profile.school }}
-                  </div>
+          <span class="username"
+            >{{ Profile.username }}
+            <span class="readersCount"
+              >читают: {{ Profile.readers }}</span
+            ></span
+          >
+          <div v-show="ProfileTab === 'description'" class="block">
+            <div class="card">
+              <div class="card-body">
+                <template v-if="Profile.status">
+                  <span class="status">{{ Profile.status }}</span>
                   <br />
-                  <tag
-                    v-for="(tag, i) in userInterests"
-                    :key="tag + i"
-                    :text="tag"
-                  ></tag>
+                  <br />
+                </template>
+                <div v-if="Profile.bio" class="bio">
+                  <span
+                    class="hint"
+                    style="text-align: left;"
+                    >Обо мне</span
+                  >
+                  {{ Profile.bio }}
+                  <hr />
+                  <span
+                    v-if="Profile.school"
+                    class="hint"
+                    style="text-align: left;"
+                    >Школа/универ</span
+                  >
+                  {{ Profile.school }}
                 </div>
+                <br />
+                <tag
+                  v-for="(tag, i) in userInterests"
+                  :key="tag + i"
+                  :text="tag"
+                ></tag>
               </div>
             </div>
-            <div class="tab-pane fade" id="posts" role="tabpanel">
+          </div>
+          <template v-if="Profile.posts_count">
+            <div v-show="ProfileTab === 'posts'" class="block">
               <div class="infoBar">
                 записи: {{ Profile.posts_count }}
                 <template v-if="isLoading">
@@ -120,12 +108,11 @@
                 ></post>
               </div>
             </div>
-            <div
-              v-if="Profile.subs_profiles && Profile.subs_profiles.length > 1"
-              class="tab-pane fade"
-              id="blogs"
-              role="tabpanel"
-            >
+          </template>
+          <template
+            v-if="Profile.subs_profiles && Profile.subs_profiles.length > 1"
+          >
+            <div v-show="ProfileTab === 'blogs'" class="block">
               <div class="infoBar">
                 подписки: {{ UserSubs.length }}
                 <template v-if="isLoading">
@@ -143,41 +130,41 @@
                 ></blog>
               </div>
             </div>
-            <div class="tab-pane fade" id="contacts" role="tabpanel">
-              <template v-if="Profile.contacts">
-                <template v-for="contact in Profile.contacts.split('|')">
-                  <a
-                    v-if="contact.indexOf('instagram.com/') > -1"
-                    class="contact"
-                    :href="contact"
-                    target="_blank"
-                  >
-                    <i class="fab fa-instagram-square"></i>
-                    {{ contact.substring(8) }}
-                  </a>
-                  <a
-                    v-if="contact.indexOf('vk.com/') > -1"
-                    class="contact"
-                    :href="contact"
-                    target="_blank"
-                  >
-                    <i class="fab fa-vk"></i>
-                    {{ contact.substring(8) }}
-                  </a>
-                  <a
-                    v-if="contact.indexOf('youtube.com/') > -1"
-                    class="contact"
-                    :href="contact"
-                    target="_blank"
-                  >
-                    <i class="fab fa-youtube"></i>
-                    {{ contact.substring(8) }}
-                  </a>
-                  <br />
-                </template>
+          </template>
+          <template v-if="Profile.contacts">
+            <div v-show="ProfileTab === 'contacts'" class="block">
+              <template v-for="contact in Profile.contacts.split('|')">
+                <a
+                  v-if="contact.indexOf('instagram.com/') > -1"
+                  class="contact"
+                  :href="contact"
+                  target="_blank"
+                >
+                  <i class="fab fa-instagram-square"></i>
+                  {{ contact.substring(8) }}
+                </a>
+                <a
+                  v-if="contact.indexOf('vk.com/') > -1"
+                  class="contact"
+                  :href="contact"
+                  target="_blank"
+                >
+                  <i class="fab fa-vk"></i>
+                  {{ contact.substring(8) }}
+                </a>
+                <a
+                  v-if="contact.indexOf('youtube.com/') > -1"
+                  class="contact"
+                  :href="contact"
+                  target="_blank"
+                >
+                  <i class="fab fa-youtube"></i>
+                  {{ contact.substring(8) }}
+                </a>
+                <br />
               </template>
             </div>
-          </div>
+          </template>
         </div>
         <div class="col">
           <profileTools
@@ -211,9 +198,18 @@ export default {
       postsCountOld: 0
     };
   },
-  beforeDestroy() {
-    this.$store.commit("dropUserPosts");
-    this.$store.commit("dropUserSubs");
+  mounted() {
+    let elem = this.$refs.container_posts;
+    let posts = this.$store.getters.getUserPosts;
+    let hash = this.$store.getters.getHash;
+
+    if (elem && hash) {
+      elem.querySelector("#" + hash).scrollIntoView({
+        block: "center",
+        inline: "center",
+        behavior: posts.length < 40 ? "smooth" : "auto"
+      });
+    }
   },
   computed: {
     Profile() {
@@ -233,22 +229,27 @@ export default {
       return user === username;
     },
     UserPosts() {
-      let elem = this.$refs.container_posts;
+      // let elem = this.$refs.container_posts;
       let posts = this.$store.getters.getUserPosts;
-      let hash = this.$store.getters.getHash;
+      // let hash = this.$store.getters.getHash;
 
-      console.log(elem);
-      console.log(hash);
+      // if (hash) {
+      //   let timerId = setInterval(() => {
+      //     elem = this.$refs.container_posts;
 
-      if (elem && hash) {
-        elem.querySelector("#" + hash).scrollIntoView({
-          block: "center",
-          inline: "center",
-          behavior: posts.length < 40 ? "smooth" : "auto"
-        });
+      //     if (elem) {
+      //       elem.querySelector("#" + hash).scrollIntoView({
+      //         block: "center",
+      //         inline: "center",
+      //         behavior: posts.length < 40 ? "smooth" : "auto"
+      //       });
 
-        this.load && this.$store.commit("setHash", "");
-      }
+      //       clearInterval(timerId);
+
+      //       this.load && this.$store.commit("setHash", "");
+      //     }
+      //   }, 100);
+      // }
 
       if (posts.length > this.postsCountOld) {
         this.load = true;
@@ -265,6 +266,9 @@ export default {
         let len = this.Profile.interests.length;
         return this.Profile.interests.substring(1, len - 1).split("|");
       }
+    },
+    ProfileTab() {
+      return this.$store.getters.getProfileTab;
     }
   },
   methods: {
@@ -321,6 +325,9 @@ export default {
           this.$store.commit("setUserSubs", response.data);
           this.isLoading = false;
         });
+    },
+    setTab(tabName) {
+      this.$store.commit("setProfileTab", tabName);
     }
   }
 };
@@ -333,15 +340,8 @@ export default {
   }
 }
 
-.nav-tabs {
-  border: none;
-}
-
-.nav-link {
-  color: white;
-  background-color: rgba(0, 0, 0, 0.3);
-  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.8);
-  text-align: center;
+.profileTab {
+  width: 100%;
 }
 
 .avatar {

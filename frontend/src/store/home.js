@@ -1,6 +1,7 @@
 export default {
   state: {
     currentProfile: {},
+    currentProfileTab: 'description',
     userProfile: {},
     settings: {},
     userPosts: [],
@@ -11,6 +12,9 @@ export default {
     ImgBlur: 0,
   },
   getters: {
+    getProfileTab(state) {
+      return state.currentProfileTab;
+    },
     getImgBlur(state) {
       return state.ImgBlur;
     },
@@ -40,6 +44,9 @@ export default {
     }
   },
   mutations: {
+    setProfileTab(state, payload) {
+      state.currentProfileTab = payload;
+    },
     setFoundProfiles(state, payload) {
       state.foundProfiles = payload;
     },

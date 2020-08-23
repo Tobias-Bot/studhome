@@ -56,6 +56,12 @@ export default {
   methods: {
     LoadProfile(blog) {
       let isAdmin = blog.username === this.username;
+
+      this.$store.commit("dropUserPosts");
+      this.$store.commit("dropUserSubs");
+      this.$store.commit("setProfileTab", 'description');
+      this.$store.commit("setHash", '');
+
       this.$store.dispatch("LoadProfile", { blog, isAdmin });
     }
   }
