@@ -25,8 +25,8 @@
     <div v-if="!Posts.length && !Blogs.length" class="interests">
       <tag v-for="(tag, index) in Interests" :key="index" :text="tag"></tag>
     </div>
-    <div class="block" ref="content">
-      <div v-show="this.cat == 'публикации'" class="card-columns">
+    <div class="block">
+      <div v-show="this.cat == 'публикации'" ref="content" class="card-columns">
         <post
           v-for="(post, id) in Posts"
           :key="id"
@@ -56,22 +56,22 @@ export default {
   mounted() {
     this.cat = this.$refs.CategorySelector.value;
 
-    let elem = this.$refs.content;
-    let posts = this.Posts;
-    let hash = this.$store.getters.getHash;
+    // let elem = this.$refs.content;
+    // let posts = this.Posts;
+    // let hash = this.$store.getters.getHash;
 
-    console.log(elem);
-    console.log(hash);
+    // console.log(elem);
+    // console.log(hash);
 
-    if (elem && hash) {
-      elem.querySelector("#" + hash).scrollIntoView({
-        block: "center",
-        inline: "center",
-        behavior: posts.length < 50 ? "smooth" : "auto"
-      });
+    // if (elem && hash && posts) {
+    //   elem.querySelector("#" + hash).scrollIntoView({
+    //     block: "center",
+    //     inline: "center",
+    //     behavior: posts.length < 50 ? "smooth" : "auto"
+    //   });
 
-      this.load && this.$store.commit("setHash", "");
-    }
+    //   this.load && this.$store.commit("setHash", "");
+    // }
   },
   data() {
     return {
@@ -87,7 +87,27 @@ export default {
   computed: {
     Posts() {
       this.SearchText = this.$store.getters.getSearchTag;
+
       let posts = this.$store.getters.getSearchPost;
+      let elem = this.$refs.content;
+      let hash = this.$store.getters.getHash;
+
+      if (hash) {
+        let timerId = setInterval(() => {
+          elem = this.$refs.content;
+
+          if (elem) {
+            elem.querySelector("#" + hash).scrollIntoView({
+              block: "center",
+              inline: "center",
+              behavior: posts.length < 50 ? "smooth" : "auto"
+            });
+
+            clearInterval(timerId);
+            this.load && this.$store.commit("setHash", "");
+          }
+        }, 100);
+      }
 
       if (posts.length > this.postsCountOld) {
         this.load = true;
@@ -134,7 +154,7 @@ export default {
       let data = {
         top,
         bottom,
-        text,
+        text
       };
 
       this.cat = this.$refs.CategorySelector.value;
@@ -169,7 +189,7 @@ export default {
       }
     },
     setSearchTag() {
-      this.$store.commit('setSearchTag', this.SearchText);
+      this.$store.commit("setSearchTag", this.SearchText);
     }
   }
 };

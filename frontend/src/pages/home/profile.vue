@@ -18,7 +18,7 @@
           >
             <a
               v-if="Profile.bio"
-              class="btn btn-light active btnMain"
+              class="btn btn-lights btnMain"
               data-toggle="tab"
               href="#description"
               role="tab"
@@ -100,7 +100,7 @@
                 </div>
               </div>
             </div>
-            <div class="tab-pane fade" ref="container_posts" id="posts" role="tabpanel">
+            <div class="tab-pane fade" id="posts" role="tabpanel">
               <div class="infoBar">
                 записи: {{ Profile.posts_count }}
                 <template v-if="isLoading">
@@ -110,7 +110,7 @@
                   ></div>
                 </template>
               </div>
-              <div class="card-columns">
+              <div ref="container_posts" class="card-columns">
                 <post
                   v-for="(post, id) in UserPosts"
                   :key="id"
@@ -237,6 +237,9 @@ export default {
       let posts = this.$store.getters.getUserPosts;
       let hash = this.$store.getters.getHash;
 
+      console.log(elem);
+      console.log(hash);
+
       if (elem && hash) {
         elem.querySelector("#" + hash).scrollIntoView({
           block: "center",
@@ -268,7 +271,7 @@ export default {
     LoadNewPosts() {
       let block = this.$refs.container;
       let Hmax =
-        block && Math.floor((block.scrollHeight - block.clientHeight) * 0.3);
+        block && Math.floor((block.scrollHeight - block.clientHeight) * 0.4);
       let h = block.scrollTop;
       let topic = this.$route.params.topic;
 
