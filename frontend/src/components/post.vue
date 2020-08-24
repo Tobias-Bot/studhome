@@ -276,7 +276,7 @@ export default {
 
 <style scoped>
 .card {
-  margin-bottom: 6%;
+  margin-bottom: 9%;
 }
 
 .post_header {

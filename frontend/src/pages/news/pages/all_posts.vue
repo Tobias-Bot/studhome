@@ -5,12 +5,52 @@
       <br />
       <span class="loadingText">одну секундочку...</span>
     </div>
-    <div v-else ref="container_posts">
+    <div v-else ref="container_posts" class="row">
       <div id="top"></div>
-      <div class="card-columns">
+      <!-- <div class="card-columns">
         <post
           v-for="(post, id) in posts"
           :key="id"
+          :post="post"
+          :post_index="id"
+          :topic="'all'"
+        ></post>
+      </div> -->
+      <div class="col-3">
+        <post
+          v-for="(post, id) in posts"
+          :key="id"
+          v-if="id < posts.length / 4 && id >= 0"
+          :post="post"
+          :post_index="id"
+          :topic="'all'"
+        ></post>
+      </div>
+      <div class="col-3">
+        <post
+          v-for="(post, id) in posts"
+          :key="id"
+          v-if="id < (posts.length / 4) * 2 && id > posts.length / 4"
+          :post="post"
+          :post_index="id"
+          :topic="'all'"
+        ></post>
+      </div>
+      <div class="col-3">
+        <post
+          v-for="(post, id) in posts"
+          :key="id"
+          v-if="id < (posts.length / 4) * 3 && id > (posts.length / 4) * 2"
+          :post="post"
+          :post_index="id"
+          :topic="'all'"
+        ></post>
+      </div>
+      <div class="col-3">
+        <post
+          v-for="(post, id) in posts"
+          :key="id"
+          v-if="id < (posts.length / 4) * 4 && id > (posts.length / 4) * 3"
           :post="post"
           :post_index="id"
           :topic="'all'"
@@ -30,7 +70,7 @@ export default {
   data: function() {
     return {
       isWriting: false,
-      PostsLoadCount: 15,
+      PostsLoadCount: 12,
       load: true,
       postsCountOld: 0
     };
@@ -45,12 +85,13 @@ export default {
       let elem = this.$refs.container_posts;
       let posts = this.$store.getters.getPosts;
       let hash = this.$store.getters.getHash;
+      console.log(elem, hash);
 
       if (elem && hash) {
         elem.querySelector("#" + hash).scrollIntoView({
           block: "center",
           inline: "center",
-          behavior: posts.length < 50 ? "smooth" : "auto"
+          behavior: posts.length < 40 ? "smooth" : "auto"
         });
 
         this.load && this.$store.commit("setHash", "");
@@ -67,7 +108,8 @@ export default {
   methods: {
     LoadNewPosts() {
       let block = this.$refs.container;
-      let Hmax = block && Math.floor((block.scrollHeight - block.clientHeight) * 0.3);
+      let Hmax =
+        block && Math.floor((block.scrollHeight - block.clientHeight) * 0.2);
       let h = block.scrollTop;
       let topic = this.$route.params.topic;
 
@@ -134,5 +176,9 @@ export default {
   width: 4rem;
   height: 4rem;
   color: white;
+}
+
+#top {
+  height: 1vh;
 }
 </style>

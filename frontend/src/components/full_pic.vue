@@ -1,7 +1,12 @@
 <template>
   <div class="cover">
     <div class="modal-dialog modal-xl">...</div>
-    <div class="row">
+    <div v-show="loading">
+      <div class="spinner-border" role="status"></div>
+      <br />
+      <span class="loadingText">уже почти</span>
+    </div>
+    <div v-show="!loading" class="row">
       <div class="col-8" style="height: 85vh;">
         <img
           :src="ImgUrl"
@@ -56,7 +61,9 @@ export default {
     return {
       isHorizontal: false,
       HorizontalImgStyle: "img_horizontal",
-      VerticalImgStyle: "img_vertical"
+      VerticalImgStyle: "img_vertical",
+
+      loading: true,
     };
   },
   created() {
@@ -107,6 +114,7 @@ export default {
         }
 
         clearInterval(timerId);
+        this.loading = false;
       }
     }, 200);
   },
@@ -229,5 +237,14 @@ img {
 }
 .btnSubscribe:hover {
   opacity: 1;
+}
+
+.spinner-border {
+  position: relative;
+  left: 30%;
+  top: 25vh;
+  width: 3rem;
+  height: 3rem;
+  color: white;
 }
 </style>
