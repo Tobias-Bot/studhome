@@ -30,7 +30,7 @@
         <post
           v-for="(post, id) in posts"
           :key="id"
-          v-if="id < (posts.length / 4) * 2 && id > posts.length / 4"
+          v-if="id < (posts.length / 4) * 2 && id >= posts.length / 4"
           :post="post"
           :post_index="id"
           :topic="'all'"
@@ -40,7 +40,7 @@
         <post
           v-for="(post, id) in posts"
           :key="id"
-          v-if="id < (posts.length / 4) * 3 && id > (posts.length / 4) * 2"
+          v-if="id < (posts.length / 4) * 3 && id >= (posts.length / 4) * 2"
           :post="post"
           :post_index="id"
           :topic="'all'"
@@ -50,7 +50,7 @@
         <post
           v-for="(post, id) in posts"
           :key="id"
-          v-if="id < (posts.length / 4) * 4 && id > (posts.length / 4) * 3"
+          v-if="id < (posts.length / 4) * 4 && id >= (posts.length / 4) * 3"
           :post="post"
           :post_index="id"
           :topic="'all'"

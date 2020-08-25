@@ -62,28 +62,31 @@
                   <br />
                   <br />
                 </template>
-                <div v-if="Profile.bio" class="bio">
-                  <span
-                    class="hint"
-                    style="text-align: left;"
-                    >Обо мне</span
-                  >
-                  {{ Profile.bio }}
-                  <hr />
-                  <span
-                    v-if="Profile.school"
-                    class="hint"
-                    style="text-align: left;"
-                    >Школа/универ</span
-                  >
-                  {{ Profile.school }}
+                <div class="bio">
+                  <template v-if="Profile.bio">
+                    <span class="hint" style="text-align: left;">Обо мне</span>
+                    {{ Profile.bio }}
+                    <hr />
+                  </template>
+                  <template v-if="Profile.school">
+                    <span
+                      v-if="Profile.school"
+                      class="hint"
+                      style="text-align: left;"
+                      >Школа/универ</span
+                    >
+                    {{ Profile.school }}
+                    <hr />
+                  </template>
+                  <template v-if="Profile.interests.length > 2">
+                    <span class="hint" style="text-align: left;">Интересы</span>
+                    <tag
+                      v-for="(tag, i) in userInterests"
+                      :key="tag + i"
+                      :text="tag"
+                    ></tag>
+                  </template>
                 </div>
-                <br />
-                <tag
-                  v-for="(tag, i) in userInterests"
-                  :key="tag + i"
-                  :text="tag"
-                ></tag>
               </div>
             </div>
           </div>
@@ -98,14 +101,34 @@
                   ></div>
                 </template>
               </div>
-              <div ref="container_posts" class="card-columns">
-                <post
+              <div ref="container_posts" class="row">
+                <!-- <post
                   v-for="(post, id) in UserPosts"
                   :key="id"
                   :post="post"
                   :post_index="id"
                   :topic="'profile'"
-                ></post>
+                ></post> -->
+                <div class="col-6">
+                  <post
+                    v-for="(post, id) in UserPosts"
+                    :key="id"
+                    v-if="id % 2 == 0"
+                    :post="post"
+                    :post_index="id"
+                    :topic="'profile'"
+                  ></post>
+                </div>
+                <div class="col-6">
+                  <post
+                    v-for="(post, id) in UserPosts"
+                    :key="id"
+                    v-if="id % 2 !== 0"
+                    :post="post"
+                    :post_index="id"
+                    :topic="'profile'"
+                  ></post>
+                </div>
               </div>
             </div>
           </template>
@@ -193,7 +216,7 @@ export default {
   data() {
     return {
       isLoading: false,
-      PostsLoadCount: 10,
+      PostsLoadCount: 8,
       load: true,
       postsCountOld: 0
     };
@@ -207,7 +230,7 @@ export default {
       elem.querySelector("#" + hash).scrollIntoView({
         block: "center",
         inline: "center",
-        behavior: posts.length < 40 ? "smooth" : "auto"
+        behavior: posts.length < 30 ? "smooth" : "auto"
       });
     }
   },
@@ -275,7 +298,7 @@ export default {
     LoadNewPosts() {
       let block = this.$refs.container;
       let Hmax =
-        block && Math.floor((block.scrollHeight - block.clientHeight) * 0.4);
+        block && Math.floor((block.scrollHeight - block.clientHeight) * 0.3);
       let h = block.scrollTop;
       let topic = this.$route.params.topic;
 
@@ -432,12 +455,12 @@ export default {
 .infoBar {
   width: 100%;
   display: inline-block;
-  margin-bottom: 2%;
-  background-color: white;
+  margin-bottom: 3%;
+  background-color: #f8f8ff;
   border-radius: 5px;
   color: rgba(0, 0, 0, 0.8);
-  box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.7);
-  font-size: 18px;
+  box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.7);
+  font-size: 20px;
   font-weight: 500;
   padding: 1% 2% 1% 2%;
 }
@@ -450,5 +473,9 @@ export default {
   position: relative;
   margin-bottom: 1%;
   text-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
+}
+
+.card {
+  margin-bottom: 3%;
 }
 </style>

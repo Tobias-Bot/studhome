@@ -26,14 +26,44 @@
       <tag v-for="(tag, index) in Interests" :key="index" :text="tag"></tag>
     </div>
     <div class="block">
-      <div v-show="this.cat == 'публикации'" ref="content" class="card-columns">
-        <post
+      <div v-show="this.cat == 'публикации'" ref="content" class="row">
+        <!-- <post
           v-for="(post, id) in Posts"
           :key="id"
           :post="post"
           :post_index="id"
           :topic="'search'"
-        ></post>
+        ></post> -->
+        <div class="col-4">
+          <post
+            v-for="(post, id) in Posts"
+            :key="id"
+            v-if="id < Posts.length / 3 && id >= 0"
+            :post="post"
+            :post_index="id"
+            :topic="'search'"
+          ></post>
+        </div>
+        <div class="col-4">
+          <post
+            v-for="(post, id) in Posts"
+            :key="id"
+            v-if="id < (Posts.length / 3) * 2 && id >= Posts.length / 3"
+            :post="post"
+            :post_index="id"
+            :topic="'search'"
+          ></post>
+        </div>
+        <div class="col-4">
+          <post
+            v-for="(post, id) in Posts"
+            :key="id"
+            v-if="id < (Posts.length / 3) * 3 && id >= (Posts.length / 3) * 2"
+            :post="post"
+            :post_index="id"
+            :topic="'search'"
+          ></post>
+        </div>
       </div>
       <div v-show="this.cat == 'люди'" class="card-columns">
         <blog v-for="(profile, id) in Blogs" :key="id" :blog="profile"></blog>
@@ -79,7 +109,7 @@ export default {
       postsByInterests: [],
       cat: "",
 
-      PostsLoadCount: 15,
+      PostsLoadCount: 9,
       load: true,
       postsCountOld: 0
     };
@@ -100,7 +130,7 @@ export default {
             elem.querySelector("#" + hash).scrollIntoView({
               block: "center",
               inline: "center",
-              behavior: posts.length < 50 ? "smooth" : "auto"
+              behavior: posts.length < 30 ? "smooth" : "auto"
             });
 
             clearInterval(timerId);
@@ -177,7 +207,7 @@ export default {
     LoadNewPosts() {
       let block = this.$refs.container;
       let Hmax =
-        block && Math.floor((block.scrollHeight - block.clientHeight) * 0.4);
+        block && Math.floor((block.scrollHeight - block.clientHeight) * 0.3);
       let h = block.scrollTop;
       let topic = this.$route.params.topic;
 

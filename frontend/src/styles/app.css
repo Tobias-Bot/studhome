@@ -192,6 +192,7 @@ body {
 .hint {
   width: 100%;
   display: block;
+  margin-bottom: 1%;
   color: rgba(0, 0, 0, 0.5);
   font-size: 15px;
   font-weight: 500;
@@ -237,7 +238,7 @@ body {
   margin-right: 1%;
   font-size: 15px;
   font-weight: 600;
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.6);
   text-decoration: none;
   word-wrap: nowrap;
   transition: 0.2s all;
