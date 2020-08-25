@@ -1,10 +1,26 @@
 <template>
   <div class="cover">
-    <div class="modal-dialog modal-xl">...</div>
-    <div v-show="loading">
+    <!-- Share modal -->
+    <div
+      class="modal fade"
+      id="ShareModal"
+      tabindex="-1"
+      role="dialog"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <span class="hint">Скопируй эту ссылку и поделись со своими друзьями в других социальных сетях</span>
+            <hr />
+            <input :value="getPath" readonly class="form-control textInput" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-show="loading" class="loading">
       <div class="spinner-border" role="status"></div>
-      <br />
-      <span class="loadingText">уже почти</span>
     </div>
     <div v-show="!loading" class="row">
       <div class="col-8" style="height: 85vh;">
@@ -37,13 +53,29 @@
               <span
                 v-else
                 class="btnSubscribe"
+                style="color: white;"
                 @click="unSubscribe(CurrImg.username, UserData.username)"
                 ><i class="far fa-times-circle"></i
               ></span>
             </template>
+            <div class="SharePanel">
+              <span
+                class="btnShare"
+                data-toggle="modal"
+                data-target="#ShareModal"
+                ><i class="far fa-share-square"></i
+              ></span>
+              <span class="btnShare" @click="$router.go(-1)"
+                ><i class="fas fa-times"></i
+              ></span>
+            </div>
           </div>
         </div>
-        <div v-if="CurrImg.text" class="card">
+        <div
+          v-if="CurrImg.text"
+          class="card"
+          style="background-color: rgba(0, 0, 0, 0.8);"
+        >
           <div class="card-body">
             <div class="photoDescription">
               <i>{{ CurrImg.text }}</i>
@@ -63,7 +95,7 @@ export default {
       HorizontalImgStyle: "img_horizontal",
       VerticalImgStyle: "img_vertical",
 
-      loading: true,
+      loading: true
     };
   },
   created() {
@@ -137,6 +169,9 @@ export default {
         return ~this.CurrImg.image.indexOf("http://127.0.0.1:8000")
           ? this.CurrImg.image
           : "http://127.0.0.1:8000" + this.CurrImg.image;
+    },
+    getPath() {
+      return `http://localhost:8080${this.$route.path}`;
     }
   },
   methods: {
@@ -195,21 +230,43 @@ img {
   width: auto;
 }
 
+.SharePanel {
+  position: absolute;
+  width: 50%;
+  right: 5%;
+  display: inline-block;
+  font-size: 23px;
+  border-radius: 5px;
+  text-align: right;
+}
+
+.btnShare {
+  margin-left: 4%;
+  color: white;
+  opacity: 0.8;
+  transition: 0.2s all;
+}
+.btnShare:hover {
+  cursor: pointer;
+  opacity: 1;
+}
+
 .photoDescription {
-  max-height: 40vh;
+  max-height: 30vh;
   overflow-y: auto;
   overflow-x: hidden;
   width: 100%;
   padding: 3% 7% 3% 4%;
-  background-color: #fafafa;
-  color: #3c3c3c;
-  box-shadow: 0px 1px 10px silver;
+  background-color: rgba(0, 0, 0, 0.6);
+  font-size: 20px;
+  color: white;
   border-radius: 5px;
 }
 
 .card {
   margin-left: 3%;
   margin-bottom: 3%;
+  border-radius: 5px;
 }
 
 .cover {
@@ -217,7 +274,7 @@ img {
   z-index: 1;
   width: 100%;
   height: 100vh;
-  padding: 2% 150px 2.5% 150px;
+  padding: 6% 150px 0 150px;
   background-color: rgba(0, 0, 0, 0.8);
 }
 
@@ -240,11 +297,8 @@ img {
 }
 
 .spinner-border {
-  position: relative;
-  left: 30%;
-  top: 25vh;
-  width: 3rem;
-  height: 3rem;
+  width: 4rem;
+  height: 4rem;
   color: white;
 }
 </style>

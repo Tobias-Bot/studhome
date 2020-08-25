@@ -1,12 +1,12 @@
 <template>
   <div class="box-with-tools" ref="container" @scroll="LoadNewPosts">
+    <div id="top"></div>
     <div v-if="!posts.length" class="loading">
       <div class="spinner-border" role="status"></div>
       <br />
       <span class="loadingText">одну секундочку...</span>
     </div>
     <div v-else ref="container_posts" class="row">
-      <div id="top"></div>
       <!-- <div class="card-columns">
         <post
           v-for="(post, id) in posts"
@@ -82,7 +82,7 @@ export default {
   },
   computed: {
     posts() {
-      let elem = this.$refs.container_posts;
+      let elem = this.$refs.container;
       let posts = this.$store.getters.getPosts;
       let hash = this.$store.getters.getHash;
       console.log(elem, hash);
@@ -178,7 +178,7 @@ export default {
   color: white;
 }
 
-#top {
+/* #top {
   height: 1vh;
-}
+} */
 </style>

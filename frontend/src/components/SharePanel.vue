@@ -84,7 +84,7 @@
         data-toggle="modal"
         data-target="#ShareModal"
       >
-        <i class="fas fa-share-alt"></i>
+        <i class="far fa-share-square"></i>
         <span v-if="text" class="textOnBtns">поделиться</span>
       </button>
     </div>
