@@ -408,13 +408,20 @@ export default {
         marks
       };
 
+      if (!(text.length && this.isText) && title.length) {
+        post.type += "заметка|";
+      }
+
       if (text.length && this.isText) {
-        post.type += "note|";
+        post.type += "текст|";
       }
 
       if (this.files.length > 0 && !text.length && !video_url.length)
-        post.type += "photo|";
-      // if () type + "document|";
+        post.type += "фото|";
+      
+      if (video_url.length) {
+        post.type += "видео|";
+      }
 
       if (this.EditMode) {
         let post_id = this.$route.params.post.id;

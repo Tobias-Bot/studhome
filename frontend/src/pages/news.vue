@@ -32,30 +32,23 @@
             популярное
           </span>
         </router-link>
-        <router-link
-          class="nav-link"
-          :to="{
-            name: 'AllPosts',
-            params: { topic: 'note' }
-          }"
+        <span
+          class="nav-link tab"
+          @mouseover="isTypeSection = true"
+          @mouseout="isTypeSection = false"
         >
-          <span class="tab" @click="PostLoader('note')">
-            <i class="fas fa-sticky-note"></i>
-            текст
-          </span>
-        </router-link>
-        <router-link
-          class="nav-link"
-          :to="{
-            name: 'AllPosts',
-            params: { topic: 'photo' }
-          }"
-        >
-          <span class="tab" @click="PostLoader('photo')">
-            <i class="fas fa-images"></i>
-            фото
-          </span>
-        </router-link>
+          <i class="fas fa-icons"></i>
+          публикации
+          <span class="sub_index" v-if="postTypesCount">{{
+            postTypesCount
+          }}</span>
+          <div v-show="isTypeSection" class="postsMarksSection">
+            <postType :name="'заметка'" :index="0" @loadPostsByTypes="PostLoader('type')"></postType>
+            <postType :name="'текст'" :index="1" @loadPostsByTypes="PostLoader('type')"></postType>
+            <postType :name="'фото'" :index="2" @loadPostsByTypes="PostLoader('type')"></postType>
+            <postType :name="'видео'" :index="3" @loadPostsByTypes="PostLoader('type')"></postType>
+          </div>
+        </span>
         <span
           class="nav-link tab"
           @mouseover="isMarkSection = true"
@@ -67,9 +60,7 @@
             postMarksCount
           }}</span>
           <div v-show="isMarkSection" class="postsMarksSection">
-            <postMark :name="'книга'" :index="0" @loadPostsByMarks="PostLoader('marks')"></postMark>
-            <postMark :name="'вопрос'" :index="1" @loadPostsByMarks="PostLoader('marks')"></postMark>
-            <postMark :name="'видео'" :index="2" @loadPostsByMarks="PostLoader('marks')"></postMark>
+            <postMark :name="'вопрос'" :index="0" @loadPostsByMarks="PostLoader('marks')"></postMark>
           </div>
         </span>
       </nav>
@@ -80,15 +71,18 @@
 
 <script>
 import postMark from "../components/News/postMark";
+import postType from "../components/News/postType";
 
 export default {
   name: "news",
   components: {
-    postMark
+    postMark,
+    postType
   },
   data: function() {
     return {
       isMarkSection: false,
+      isTypeSection: false,
       PostsLoadCount: 15
     };
   },
@@ -98,6 +92,9 @@ export default {
   computed: {
     postMarksCount() {
       return this.$store.getters.getPostMarks.length;
+    },
+    postTypesCount() {
+      return this.$store.getters.getPostTypes.length;
     }
   },
   methods: {
@@ -118,16 +115,16 @@ export default {
         case "popular":
           this.$store.dispatch("AllPopularPostLoader", data);
           break;
-        case "note":
-          this.$store.dispatch("AllPostByTypeLoader", data);
-          break;
-        case "photo":
+        case "type":
           this.$store.dispatch("AllPostByTypeLoader", data);
           break;
         case "marks":
           this.$store.dispatch("PostsByMarksLoader", data);
           break;
       }
+
+      this.postMarksCount && (topic !== 'marks') && this.$store.commit('dropPostMarks');
+      this.postTypesCount && (topic !== 'type') && this.$store.commit('dropPostTypes');
 
       this.$store.commit('setHash', 'top');
     }
@@ -142,7 +139,7 @@ export default {
   left: 50%;
   transform: translateX(-50%);
   z-index: 1;
-  padding: 15% 6% 3% 6%;
+  padding: 12% 6% 3% 6%;
   background: white;
   border-radius: 2px 2px 5px 5px;
   color: white;

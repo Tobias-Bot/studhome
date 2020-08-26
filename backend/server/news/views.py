@@ -46,9 +46,14 @@ class SearchByTypePostList(generics.ListAPIView):
         query = self.request.GET.get('q')
         a = int(self.request.GET.get("a"))
         b = int(self.request.GET.get("b"))
+        queryset = Post.objects.none()
 
-        queryset = Post.objects.filter(type__icontains=query).order_by("-date")[a:b]
-        return queryset
+        print(query)
+
+        for tag in query[1:-1].split('|'):
+            queryset = queryset | Post.objects.filter(type__icontains=tag)
+            
+        return queryset.order_by('-date')[a:b]
 
 class SubscribeUserView(APIView):
     serializer_class = ProfileSerializer
@@ -161,19 +166,12 @@ class PostByMarksListView(generics.ListAPIView):
         query = self.request.GET.get('q')
         a = int(self.request.GET.get("a"))
         b = int(self.request.GET.get("b"))
+        queryset = Post.objects.none()
 
-        if (query):
-            marks = query[1:-1].split("|")
-            if (len(marks) == 1):
-                queryset = Post.objects.filter(marks__icontains=marks[0]).order_by('-date')[a:b]
-            if (len(marks) == 2):
-                queryset = Post.objects.filter(Q(marks__icontains=marks[0]) | Q(marks__icontains=marks[1])).order_by('-date')[a:b]
-            if (len(marks) == 3):
-                queryset = Post.objects.filter(Q(marks__icontains=marks[0]) | Q(marks__icontains=marks[1]) | Q(marks__icontains=marks[2])).order_by('-date')[a:b]
-        else:
-            queryset = Post.objects.all().order_by('-date')[a:b]
+        for tag in query[1:-1].split('|'):
+            queryset = queryset | Post.objects.filter(marks__icontains=tag)
             
-        return queryset
+        return queryset.order_by('-date')[a:b]
     
 class PopularPostListView(generics.ListAPIView):
     serializer_class = PostListSerializer

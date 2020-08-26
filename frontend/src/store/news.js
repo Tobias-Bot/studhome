@@ -9,6 +9,7 @@ export default {
     currentPost: {},
     currentImage: {},
     postMarks: [],
+    postTypes: [],
     createdPostMarks: [],
     currentComments: [],
 
@@ -40,17 +41,23 @@ export default {
     },
     addPostMark(state, payload) {
       state.postMarks.push(payload);
-
-      console.log(state.postMarks);
+    },
+    addPostType(state, payload) {
+      state.postTypes.push(payload);
     },
     deletePostMark(state, payload) {
       let index = state.postMarks.findIndex(mark => mark.id == payload);
       state.postMarks.splice(index, 1);
-
-      console.log(state.postMarks);
+    },
+    deletePostType(state, payload) {
+      let index = state.postTypes.findIndex(mark => mark.id == payload);
+      state.postTypes.splice(index, 1);
     },
     dropPostMarks(state) {
       state.postMarks.splice(0, state.postMarks.length);
+    },
+    dropPostTypes(state) {
+      state.postTypes.splice(0, state.postTypes.length);
     },
     setSearchTag(state, payload) {
       state.SearchTag = payload;
@@ -124,6 +131,9 @@ export default {
     },
     getPostMarks(state) {
       return state.postMarks;
+    },
+    getPostTypes(state) {
+      return state.postTypes;
     },
     getSearchTag(state) {
       return state.SearchTag;
@@ -303,10 +313,19 @@ export default {
     AllPostByTypeLoader(context, data) {
       let token = context.getters.getToken;
       let domain = context.getters.getDomain;
+      let types = context.getters.getPostTypes;
+      let query = [];
+
+      for (let type of types) {
+        console.log(type);
+        query.push(type.name)
+      }
+
+      console.log(query.join('|'));
 
       axios
         .get(
-          `${domain}/api/v1/news/post/type/?q=|${data.value}|&a=${data.top}&b=${data.bottom}`,
+          `${domain}/api/v1/news/post/type/?q=|${query.join('|')}|&a=${data.top}&b=${data.bottom}`,
           {
             headers: { Authorization: "Token " + token }
           }

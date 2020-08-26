@@ -60,18 +60,15 @@
       </div>
     </div>
     <div class="post-toolbar">
-      <div class="dropdown">
-        <button
-          class="btn btn-light dropdown-toggle PostTool btnMain"
-          data-toggle="dropdown"
-          aria-haspopup="true"
-          aria-expanded="false"
-          title="добавить метку"
-        >
-          <i class="fas fa-tags"></i>
-          метки
-        </button>
-        <div class="dropdown-menu">
+      <button
+        class="btn btn-light PostTool btnMain"
+        title="добавить метку"
+        @mouseover="isMarkSection = true"
+        @mouseout="isMarkSection = false"
+      >
+        <i class="fas fa-tags"></i>
+        метки <b v-show="MarksCount">{{ MarksCount }}</b>
+        <div v-show="isMarkSection" class="postsMarksSection">
           <PostMarks
             v-for="(mark, i) in marks"
             :key="'mark' + i"
@@ -79,7 +76,7 @@
             @addMark="$emit('changed')"
           ></PostMarks>
         </div>
-      </div>
+      </button>
       <button
         class="btn btn-light PostTool btnMain"
         data-toggle="modal"
@@ -128,10 +125,15 @@ export default {
   data: function() {
     return {
       YoutubeUrl: "",
-      marks: ["вопрос", "книга"]
+      marks: ["вопрос"],
+      isMarkSection: false
     };
   },
-  computed: {},
+  computed: {
+    MarksCount() {
+      return this.$store.getters.getCreatedPostMarks.length;
+    }
+  },
   methods: {
     getImagePreviews(old_len) {
       for (let i = old_len; i < this.files.length; i++) {
@@ -142,7 +144,7 @@ export default {
             "load",
             function() {
               this.files[i].url = reader.result;
-              this.$emit('changed');
+              this.$emit("changed");
             }.bind(this),
             false
           );
@@ -167,7 +169,7 @@ export default {
     destroyYoutubeUrl() {
       this.YoutubeUrl = "";
       this.$emit("update:youtubeUrl", this.YoutubeUrl);
-      this.$emit('changed');
+      this.$emit("changed");
     }
   }
 };
@@ -183,5 +185,18 @@ export default {
 .PostTool {
   width: auto;
   float: right;
+}
+
+.postsMarksSection {
+  width: 20%;
+  position: absolute;
+  z-index: 1;
+  padding: 1% 0 1% 0;
+  margin-top: 1%;
+  background: white;
+  border-radius: 1px 10px 10px 10px;
+  color: white;
+  text-shadow: none;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
 }
 </style>
