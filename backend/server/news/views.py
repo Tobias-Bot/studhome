@@ -26,6 +26,7 @@ class SearchPostList(generics.ListAPIView):
         b = int(self.request.GET.get("b"))
 
         title = tag[1:-1]
+
         queryset = Post.objects.filter(Q(tags__icontains=tag) | Q(title__icontains=title))[a:b]
         return queryset
 
@@ -33,9 +34,9 @@ class SearchProfilesList(generics.ListAPIView):
     serializer_class = ProfileSerializer
 
     def get_queryset(self):
-        name = self.request.GET.get('q')[1:-1]
+        name = self.request.GET.get('q')
 
-        queryset = Profile.objects.filter(username__icontains=name)[:PostsPerPage]
+        queryset = Profile.objects.filter(username=name)[:PostsPerPage]
         return queryset
 
 class SearchByTypePostList(generics.ListAPIView):

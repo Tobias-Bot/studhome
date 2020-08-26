@@ -30,7 +30,7 @@
             to="/news"
           >
             <span class="MainTabs">
-              <i class="far fa-newspaper"></i>
+              <i class="fas fa-newspaper"></i>
               <span>публикации</span>
             </span>
           </router-link>
@@ -40,7 +40,7 @@
             to="/search"
           >
             <span class="MainTabs">
-              <i class="far fa-compass"></i>
+              <i class="fas fa-compass"></i>
               <span>поиск</span>
             </span>
           </router-link>

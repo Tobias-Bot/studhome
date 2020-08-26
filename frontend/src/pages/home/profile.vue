@@ -78,7 +78,9 @@
                     {{ Profile.school }}
                     <hr />
                   </template>
-                  <template v-if="Profile.interests.length > 2">
+                  <template
+                    v-if="Profile.interests && Profile.interests.length > 2"
+                  >
                     <span class="hint" style="text-align: left;">Интересы</span>
                     <tag
                       v-for="(tag, i) in userInterests"
@@ -220,6 +222,17 @@ export default {
       load: true,
       postsCountOld: 0
     };
+  },
+  created() {
+    let isAdmin = this.isAdmin;
+    let username = this.$route.params.username;
+
+    let data = {
+      isAdmin,
+      username
+    };
+
+    this.$store.dispatch("LoadProfile", data);
   },
   mounted() {
     let elem = this.$refs.container_posts;
@@ -476,6 +489,6 @@ export default {
 }
 
 .card {
-  margin-bottom: 3%;
+  margin-bottom: 6%;
 }
 </style>

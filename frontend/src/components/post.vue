@@ -262,13 +262,9 @@ export default {
       this.$store.dispatch('addUserView', data);
     },
     LoadProfile(username) {
-      let isAdmin = username === this.UserData.username;
-
       this.$store.commit("dropUserPosts");
       this.$store.commit("dropUserSubs");
       this.$store.commit("setProfileTab", 'description');
-
-      this.$store.dispatch("LoadProfile", { blog: "", isAdmin, username });
     }
   }
 };
@@ -276,7 +272,7 @@ export default {
 
 <style scoped>
 .card {
-  margin-bottom: 7%;
+  margin-bottom: 8%;
 }
 
 .post_header {

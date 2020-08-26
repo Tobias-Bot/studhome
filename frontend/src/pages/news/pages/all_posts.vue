@@ -85,7 +85,6 @@ export default {
       let elem = this.$refs.container;
       let posts = this.$store.getters.getPosts;
       let hash = this.$store.getters.getHash;
-      console.log(elem, hash);
 
       if (elem && hash) {
         elem.querySelector("#" + hash).scrollIntoView({
@@ -177,7 +176,6 @@ export default {
   height: 4rem;
   color: white;
 }
-
 /* #top {
   height: 1vh;
 } */

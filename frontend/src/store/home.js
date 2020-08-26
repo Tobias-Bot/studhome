@@ -318,7 +318,6 @@ export default {
       };
     },
     LoadProfile(context, data) {
-
       if (data.blog) {
         context.commit("setCurrProfile", data.blog);
       } else if (!data.isAdmin) {
