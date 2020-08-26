@@ -99,6 +99,12 @@ class ImageCreateView(generics.CreateAPIView):
     serializer_class = ImageSerializer
     permission_classes = (IsAuthenticated, )
 
+class ImageUpdateView(generics.UpdateAPIView):
+    serializer_class = ImageSerializer
+    permission_classes = (IsAuthenticated, IsOwnerOrReadOnly, )
+    lookup_field = 'id'
+    queryset = Image.objects.all()
+
 class ImageDestroyView(generics.DestroyAPIView):
     serializer_class = ImageSerializer
     permission_classes = (IsAuthenticated, IsOwnerOrReadOnly, )

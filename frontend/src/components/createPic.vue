@@ -33,6 +33,7 @@
       placeholder="добавьте описание к фото, если хотите"
       @mouseover="ShowImgDesc = true"
       @mouseout="ShowImgDesc = false"
+      @change.once="files[index].modified = true"
     ></textarea>
   </div>
 </template>
@@ -45,9 +46,9 @@ export default {
     return {
       ImgSettings: false,
       ShowImgDesc: false,
+
+      Modified: false,
     };
-  },
-  computed: {
   },
   methods: {
     DeletePreviewPhoto(i) {

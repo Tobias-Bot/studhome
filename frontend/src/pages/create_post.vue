@@ -134,7 +134,7 @@
                   <span v-if="!EditMode">опубликовать</span>
                   <span v-else>сохранить изменения</span>
                 </template>
-                <template v-else="isPublishing">
+                <template v-else>
                   <div class="spinner-border spinner-border-sm" role="status">
                     <span class="sr-only">Loading...</span>
                   </div>
@@ -229,7 +229,8 @@ export default {
             file: "",
             url: domain + i.image,
             text: i.text,
-            image_id: i.id
+            image_id: i.id,
+            modified: false
           };
 
           this.files.push(img);
@@ -440,10 +441,13 @@ export default {
           if (this.files.length > 0) {
             for (var i = 0; i < this.files.length; i++) {
               if (!this.files[i].image_id) this.submitPhotos(token, post_id, i);
+              else if (this.files[i].modified)
+                this.submitEditedPhotos(token, post_id, i);
             }
 
             this.clearPostData();
           }
+
           this.isPublishing = false;
         })
         .catch(e => {
@@ -491,12 +495,34 @@ export default {
     submitPhotos(token, post_id, img_index) {
       let formData = new FormData();
       formData.append("post", post_id);
+      formData.append("user", this.UserData.id);
       formData.append("username", this.UserData.username);
       formData.append("text", this.files[img_index].text);
       formData.append("image", this.files[img_index].file);
 
       axios.post(
         "http://127.0.0.1:8000/api/v1/news/post/" + post_id + "/image/",
+        formData,
+        {
+          headers: {
+            Authorization: "Token " + token,
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
+    },
+    submitEditedPhotos(token, post_id, img_index) {
+      let formData = new FormData();
+      let domain = this.$store.getters.getDomain;
+      let img_id = this.files[img_index].image_id;
+
+      formData.append("post", post_id);
+      formData.append("username", this.UserData.username);
+      formData.append("user", this.UserData.id);
+      formData.append("text", this.files[img_index].text);
+
+      axios.put(
+        `${domain}/api/v1/news/post/image_update/${img_id}/`,
         formData,
         {
           headers: {

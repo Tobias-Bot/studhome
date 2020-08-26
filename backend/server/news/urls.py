@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from . views import ImageDetailView, SearchProfilesList, PostsByInterestsListView, PostViewsUpdate, PostByMarksListView, addPostToBookMarksView, deletePostFromBookMarksView, unSubscribeUserView, SubscribeUserView, PopularPostListView, SubsPostsListView, BookMarksPostsListView, ImageDestroyView, PostUpdateView, SearchByTypePostList, PostDetailView, CommentUpdateView, SearchPostList, ImageCreateView, CommentDestroyView, PostCreateView, PostListView, PostDestroyView, CommentListView, UserPostsListView, CommentCreateView
+from . views import ImageUpdateView, ImageDetailView, SearchProfilesList, PostsByInterestsListView, PostViewsUpdate, PostByMarksListView, addPostToBookMarksView, deletePostFromBookMarksView, unSubscribeUserView, SubscribeUserView, PopularPostListView, SubsPostsListView, BookMarksPostsListView, ImageDestroyView, PostUpdateView, SearchByTypePostList, PostDetailView, CommentUpdateView, SearchPostList, ImageCreateView, CommentDestroyView, PostCreateView, PostListView, PostDestroyView, CommentListView, UserPostsListView, CommentCreateView
 
 urlpatterns = [
     path('post_create/<str:username>/', PostCreateView.as_view()),
@@ -12,6 +12,7 @@ urlpatterns = [
     path('post_delete/<int:post_id>/<slug:username>/', PostDestroyView.as_view()),
     path('post/<int:pk>/image/', ImageCreateView.as_view()),
     path('post/image/<int:img_id>/', ImageDetailView.as_view()),
+    path('post/image_update/<str:id>/', ImageUpdateView.as_view()),
     path('post/image_delete/<int:id>/', ImageDestroyView.as_view()),
     path('post/<int:post_id>/comment/list/', CommentListView.as_view()),
     path('post/<int:pk>/comment/', CommentCreateView.as_view()),
