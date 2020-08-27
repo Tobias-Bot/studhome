@@ -541,7 +541,7 @@ export default {
     },
     DeleteStyles(event) {
       event.preventDefault();
-      var text = (event.originalEvent || event).clipboardData.getData(
+      let text = (event.originalEvent || event).clipboardData.getData(
         "text/plain"
       );
       document.execCommand("insertText", false, text);

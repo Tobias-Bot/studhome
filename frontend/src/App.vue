@@ -27,6 +27,16 @@
           <router-link
             active-class="btn btn-active"
             class="btn btn-light"
+            to="/apps"
+          >
+            <span class="MainTabs">
+              <i class="fas fa-shapes"></i>
+              <span>приложения</span>
+            </span>
+          </router-link>
+          <router-link
+            active-class="btn btn-active"
+            class="btn btn-light"
             to="/news"
           >
             <span class="MainTabs">

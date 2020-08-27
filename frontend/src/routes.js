@@ -7,6 +7,9 @@ import profile from "./pages/home/profile";
 import bookmarks from "./pages/home/bookmarks";
 import settings from "./pages/home/settings";
 
+import apps from "./pages/apps";
+import TextEditor from "./pages/apps/TextEditor"
+
 import news from "./pages/news";
 import all_posts from "./pages/news/pages/all_posts";
 import full_post from "./components/full_post";
@@ -94,6 +97,18 @@ const router = new VueRouter({
       name: "profile",
       path: "/profile_:username",
       component: profile
+    },
+    {
+      name: "apps",
+      path: "/apps",
+      component: apps,
+      children: [
+        {
+          name: "text",
+          path: "text",
+          component: TextEditor,
+        },
+      ]
     },
     {
       name: "news",
