@@ -12,6 +12,8 @@ from rest_framework.authentication import TokenAuthentication, SessionAuthentica
 from django.db.models import F
 from django.db.models import Q
 
+import datetime
+
 from . models import Post, Comment, Image
 from userprofile.models import Profile
 
@@ -47,8 +49,6 @@ class SearchByTypePostList(generics.ListAPIView):
         a = int(self.request.GET.get("a"))
         b = int(self.request.GET.get("b"))
         queryset = Post.objects.none()
-
-        print(query)
 
         for tag in query[1:-1].split('|'):
             queryset = queryset | Post.objects.filter(type__icontains=tag)
@@ -99,6 +99,22 @@ class PostUpdateView(generics.UpdateAPIView):
     permission_classes = (IsAuthenticated, IsOwnerOrReadOnly, )
     lookup_field = 'id'
     queryset = Post.objects.all()
+
+    def perform_update(self, serializer):
+        if (serializer.is_valid()):
+            date = serializer.initial_data.get('date')[0:10].split('-')
+            dateNow = str(datetime.datetime.now())[0:10].split('-')
+            day = int(date[2])
+            month = int(date[1])
+            year = int(date[0])
+            dayNow = int(dateNow[2])
+            monthNow = int(dateNow[1])
+            yearNow = int(dateNow[0])
+
+            if ((dayNow - day > 0) or (monthNow - month > 0) or (yearNow - year > 0)):
+                return Response(status=501)
+            else:
+                instance = serializer.save()
 
 class ImageCreateView(generics.CreateAPIView):
     serializer_class = ImageSerializer

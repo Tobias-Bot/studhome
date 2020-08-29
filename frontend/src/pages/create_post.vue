@@ -384,6 +384,10 @@ export default {
       let video_url = this.youtubeUrl;
       let type = "|";
       let marks = this.$store.getters.getCreatedPostMarks;
+      let date = '';
+      let EditingPost = this.$route.params.post;
+
+      if (EditingPost) date = EditingPost.date;
 
       if (this.isText) {
         text = $(".note").html();
@@ -405,7 +409,8 @@ export default {
         text,
         note_color,
         text_color,
-        marks
+        marks,
+        date,
       };
 
       if (!(text.length && this.isText) && title.length) {

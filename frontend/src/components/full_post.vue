@@ -17,7 +17,9 @@
               class="username"
               style="text-align: center;"
               :to="{ name: 'profile', params: { username: CurrPost.username } }"
-              ><h5 @click="loadProfile">{{ CurrPost.username }}</h5></router-link
+              ><h5 @click="loadProfile">
+                {{ CurrPost.username }}
+              </h5></router-link
             >
             <template v-if="CurrPost.username !== UserData.username">
               <button
@@ -41,6 +43,7 @@
             </template>
             <template v-else>
               <router-link
+                v-if="isEditable"
                 :to="{
                   name: 'CreatePost',
                   params: { editMode: true, post: CurrPost }
@@ -275,6 +278,23 @@ export default {
       let names = this.$store.getters.getUserProfile.subs_profiles;
       if (names && names.indexOf(this.CurrPost.username) == -1) return false;
       else return true;
+    },
+    isEditable() {
+      let day = parseInt(this.PostDate.substring(0, 2));
+      let month = parseInt(this.PostDate.substring(3, 5));
+      let year = parseInt(this.PostDate.substring(6, 10));
+      let date = new Date();
+      let result = true;
+
+      if (
+        date.getDate() - day >= 1 ||
+        date.getMonth() + 1 - month >= 1 ||
+        date.getFullYear() - year >= 1
+      ) {
+        result = false;
+      }
+
+      return result;
     }
   },
   created() {
@@ -354,7 +374,7 @@ export default {
     loadProfile() {
       this.$store.commit("dropUserPosts");
       this.$store.commit("dropUserSubs");
-      this.$store.commit("setProfileTab", 'description');
+      this.$store.commit("setProfileTab", "description");
     }
   }
 };

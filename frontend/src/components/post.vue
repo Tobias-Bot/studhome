@@ -13,12 +13,14 @@
         <span
           v-if="!inUserSubs"
           class="btnSubscribe"
+          title="подписаться"
           @click="Subscribe(post.username, UserData.username)"
           ><i class="fas fa-plus-circle"></i
         ></span>
         <span
           v-else
           class="btnSubscribe"
+          title="отписаться"
           @click="unSubscribe(post.username, UserData.username)"
           ><i class="far fa-times-circle"></i
         ></span>
@@ -38,14 +40,17 @@
           </router-link>
           <template v-if="post.user === UserData.id">
             <router-link
+              v-if="isEditable"
               :to="{ name: 'CreatePost', params: { editMode: true, post } }"
               type="button"
+              title="редактировать"
               class="btn btn-light btn-sm"
             >
               <i class="fas fa-edit"></i>
             </router-link>
             <button
               type="button"
+              title="удалить пост"
               class="btn btn-light btn-sm"
               @click="DeletePost(post_index, post.id, topic)"
             >
@@ -56,6 +61,7 @@
             <button
               type="button"
               class="btn btn-light btn-sm"
+              title="добавить в закладки"
               @click="
                 !inUserBookmarks ? addToBookmarks() : deleteFromBookmarks()
               "
@@ -143,6 +149,34 @@ export default {
 
       for (let post of ids) {
         if (post.id == post_id) return true;
+      }
+
+      return result;
+    },
+    PostDate() {
+      if (this.post.date) {
+        let date = this.post.date
+          .substring(0, 10)
+          .split("-")
+          .reverse()
+          .join(".");
+
+        return date;
+      }
+    },
+    isEditable() {
+      let day = parseInt(this.PostDate.substring(0, 2));
+      let month = parseInt(this.PostDate.substring(3, 5));
+      let year = parseInt(this.PostDate.substring(6, 10));
+      let date = new Date();
+      let result = true;
+
+      if (
+        date.getDate() - day > 0 ||
+        date.getMonth() + 1 - month > 0 ||
+        date.getFullYear() - year > 0
+      ) {
+        result = false;
       }
 
       return result;
