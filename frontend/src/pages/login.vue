@@ -28,13 +28,45 @@
           </div>
           <div class="card-body">
             <h6>Имя пользователя</h6>
-            <input v-model="UserData.username" type="name" class="form-control textInput" />
+            <input
+              v-model="UserData.username"
+              type="name"
+              class="form-control textInput"
+              required
+            />
+            <br />
+            <h6>Email</h6>
+            <input
+              v-model="email"
+              type="email"
+              class="form-control textInput"
+              :class="{
+                'is-invalid':
+                  ($v.email.$dirty && (!$v.email.required || !$v.email.email))
+              }"
+              required
+            />
             <br />
             <h6>Пароль</h6>
-            <input v-model="UserData.pass1" type="password" class="form-control textInput" />
+            <input
+              v-model="password"
+              type="password"
+              class="form-control textInput"
+              :class="{
+                'is-invalid':
+                  ($v.password.$dirty && !$v.password.minLength) ||
+                  ($v.password.$dirty && !$v.password.required),
+              }"
+              required
+            />
             <br />
             <h6>Повторите пароль</h6>
-            <input v-model="UserData.pass2" type="password" class="form-control textInput" />
+            <input
+              v-model="UserData.pass2"
+              type="password"
+              class="form-control textInput"
+              required
+            />
           </div>
           <div class="card-footer">
             <router-link to="/home">
@@ -52,10 +84,18 @@
           </div>
           <div class="card-body">
             <h6>Имя пользователя</h6>
-            <input v-model="UserData.username" type="name" class="form-control textInput" />
+            <input
+              v-model="UserData.username"
+              type="name"
+              class="form-control textInput"
+            />
             <br />
             <h6>Пароль</h6>
-            <input v-model="UserData.pass1" type="password" class="form-control textInput" />
+            <input
+              v-model="UserData.pass1"
+              type="password"
+              class="form-control textInput"
+            />
           </div>
           <div class="card-footer">
             <router-link to="/home">
@@ -71,37 +111,43 @@
 </template>
 
 <script>
+import { email, required, minLength } from "vuelidate/lib/validators";
+
 export default {
   data: function() {
     return {
       UserData: {
         username: "",
         pass1: "",
-        pass2: ""
+        pass2: "",
       },
       RegistrationData: {
         username: "",
-        password: ""
+        password: "",
       },
       LoginData: {
         username: "",
-        password: ""
-      }
+        password: "",
+      },
+
+      email: "",
+      password: "",
     };
+  },
+  validations: {
+    email: { email, required },
+    password: { required, minLength: minLength(6) },
   },
   methods: {
     LoginFunc() {
       this.LoginData.username = this.UserData.username;
       this.LoginData.password = this.UserData.pass1;
-      
+
       let domain = this.$store.getters.getDomain;
 
       axios
-        .post(
-          `${domain}/api/v1/auth_token/token/login`,
-          this.LoginData
-        )
-        .then(response => {
+        .post(`${domain}/api/v1/auth_token/token/login`, this.LoginData)
+        .then((response) => {
           let token = response.data.auth_token;
 
           this.$store.commit("setToken", token);
@@ -117,13 +163,16 @@ export default {
 
       let domain = this.$store.getters.getDomain;
 
-      axios
-        .post(`${domain}/api/v1/auth/users/`, this.RegistrationData)
-        .then(() => {
-          this.LoginFunc();
-        });
-    }
-  }
+      // axios
+      //   .post(`${domain}/api/v1/auth/users/`, this.RegistrationData)
+      //   .then(() => {
+      //     this.LoginFunc();
+      //   });
+
+      this.$v.email.$touch();
+      this.$v.password.$touch();
+    },
+  },
 };
 </script>
 
