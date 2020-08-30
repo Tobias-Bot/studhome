@@ -11,7 +11,10 @@
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-body">
-            <span class="hint">Скопируй эту ссылку и поделись со своими друзьями в других социальных сетях</span>
+            <span class="hint"
+              >Скопируй эту ссылку и поделись со своими друзьями в других
+              социальных сетях</span
+            >
             <hr />
             <input :value="getPath" readonly class="form-control textInput" />
           </div>
@@ -95,7 +98,7 @@ export default {
       HorizontalImgStyle: "img_horizontal",
       VerticalImgStyle: "img_vertical",
 
-      loading: true
+      loading: true,
     };
   },
   created() {
@@ -121,9 +124,9 @@ export default {
 
         axios
           .get(`${domain}/api/v1/news/post/image/${image_id}/`, {
-            headers: { Authorization: "Token " + token }
+            headers: { Authorization: "Token " + token },
           })
-          .then(response => {
+          .then((response) => {
             let image = response.data[0];
             this.$store.commit("setCurrImage", image);
           })
@@ -165,14 +168,21 @@ export default {
       return this.$store.getters.getUserData;
     },
     ImgUrl() {
-      if (this.CurrImg.image)
-        return ~this.CurrImg.image.indexOf("http://127.0.0.1:8000")
-          ? this.CurrImg.image
-          : "http://127.0.0.1:8000" + this.CurrImg.image;
+      let result = "";
+      
+      if (this.CurrImg.image) {
+        if (~this.CurrImg.image.indexOf("http://127.0.0.1:8000"))
+          result = this.CurrImg.image;
+        else {
+          result = `http://127.0.0.1:8000${this.CurrImg.image}`;
+        }
+      }
+
+      return result;
     },
     getPath() {
       return `http://localhost:8080${this.$route.path}`;
-    }
+    },
   },
   methods: {
     Subscribe(sub_user, username) {
@@ -181,7 +191,7 @@ export default {
       let data = {
         token,
         q: sub_user,
-        me: username
+        me: username,
       };
 
       this.$store.dispatch("addUserProfileInSubs", data);
@@ -192,7 +202,7 @@ export default {
       let data = {
         token,
         q: sub_user,
-        me: username
+        me: username,
       };
 
       this.$store.dispatch("deleteUserProfileFromSubs", data);
@@ -205,8 +215,8 @@ export default {
       this.$store.commit("setProfileTab", "description");
 
       this.$store.dispatch("LoadProfile", { blog: "", isAdmin, username });
-    }
-  }
+    },
+  },
 };
 </script>
 

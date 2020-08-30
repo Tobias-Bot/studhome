@@ -42,7 +42,7 @@
 <script>
 export default {
   props: ["blog"],
-  name: "blog",
+  name: "profileView",
   data: function() {
     return {
       maxLen: 100

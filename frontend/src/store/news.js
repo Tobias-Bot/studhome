@@ -112,7 +112,7 @@ export default {
 
       state.currentPost.comments_count += 1;
     },
-    deleteCurrentComm(state, payload) {
+    deleteCurrentComm(state) {
       state.currentPost.comments_count -= 1;
     }
   },
@@ -220,14 +220,11 @@ export default {
       let token = context.getters.getToken;
       let username = context.getters.getUserData.username;
       let profile = context.getters.getUserProfile;
+      let domain = context.getters.getDomain;
 
       axios
         .delete(
-          "http://127.0.0.1:8000/api/v1/news/post_delete/" +
-            data.post_id +
-            "/" +
-            username +
-            "/",
+          `${domain}/api/v1/news/post_delete/${data.post_id}/${username}/`,
           {
             headers: { Authorization: "Token " + token }
           }

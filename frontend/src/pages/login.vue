@@ -93,10 +93,12 @@ export default {
     LoginFunc() {
       this.LoginData.username = this.UserData.username;
       this.LoginData.password = this.UserData.pass1;
+      
+      let domain = this.$store.getters.getDomain;
 
       axios
         .post(
-          "http://127.0.0.1:8000/api/v1/auth_token/token/login",
+          `${domain}/api/v1/auth_token/token/login`,
           this.LoginData
         )
         .then(response => {
@@ -113,9 +115,11 @@ export default {
       this.RegistrationData.password = this.UserData.pass1;
       this.RegistrationData.email = this.UserData.email;
 
+      let domain = this.$store.getters.getDomain;
+
       axios
-        .post("http://127.0.0.1:8000/api/v1/auth/users/", this.RegistrationData)
-        .then(response => {
+        .post(`${domain}/api/v1/auth/users/`, this.RegistrationData)
+        .then(() => {
           this.LoginFunc();
         });
     }

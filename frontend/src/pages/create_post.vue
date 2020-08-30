@@ -198,7 +198,7 @@ export default {
     createPic,
     PostToolBar,
     WritingToolBar,
-    PostTags
+    PostTags,
   },
   data: function() {
     return {
@@ -215,7 +215,7 @@ export default {
 
       tags: [],
 
-      isPublishing: false
+      isPublishing: false,
     };
   },
   mounted() {
@@ -230,7 +230,7 @@ export default {
             url: domain + i.image,
             text: i.text,
             image_id: i.id,
-            modified: false
+            modified: false,
           };
 
           this.files.push(img);
@@ -279,11 +279,15 @@ export default {
       );
     },
     ManyImages() {
-      if (this.files) return this.files.length > 2;
+      let result = "";
+
+      if (this.files) result = this.files.length > 2;
+
+      return result;
     },
     EditMode() {
       return this.$route.params.editMode;
-    }
+    },
   },
   methods: {
     loadDraftFromMemory(obj) {
@@ -307,13 +311,13 @@ export default {
         let store = tx.objectStore(obj.store);
         let data = store.get(obj.key);
 
-        let result = (tx.oncomplete = () => {
+        tx.oncomplete = () => {
           if (data.result) this.setSavedPost(data.result);
-        });
+        };
       };
     },
     saveDraftToMemory() {
-      let text = $(".note").html();
+      let text = this.$refs.editor.innerHTML;
       let title = this.$refs.NoteTitle.value;
       let tags = "|" + this.tags.join("|") + "|";
       let video_url = this.youtubeUrl;
@@ -330,13 +334,13 @@ export default {
         note_color,
         text_color,
         marks,
-        files
+        files,
       };
 
       this.$store.dispatch("saveToDB", {
         store: "post-drafts",
         key: "draft",
-        data
+        data,
       });
     },
     setSavedPost(data) {
@@ -384,13 +388,13 @@ export default {
       let video_url = this.youtubeUrl;
       let type = "|";
       let marks = this.$store.getters.getCreatedPostMarks;
-      let date = '';
+      let date = "";
       let EditingPost = this.$route.params.post;
 
       if (EditingPost) date = EditingPost.date;
 
       if (this.isText) {
-        text = $(".note").html();
+        text = this.$refs.editor.innerHTML;
         note_color = this.NoteColor;
         text_color = this.TextColor;
       }
@@ -423,7 +427,7 @@ export default {
 
       if (this.files.length > 0 && !text.length && !video_url.length)
         post.type += "фото|";
-      
+
       if (video_url.length) {
         post.type += "видео|";
       }
@@ -436,19 +440,16 @@ export default {
       }
     },
     submitEditedPost(post_id, post, token) {
+      let domain = this.$store.getters.getDomain;
+
       axios
-        .put(
-          "http://127.0.0.1:8000/api/v1/news/post_update/" + post_id + "/",
-          post,
-          {
-            headers: {
-              Authorization: "Token " + token
-            }
-          }
-        )
-        .then(response => {
+        .put(`${domain}/api/v1/news/post_update/${post_id}/`, post, {
+          headers: {
+            Authorization: "Token " + token,
+          },
+        })
+        .then((response) => {
           let post_id = response.data.id;
-          let domen = this.$store.getters.getDomen;
 
           if (this.files.length > 0) {
             for (var i = 0; i < this.files.length; i++) {
@@ -462,24 +463,21 @@ export default {
 
           this.isPublishing = false;
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
     },
     submitPost(username, post, token) {
       let profile = this.$store.getters.getUserProfile;
+      let domain = this.$store.getters.getDomain;
 
       axios
-        .post(
-          "http://127.0.0.1:8000/api/v1/news/post_create/" + username + "/",
-          post,
-          {
-            headers: {
-              Authorization: "Token " + token
-            }
-          }
-        )
-        .then(response => {
+        .post(`${domain}/api/v1/news/post_create/${username}/`, post, {
+          headers: {
+            Authorization: "Token " + token,
+          },
+        })
+        .then((response) => {
           let post_id = response.data.id;
 
           if (this.files.length > 0) {
@@ -495,17 +493,19 @@ export default {
           this.$store.dispatch("saveToDB", {
             store: "profile",
             key: "userprofile",
-            data: profile
+            data: profile,
           });
 
           this.isPublishing = false;
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
     },
     submitPhotos(token, post_id, img_index) {
       let formData = new FormData();
+      let domain = this.$store.getters.getDomain;
+
       formData.append("post", post_id);
       formData.append("user", this.UserData.id);
       formData.append("username", this.UserData.username);
@@ -513,13 +513,13 @@ export default {
       formData.append("image", this.files[img_index].file);
 
       axios.post(
-        "http://127.0.0.1:8000/api/v1/news/post/" + post_id + "/image/",
+        `${domain}/api/v1/news/post/${post_id}/image/`,
         formData,
         {
           headers: {
             Authorization: "Token " + token,
-            "Content-Type": "multipart/form-data"
-          }
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
     },
@@ -539,8 +539,8 @@ export default {
         {
           headers: {
             Authorization: "Token " + token,
-            "Content-Type": "multipart/form-data"
-          }
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
     },
@@ -550,8 +550,8 @@ export default {
         "text/plain"
       );
       document.execCommand("insertText", false, text);
-    }
-  }
+    },
+  },
 };
 </script>
 

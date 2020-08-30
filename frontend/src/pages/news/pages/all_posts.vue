@@ -17,44 +17,48 @@
         ></post>
       </div> -->
       <div class="col-3">
-        <post
-          v-for="(post, id) in posts"
-          :key="id"
-          v-if="id < posts.length / 4 && id >= 0"
-          :post="post"
-          :post_index="id"
-          :topic="'all'"
-        ></post>
+        <template v-for="(post, id) in posts">
+          <post
+            v-if="id < posts.length / 4 && id >= 0"
+            :key="id"
+            :post="post"
+            :post_index="id"
+            :topic="'all'"
+          ></post>
+        </template>
       </div>
       <div class="col-3">
-        <post
-          v-for="(post, id) in posts"
-          :key="id"
-          v-if="id < (posts.length / 4) * 2 && id >= posts.length / 4"
-          :post="post"
-          :post_index="id"
-          :topic="'all'"
-        ></post>
+        <template v-for="(post, id) in posts">
+          <post
+            v-if="id < (posts.length / 4) * 2 && id >= posts.length / 4"
+            :key="id"
+            :post="post"
+            :post_index="id"
+            :topic="'all'"
+          ></post>
+        </template>
       </div>
       <div class="col-3">
-        <post
-          v-for="(post, id) in posts"
-          :key="id"
-          v-if="id < (posts.length / 4) * 3 && id >= (posts.length / 4) * 2"
-          :post="post"
-          :post_index="id"
-          :topic="'all'"
-        ></post>
+        <template v-for="(post, id) in posts">
+          <post
+            v-if="id < (posts.length / 4) * 3 && id >= (posts.length / 4) * 2"
+            :key="id"
+            :post="post"
+            :post_index="id"
+            :topic="'all'"
+          ></post>
+        </template>
       </div>
       <div class="col-3">
-        <post
-          v-for="(post, id) in posts"
-          :key="id"
-          v-if="id < (posts.length / 4) * 4 && id >= (posts.length / 4) * 3"
-          :post="post"
-          :post_index="id"
-          :topic="'all'"
-        ></post>
+        <template v-for="(post, id) in posts">
+          <post
+            v-if="id < (posts.length / 4) * 4 && id >= (posts.length / 4) * 3"
+            :key="id"
+            :post="post"
+            :post_index="id"
+            :topic="'all'"
+          ></post>
+        </template>
       </div>
     </div>
   </div>
@@ -65,14 +69,14 @@ import post from "../../../components/post";
 
 export default {
   components: {
-    post
+    post,
   },
   data: function() {
     return {
       isWriting: false,
       PostsLoadCount: 12,
       load: true,
-      postsCountOld: 0
+      postsCountOld: 0,
     };
   },
   created() {
@@ -90,19 +94,19 @@ export default {
         elem.querySelector("#" + hash).scrollIntoView({
           block: "center",
           inline: "center",
-          behavior: posts.length < 40 ? "smooth" : "auto"
+          behavior: posts.length < 40 ? "smooth" : "auto",
         });
 
         this.load && this.$store.commit("setHash", "");
       }
 
       if (posts.length > this.postsCountOld) {
-        this.load = true;
-        this.postsCountOld = posts.length;
+        () => (this.load = true);
+        () => (this.postsCountOld = posts.length);
       }
 
       return posts;
-    }
+    },
   },
   methods: {
     LoadNewPosts() {
@@ -126,7 +130,7 @@ export default {
       let data = {
         top,
         bottom,
-        value: topic
+        value: topic,
       };
 
       switch (topic) {
@@ -146,8 +150,8 @@ export default {
           this.$store.dispatch("PostsByMarksLoader", data);
           break;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

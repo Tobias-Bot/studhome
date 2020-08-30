@@ -103,8 +103,6 @@
 </template>
 
 <script>
-var Cookies = localStorage;
-
 export default {
   name: "design",
   data() {
@@ -128,12 +126,12 @@ export default {
   computed: {
     range() {
       let value = this.$store.getters.getUserSettings.blackout;
-      this.settings.blackout = value;
+      this.setRange(value);
       return value;
     },
     blur() {
       let value = this.$store.getters.getUserSettings.blur;
-      this.settings.blur = value;
+      this.setBlur(value);
       return value;
     },
     pic() {
@@ -147,6 +145,12 @@ export default {
     },
   },
   methods: {
+    setRange(value) {
+      this.settings.blackout = value;
+    },
+    setBlur(value) {
+      this.settings.blur = value;
+    },
     updateSettings() {
       let token = localStorage.getItem("token");
       let user_id = this.$store.getters.getUserData.id;
@@ -186,7 +190,7 @@ export default {
       openRequest.onsuccess = function() {
         var DB = openRequest.result;
 
-        let ob = DB.transaction("settings", "readwrite")
+        DB.transaction("settings", "readwrite")
           .objectStore("settings")
           .put(obj, "settings");
       };

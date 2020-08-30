@@ -35,34 +35,37 @@
           :topic="'search'"
         ></post> -->
         <div class="col-4">
-          <post
-            v-for="(post, id) in Posts"
-            :key="id"
-            v-if="id < Posts.length / 3 && id >= 0"
-            :post="post"
-            :post_index="id"
-            :topic="'search'"
-          ></post>
+          <template v-for="(post, id) in Posts">
+            <post
+              :key="id"
+              v-if="id < Posts.length / 3 && id >= 0"
+              :post="post"
+              :post_index="id"
+              :topic="'search'"
+            ></post>
+          </template>
         </div>
         <div class="col-4">
-          <post
-            v-for="(post, id) in Posts"
-            :key="id"
-            v-if="id < (Posts.length / 3) * 2 && id >= Posts.length / 3"
-            :post="post"
-            :post_index="id"
-            :topic="'search'"
-          ></post>
+          <template v-for="(post, id) in Posts">
+            <post
+              :key="id"
+              v-if="id < (Posts.length / 3) * 2 && id >= Posts.length / 3"
+              :post="post"
+              :post_index="id"
+              :topic="'search'"
+            ></post>
+          </template>
         </div>
         <div class="col-4">
-          <post
-            v-for="(post, id) in Posts"
-            :key="id"
-            v-if="id < (Posts.length / 3) * 3 && id >= (Posts.length / 3) * 2"
-            :post="post"
-            :post_index="id"
-            :topic="'search'"
-          ></post>
+          <template v-for="(post, id) in Posts">
+            <post
+              :key="id"
+              v-if="id < (Posts.length / 3) * 3 && id >= (Posts.length / 3) * 2"
+              :post="post"
+              :post_index="id"
+              :topic="'search'"
+            ></post>
+          </template>
         </div>
       </div>
       <div v-show="this.cat == 'люди'" class="card-columns">
@@ -81,7 +84,7 @@ export default {
   components: {
     post,
     tag,
-    blog
+    blog,
   },
   mounted() {
     this.cat = this.$refs.CategorySelector.value;
@@ -111,37 +114,20 @@ export default {
 
       PostsLoadCount: 9,
       load: true,
-      postsCountOld: 0
+      postsCountOld: 0,
     };
   },
   computed: {
     Posts() {
-      this.SearchText = this.$store.getters.getSearchTag;
+      () => (this.SearchText = this.$store.getters.getSearchTag);
 
       let posts = this.$store.getters.getSearchPost;
-      let elem = this.$refs.content;
-      let hash = this.$store.getters.getHash;
 
-      if (hash) {
-        let timerId = setInterval(() => {
-          elem = this.$refs.content;
-
-          if (elem) {
-            elem.querySelector("#" + hash).scrollIntoView({
-              block: "center",
-              inline: "center",
-              behavior: posts.length < 30 ? "smooth" : "auto"
-            });
-
-            clearInterval(timerId);
-            this.load && this.$store.commit("setHash", "");
-          }
-        }, 100);
-      }
+      this.goToHash(posts);
 
       if (posts.length > this.postsCountOld) {
-        this.load = true;
-        this.postsCountOld = posts.length;
+        () => (this.load = true);
+        () => (this.postsCountOld = posts.length);
       }
 
       return posts;
@@ -162,20 +148,43 @@ export default {
       },
       set(text) {
         this.SearchText = text;
-      }
+      },
     },
     Interests() {
       let tags = this.$store.getters.getUserProfile.interests;
+      let arr = '';
+
       if (tags) {
-        let arr = tags.split("|");
+        arr = tags.split("|");
         arr.splice(0, 1);
         arr.splice(arr.length - 1, 1);
-
-        return arr;
       }
-    }
+
+      return arr;
+    },
   },
   methods: {
+    goToHash(posts) {
+      let elem = this.$refs.content;
+      let hash = this.$store.getters.getHash;
+
+      if (hash) {
+        let timerId = setInterval(() => {
+          elem = this.$refs.content;
+
+          if (elem) {
+            elem.querySelector("#" + hash).scrollIntoView({
+              block: "center",
+              inline: "center",
+              behavior: posts.length < 30 ? "smooth" : "auto",
+            });
+
+            clearInterval(timerId);
+            this.load && this.$store.commit("setHash", "");
+          }
+        }, 100);
+      }
+    },
     FindData() {
       let top = this.Posts.length;
       let bottom = top + this.PostsLoadCount;
@@ -184,7 +193,7 @@ export default {
       let data = {
         top,
         bottom,
-        text
+        text,
       };
 
       this.cat = this.$refs.CategorySelector.value;
@@ -209,7 +218,6 @@ export default {
       let Hmax =
         block && Math.floor((block.scrollHeight - block.clientHeight) * 0.3);
       let h = block.scrollTop;
-      let topic = this.$route.params.topic;
 
       if (h > Hmax) {
         this.load && this.FindData();
@@ -220,8 +228,8 @@ export default {
     },
     setSearchTag() {
       this.$store.commit("setSearchTag", this.SearchText);
-    }
-  }
+    },
+  },
 };
 </script>
 

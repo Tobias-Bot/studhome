@@ -112,24 +112,26 @@
                   :topic="'profile'"
                 ></post> -->
                 <div class="col-6">
-                  <post
-                    v-for="(post, id) in UserPosts"
-                    :key="id"
-                    v-if="id % 2 == 0"
-                    :post="post"
-                    :post_index="id"
-                    :topic="'profile'"
-                  ></post>
+                  <template v-for="(post, id) in UserPosts">
+                    <post
+                      :key="id"
+                      v-if="id % 2 == 0"
+                      :post="post"
+                      :post_index="id"
+                      :topic="'profile'"
+                    ></post>
+                  </template>
                 </div>
                 <div class="col-6">
-                  <post
-                    v-for="(post, id) in UserPosts"
-                    :key="id"
-                    v-if="id % 2 !== 0"
-                    :post="post"
-                    :post_index="id"
-                    :topic="'profile'"
-                  ></post>
+                  <template v-for="(post, id) in UserPosts">
+                    <post
+                      :key="id"
+                      v-if="id % 2 !== 0"
+                      :post="post"
+                      :post_index="id"
+                      :topic="'profile'"
+                    ></post>
+                  </template>
                 </div>
               </div>
             </div>
@@ -148,46 +150,48 @@
                 </template>
               </div>
               <div class="card-columns">
-                <blog
+                <profileView
                   v-for="(blog, id) in UserSubs"
                   :key="id"
                   :blog="blog"
-                ></blog>
+                ></profileView>
               </div>
             </div>
           </template>
           <template v-if="Profile.contacts">
             <div v-show="ProfileTab === 'contacts'" class="block">
-              <template v-for="contact in Profile.contacts.split('|')">
-                <a
-                  v-if="contact.indexOf('instagram.com/') > -1"
-                  class="contact"
-                  :href="contact"
-                  target="_blank"
-                >
-                  <i class="fab fa-instagram-square"></i>
-                  {{ contact.substring(8) }}
-                </a>
-                <a
-                  v-if="contact.indexOf('vk.com/') > -1"
-                  class="contact"
-                  :href="contact"
-                  target="_blank"
-                >
-                  <i class="fab fa-vk"></i>
-                  {{ contact.substring(8) }}
-                </a>
-                <a
-                  v-if="contact.indexOf('youtube.com/') > -1"
-                  class="contact"
-                  :href="contact"
-                  target="_blank"
-                >
-                  <i class="fab fa-youtube"></i>
-                  {{ contact.substring(8) }}
-                </a>
-                <br />
+              <template v-for="(contact, i) in Profile.contacts.split('|')">
+                <div :key="i">
+                  <a
+                    v-if="contact.indexOf('instagram.com/') > -1"
+                    class="contact"
+                    :href="contact"
+                    target="_blank"
+                  >
+                    <i class="fab fa-instagram-square"></i>
+                    {{ contact.substring(8) }}
+                  </a>
+                  <a
+                    v-if="contact.indexOf('vk.com/') > -1"
+                    class="contact"
+                    :href="contact"
+                    target="_blank"
+                  >
+                    <i class="fab fa-vk"></i>
+                    {{ contact.substring(8) }}
+                  </a>
+                  <a
+                    v-if="contact.indexOf('youtube.com/') > -1"
+                    class="contact"
+                    :href="contact"
+                    target="_blank"
+                  >
+                    <i class="fab fa-youtube"></i>
+                    {{ contact.substring(8) }}
+                  </a>
+                </div>
               </template>
+              <br />
             </div>
           </template>
         </div>
@@ -203,24 +207,24 @@
 </template>
 
 <script>
-import post from "../../components/post";
-import tag from "../../components/tag";
-import profileTools from "../../components/Profile/profileTools";
-import blog from "../../components/Profile/profileView";
+import post from "@/components/post";
+import tag from "@/components/tag";
+import profileTools from "@/components/Profile/profileTools";
+import profileView from "@/components/Profile/profileView";
 
 export default {
   components: {
     post,
     profileTools,
     tag,
-    blog
+    profileView,
   },
   data() {
     return {
       isLoading: false,
       PostsLoadCount: 8,
       load: true,
-      postsCountOld: 0
+      postsCountOld: 0,
     };
   },
   created() {
@@ -229,7 +233,7 @@ export default {
 
     let data = {
       isAdmin,
-      username
+      username,
     };
 
     this.$store.dispatch("LoadProfile", data);
@@ -243,7 +247,7 @@ export default {
       elem.querySelector("#" + hash).scrollIntoView({
         block: "center",
         inline: "center",
-        behavior: posts.length < 30 ? "smooth" : "auto"
+        behavior: posts.length < 30 ? "smooth" : "auto",
       });
     }
   },
@@ -288,8 +292,8 @@ export default {
       // }
 
       if (posts.length > this.postsCountOld) {
-        this.load = true;
-        this.postsCountOld = posts.length;
+        () => (this.load = true);
+        () => (this.postsCountOld = posts.length);
       }
 
       return posts;
@@ -298,14 +302,18 @@ export default {
       return this.$store.getters.getUserSubs;
     },
     userInterests() {
+      let result = '';
+
       if (this.Profile.interests) {
         let len = this.Profile.interests.length;
-        return this.Profile.interests.substring(1, len - 1).split("|");
+        result = this.Profile.interests.substring(1, len - 1).split("|");
       }
+
+      return result;
     },
     ProfileTab() {
       return this.$store.getters.getProfileTab;
-    }
+    },
   },
   methods: {
     LoadNewPosts() {
@@ -313,7 +321,6 @@ export default {
       let Hmax =
         block && Math.floor((block.scrollHeight - block.clientHeight) * 0.3);
       let h = block.scrollTop;
-      let topic = this.$route.params.topic;
 
       if (h > Hmax) {
         if (this.load) {
@@ -338,10 +345,10 @@ export default {
           .get(
             `${domain}/api/v1/news/post/list/${username}/?a=${top}&b=${bottom}`,
             {
-              headers: { Authorization: "Token " + token }
+              headers: { Authorization: "Token " + token },
             }
           )
-          .then(response => {
+          .then((response) => {
             this.$store.commit("setUserPosts", { top, posts: response.data });
             this.isLoading = false;
           });
@@ -355,17 +362,17 @@ export default {
 
       axios
         .get(`${domain}/api/v1/home/profile/get_profiles/${users}`, {
-          headers: { Authorization: "Token " + token }
+          headers: { Authorization: "Token " + token },
         })
-        .then(response => {
+        .then((response) => {
           this.$store.commit("setUserSubs", response.data);
           this.isLoading = false;
         });
     },
     setTab(tabName) {
       this.$store.commit("setProfileTab", tabName);
-    }
-  }
+    },
+  },
 };
 </script>
 

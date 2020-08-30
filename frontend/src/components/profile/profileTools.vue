@@ -236,7 +236,7 @@ export default {
       openRequest.onsuccess = function() {
         var DB = openRequest.result;
 
-        let ob = DB.transaction("profile", "readwrite")
+        DB.transaction("profile", "readwrite")
           .objectStore("profile")
           .put(obj, "userprofile");
       };

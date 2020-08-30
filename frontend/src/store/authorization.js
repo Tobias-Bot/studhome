@@ -54,8 +54,10 @@ export default {
   },
   actions: {
     addUserData(context, token) {
+      let domain = context.getters.getDomain;
+
       axios
-        .get("http://127.0.0.1:8000/api/v1/auth/users/me", {
+        .get(`${domain}/api/v1/auth/users/me`, {
           headers: { Authorization: "Token " + token }
         })
         .then(response => {

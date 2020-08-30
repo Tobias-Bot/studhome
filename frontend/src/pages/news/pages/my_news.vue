@@ -58,8 +58,8 @@ export default {
       let posts = this.$store.getters.getMyNewsPosts;
 
       if (posts.length > this.postsCountOld) {
-        this.load = true;
-        this.postsCountOld = posts.length;
+        () => (this.load = true);
+        () => (this.postsCountOld = posts.length);
       }
 
       return posts;

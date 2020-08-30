@@ -5,9 +5,7 @@
         style="text-decoration: none;"
         :to="{ name: 'profile', params: { username: post.username } }"
       >
-        <span class="username" @click="LoadProfile(post.username)">{{
-          post.username
-        }}</span>
+        <span class="username" @click="LoadProfile()">{{ post.username }}</span>
       </router-link>
       <template v-if="post.username !== UserData.username">
         <span
@@ -30,7 +28,7 @@
           <router-link
             :to="{
               name: 'post',
-              params: { post_id: post.id, post: post, post_index: post_index }
+              params: { post_id: post.id, post: post, post_index: post_index },
             }"
             style="text-decoration: none; color: white; font-weight: 500;"
           >
@@ -91,14 +89,15 @@
       </template>
       <template v-if="post.tags.length > 2">
         <hr />
-        <tag
-          v-for="(tag, index) in tags"
-          v-if="index < TagsViewCount"
-          :key="index"
-          :text="tag"
-          :textColor="post.text_color"
-          :noteColor="post.note_color"
-        ></tag>
+        <template v-for="(tag, index) in tags">
+          <tag
+            v-if="index < TagsViewCount"
+            :key="index"
+            :text="tag"
+            :textColor="post.text_color"
+            :noteColor="post.note_color"
+          ></tag>
+        </template>
       </template>
     </div>
     <div class="card-footer">
@@ -119,12 +118,12 @@ export default {
     tag,
     SharePanel,
     pic,
-    NoteText
+    NoteText,
   },
   props: ["post", "post_index", "topic"],
   data: function() {
     return {
-      TagsViewCount: 5
+      TagsViewCount: 5,
     };
   },
   computed: {
@@ -154,15 +153,17 @@ export default {
       return result;
     },
     PostDate() {
+      let date = "";
+
       if (this.post.date) {
-        let date = this.post.date
+        date = this.post.date
           .substring(0, 10)
           .split("-")
           .reverse()
           .join(".");
-
-        return date;
       }
+
+      return date;
     },
     isEditable() {
       let day = parseInt(this.PostDate.substring(0, 2));
@@ -180,14 +181,14 @@ export default {
       }
 
       return result;
-    }
+    },
   },
   methods: {
     DeletePost(post_index, post_id, topic) {
       this.$store.dispatch("deletePostFromServer", {
         post_index,
         post_id,
-        topic
+        topic,
       });
     },
     Subscribe(sub_user, username) {
@@ -196,7 +197,7 @@ export default {
       let data = {
         token,
         q: sub_user,
-        me: username
+        me: username,
       };
 
       this.$store.dispatch("addUserProfileInSubs", data);
@@ -207,7 +208,7 @@ export default {
       let data = {
         token,
         q: sub_user,
-        me: username
+        me: username,
       };
 
       this.$store.dispatch("deleteUserProfileFromSubs", data);
@@ -216,14 +217,12 @@ export default {
       let token = localStorage.getItem("token");
       let username = this.UserData.username;
       let post_id = this.post.id;
+      let domain = this.$store.getters.getDomain;
 
       axios.get(
-        "http://127.0.0.1:8000/api/v1/news/post/bookmarks_add/?q=" +
-          post_id +
-          "&me=" +
-          username,
+        `${domain}/api/v1/news/post/bookmarks_add/?q=${post_id}&me=${username}`,
         {
-          headers: { Authorization: "Token " + token }
+          headers: { Authorization: "Token " + token },
         }
       );
 
@@ -258,15 +257,13 @@ export default {
       let username = this.UserData.username;
       let post_id = this.post.id;
       let MarkedPosts = this.$store.getters.getUserBookmarks;
+      let domain = this.$store.getters.getDomain;
 
       axios
         .get(
-          "http://127.0.0.1:8000/api/v1/news/post/bookmarks_delete/?q=" +
-            post_id +
-            "&me=" +
-            username,
+          `${domain}/api/v1/news/post/bookmarks_delete/?q=${post_id}&me=${username}`,
           {
-            headers: { Authorization: "Token " + token }
+            headers: { Authorization: "Token " + token },
           }
         )
         .then(() => {
@@ -290,17 +287,17 @@ export default {
       let post_index = this.post_index;
       let data = {
         post_id,
-        post_index
-      }
+        post_index,
+      };
 
-      this.$store.dispatch('addUserView', data);
+      this.$store.dispatch("addUserView", data);
     },
-    LoadProfile(username) {
+    LoadProfile() {
       this.$store.commit("dropUserPosts");
       this.$store.commit("dropUserSubs");
-      this.$store.commit("setProfileTab", 'description');
-    }
-  }
+      this.$store.commit("setProfileTab", "description");
+    },
+  },
 };
 </script>
 

@@ -52,7 +52,7 @@ export default {
     }
   },
   methods: {
-    StyleText(style, url) {
+    StyleText(style) {
       if (style == "hiliteColor") {
         document.execCommand("styleWithCSS", false, true);
         document.execCommand(style, false, this.Color);

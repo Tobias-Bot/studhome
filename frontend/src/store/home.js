@@ -98,12 +98,11 @@ export default {
   },
   actions: {
     addUserProfileInSubs(context, data) {
+      let domain = context.getters.getDomain;
+
       axios
         .get(
-          "http://127.0.0.1:8000/api/v1/news/subscribe/?q=" +
-            data.q +
-            "&me=" +
-            data.me,
+          `${domain}/api/v1/news/subscribe/?q=${data.q}&me=${data.me}`,
           {
             headers: { Authorization: "Token " + data.token }
           }
@@ -121,12 +120,11 @@ export default {
         });
     },
     deleteUserProfileFromSubs(context, data) {
+      let domain = context.getters.getDomain;
+
       axios
         .get(
-          "http://127.0.0.1:8000/api/v1/news/unsubscribe/?q=" +
-            data.q +
-            "&me=" +
-            data.me,
+          `${domain}/api/v1/news/unsubscribe/?q=${data.q}&me=${data.me}`,
           {
             headers: { Authorization: "Token " + data.token }
           }
@@ -149,10 +147,11 @@ export default {
     loadBookmarksFromServer(context) {
       let token = localStorage.getItem("token");
       let username = context.getters.getUserData.username;
+      let domain = context.getters.getDomain;
 
       axios
         .get(
-          "http://127.0.0.1:8000/api/v1/news/post/bookmarks/?me=" + username,
+          `${domain}/api/v1/news/post/bookmarks/?me=${username}`,
           {
             headers: { Authorization: "Token " + token }
           }
@@ -169,9 +168,10 @@ export default {
     loadSettingsFromServer(context) {
       let token = localStorage.getItem("token");
       let user_id = context.getters.getUserData.id;
+      let domain = context.getters.getDomain;
 
       axios
-        .get("http://127.0.0.1:8000/api/v1/home/settings_get/?q=" + user_id, {
+        .get(`${domain}/api/v1/home/settings_get/?q=${user_id}`, {
           headers: { Authorization: "Token " + token }
         })
         .then(response => {
@@ -186,9 +186,10 @@ export default {
     loadUserProfileFromServer(context) {
       let token = localStorage.getItem("token");
       let username = context.getters.getUserData.username;
+      let domain = context.getters.getDomain;
 
       axios
-        .get("http://127.0.0.1:8000/api/v1/home/profile/" + username, {
+        .get(`${domain}/api/v1/home/profile/${username}`, {
           headers: { Authorization: "Token " + token }
         })
         .then(response => {

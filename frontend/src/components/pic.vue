@@ -8,7 +8,7 @@
     style="text-decoration: none;"
   >
     <img
-      :src="'http://127.0.0.1:8000' + item.image"
+      :src="domain + item.image"
       class="image"
       alt="image"
       @click="$store.commit('setHash', 'post-' + post_index);"
@@ -25,6 +25,9 @@ export default {
     return {};
   },
   computed: {
+    domain() {
+      return this.$store.getters.getDomain;
+    }
   },
   methods: {}
 };

@@ -108,14 +108,14 @@
             </div>
             <template v-if="CurrPost.images">
               <template v-if="CurrPost.images.length <= 3">
-                <template v-for="img in CurrPost.images">
-                  <pic :item="img" :username="CurrPost.username"></pic>
+                <template v-for="(img, i) in CurrPost.images">
+                  <pic :item="img" :key="i" :username="CurrPost.username"></pic>
                 </template>
               </template>
               <template v-else>
                 <div class="card-columns">
-                  <template v-for="img in CurrPost.images">
-                    <pic :item="img" :username="CurrPost.username"></pic>
+                  <template v-for="(img, i) in CurrPost.images">
+                    <pic :item="img" :key="i" :username="CurrPost.username"></pic>
                   </template>
                 </div>
               </template>
@@ -199,7 +199,6 @@ import comment from "./comment";
 import SharePanel from "./SharePanel";
 import pic from "./pic";
 import tag from "./tag";
-import scrollbar from "./scrollbar";
 
 var Cookies = localStorage;
 var token = Cookies.getItem("token");
@@ -209,8 +208,7 @@ export default {
     comment,
     SharePanel,
     pic,
-    tag,
-    scrollbar
+    tag
   },
   data: function() {
     return {
@@ -237,12 +235,16 @@ export default {
       return this.$store.getters.getCurrentComms;
     },
     tags() {
+      let result = '';
+
       if (this.CurrPost.tags) {
         let tags = this.CurrPost.tags.split("|");
         tags.splice(0, 1);
         tags.splice(tags.length - 1, 1);
-        if (tags.length > 1) return tags;
+        if (tags.length > 1) return result = tags;
       }
+
+      return result
     },
     getDate() {
       let date = new Date();
@@ -258,21 +260,26 @@ export default {
       return result;
     },
     PostDate() {
+      let date = '';
+
       if (this.CurrPost.date) {
-        let date = this.CurrPost.date
+        date = this.CurrPost.date
           .substring(0, 10)
           .split("-")
           .reverse()
           .join(".");
-
-        return date;
       }
+
+      return date;
     },
     PostTime() {
+      let date = '';
+
       if (this.CurrPost.date) {
-        let date = this.CurrPost.date.substring(11, 16);
-        return date;
+        date = this.CurrPost.date.substring(11, 16);
       }
+
+      return date;
     },
     inUserSubs() {
       let names = this.$store.getters.getUserProfile.subs_profiles;
@@ -315,9 +322,11 @@ export default {
       this.$store.commit("setCurrentPost", post);
       this.CommentsLoader(post_id);
     } else {
-      if (!post && !this.CurrPost.id)
+      if (!post && !this.CurrPost.id) {
+        let domain = this.$store.getters.getDomain;
+
         axios
-          .get("http://127.0.0.1:8000/api/v1/news/post/" + post_id + "/", {
+          .get(`${domain}/api/v1/news/post/${post_id}/`, {
             headers: { Authorization: "Token " + token }
           })
           .then(response => {
@@ -328,6 +337,7 @@ export default {
           .catch(function(e) {
             console.log(e);
           });
+      }
     }
   },
   methods: {
