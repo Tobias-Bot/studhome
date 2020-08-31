@@ -6,12 +6,11 @@
       id="image"
       :style="'filter: blur(' + ImgBlur + 'px);'"
     />
-    <nav
-      id="main_header"
-      class="navbar navbar-expand-lg navbar-light"
-    >
-      <img src="./static/logo.png" id="logo" />
-      <span class="navbar-brand">studhome</span>
+    <nav id="main_header" class="navbar navbar-expand-lg navbar-light">
+      <div :class="!IsAuthorized ? 'logoBlock' : ''">
+        <img src="@/static/logo.png" id="logo" />
+        <span class="navbar-brand">studhome</span>
+      </div>
       <template v-if="IsAuthorized">
         <div class="btn-group" role="group">
           <router-link
@@ -105,7 +104,7 @@ export default {
     return {
       msgOpen: false,
 
-      isWritingSection: false
+      isWritingSection: false,
     };
   },
   methods: {},
@@ -123,7 +122,7 @@ export default {
       return {
         background:
           "rgba(0, 0, 0, " + this.$store.getters.getUserSettings.blackout + ")",
-        "z-index": -1
+        "z-index": -1,
       };
     },
     ImgBlur() {
@@ -137,12 +136,17 @@ export default {
     },
     IsAuthorized() {
       return this.$store.getters.getAuth;
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style>
+.logoBlock {
+  width: 100%;
+  text-align: center;
+}
+
 .btn-group {
   margin-left: 50px;
 }

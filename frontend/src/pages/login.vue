@@ -1,152 +1,99 @@
 <template>
-  <div class="box">
-    <div class="nav nav-tabs" id="v-pills-tab" role="tablist">
-      <a
-        class="login-tab"
-        id="v-pills-settings-tab"
-        data-toggle="tab"
-        href="#registration"
-        role="tab"
-        aria-selected="false"
-        >регистрация</a
-      >
-      <a
-        class="login-tab"
-        id="v-pills-settings-tab"
-        data-toggle="tab"
-        href="#login"
-        role="tab"
-        aria-selected="false"
-        >войти</a
-      >
-    </div>
-    <div class="tab-content">
-      <div class="tab-pane fade show" id="registration" role="tabpanel">
-        <div class="card">
-          <div class="card-header">
-            <h5>Регистрация</h5>
-          </div>
-          <div class="card-body">
-            <h6>Имя пользователя</h6>
-            <input
-              v-model="UserData.username"
-              type="name"
-              class="form-control textInput"
-              required
-            />
-            <br />
-            <h6>Email</h6>
-            <input
-              v-model="email"
-              type="email"
-              class="form-control textInput"
-              :class="{
-                'is-invalid':
-                  ($v.email.$dirty && (!$v.email.required || !$v.email.email))
-              }"
-              required
-            />
-            <br />
-            <h6>Пароль</h6>
-            <input
-              v-model="password"
-              type="password"
-              class="form-control textInput"
-              :class="{
-                'is-invalid':
-                  ($v.password.$dirty && !$v.password.minLength) ||
-                  ($v.password.$dirty && !$v.password.required),
-              }"
-              required
-            />
-            <br />
-            <h6>Повторите пароль</h6>
-            <input
-              v-model="UserData.pass2"
-              type="password"
-              class="form-control textInput"
-              required
-            />
-          </div>
-          <div class="card-footer">
-            <router-link to="/home">
-              <button class="btn btn-dark btnMain" @click="RegisterFunc">
-                начать
-              </button>
-            </router-link>
-          </div>
+  <div>
+    <img src="@/static/login.gif" class="imgLogin" />
+    <div class="card">
+      <div class="card-header">
+        <h5>Вход</h5>
+      </div>
+      <div class="card-body">
+        <h6>Имя пользователя</h6>
+        <input
+          v-model="username"
+          type="name"
+          class="form-control textInput"
+          :class="{
+            'is-invalid':
+              $v.username.$dirty &&
+              (!$v.username.required ||
+                !$v.username.maxLength ||
+                !$v.username.minLength),
+          }"
+        />
+        <div v-show="$v.username.$invalid" class="invalid-feedback">
+          ой, похоже, здесь что-то не так:
+        </div>
+        <div v-show="!$v.username.required" class="invalid-feedback">
+          * это обязательное поле
+        </div>
+        <div v-show="!$v.username.maxLength" class="invalid-feedback">
+          * максимальная длина {{ $v.username.$params.maxLength.max }}
+        </div>
+        <div v-show="!$v.username.minLength" class="invalid-feedback">
+          * минимальная длина {{ $v.username.$params.minLength.min }}
+        </div>
+        <br />
+        <h6>Пароль</h6>
+        <input
+          v-model.trim="password"
+          type="password"
+          class="form-control textInput"
+          :class="{
+            'is-invalid':
+              $v.password.$dirty &&
+              (!$v.password.required || !$v.password.minLength),
+          }"
+        />
+        <div v-show="$v.password.$invalid" class="invalid-feedback">
+          ой, похоже, здесь что-то не так:
+        </div>
+        <div v-show="!$v.password.required" class="invalid-feedback">
+          * это обязательное поле
+        </div>
+        <div v-show="!$v.password.minLength" class="invalid-feedback">
+          * минимальная длина {{ $v.password.$params.minLength.min }}
         </div>
       </div>
-      <div class="tab-pane fade show active" id="login" role="tabpanel">
-        <div class="card">
-          <div class="card-header">
-            <h5>Вход</h5>
-          </div>
-          <div class="card-body">
-            <h6>Имя пользователя</h6>
-            <input
-              v-model="UserData.username"
-              type="name"
-              class="form-control textInput"
-            />
-            <br />
-            <h6>Пароль</h6>
-            <input
-              v-model="UserData.pass1"
-              type="password"
-              class="form-control textInput"
-            />
-          </div>
-          <div class="card-footer">
-            <router-link to="/home">
-              <button class="btn btn-dark btnMain" @click="LoginFunc">
-                войти
-              </button>
-            </router-link>
-          </div>
-        </div>
+      <div class="card-footer">
+        <router-link to="/home">
+          <button class="btn btnMain" @click="LoginFunc">
+            войти
+          </button>
+        </router-link>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { email, required, minLength } from "vuelidate/lib/validators";
+import { required, minLength, maxLength } from "vuelidate/lib/validators";
 
 export default {
   data: function() {
     return {
-      UserData: {
-        username: "",
-        pass1: "",
-        pass2: "",
-      },
-      RegistrationData: {
-        username: "",
-        password: "",
-      },
-      LoginData: {
-        username: "",
-        password: "",
-      },
-
-      email: "",
+      username: "",
       password: "",
     };
   },
   validations: {
-    email: { email, required },
+    username: { required, maxLength: maxLength(50), minLength: minLength(3) },
     password: { required, minLength: minLength(6) },
   },
   methods: {
     LoginFunc() {
-      this.LoginData.username = this.UserData.username;
-      this.LoginData.password = this.UserData.pass1;
+      if (this.$v.$invalid) {
+        this.$v.$touch();
+        return;
+      }
+
+      let loginData = {
+        username: this.username,
+        password: this.password,
+      };
 
       let domain = this.$store.getters.getDomain;
 
       axios
-        .post(`${domain}/api/v1/auth_token/token/login`, this.LoginData)
+        .post(`${domain}/api/v1/auth_token/token/login`, loginData)
         .then((response) => {
           let token = response.data.auth_token;
 
@@ -168,41 +115,49 @@ export default {
       //   .then(() => {
       //     this.LoginFunc();
       //   });
-
-      this.$v.email.$touch();
-      this.$v.password.$touch();
     },
   },
 };
 </script>
 
 <style scoped>
+.imgLogin {
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 110%;
+}
+
 .btn {
-  float: right;
+  position: relative;
+  width: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 5px 15px 5px 15px;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  transition: 0.2s all;
+}
+.btn:hover {
+  color: white;
+  background-color: rgba(0, 0, 0, 0.9);
 }
 
 .card {
-  width: 40%;
+  position: absolute;
+  width: 25%;
+  top: 28%;
   left: 50%;
   transform: translateX(-50%);
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.7);
+  border-radius: 7px 30px 7px 30px;
 }
-
-.nav-tabs {
-  margin-bottom: 2%;
-  border: none;
+.card-header {
+  border-radius: 7px 30px 0 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 0, 0, 0.6);
 }
-
-.login-tab {
-  position: relative;
-  display: inline;
-  margin-right: 2%;
-  font-size: 25px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
-  text-shadow: -2px 2px 3px rgba(0, 0, 0, 0.5);
-  text-decoration: none;
-}
-.login-tab:hover {
-  color: rgba(255, 255, 255, 1);
+.card-footer {
+  border-radius: 0 30px 7px 30px;
 }
 </style>

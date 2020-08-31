@@ -8,7 +8,7 @@ import datetime
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    username = models.TextField(max_length=500)
+    username = models.TextField(max_length=50)
     bio = models.TextField(max_length=3000, blank=True, default="Описание профиля")
     status = models.TextField(max_length=500, blank=True)
     avatar = models.ImageField(blank=True, upload_to='profile_avatars/', default="http://127.0.0.1:8000/media/profile_avatars/default_avatar.png")
