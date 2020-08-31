@@ -55,8 +55,10 @@
       </div>
       <div class="card-footer">
         <router-link to="/home">
-          <button class="btn btnMain" @click="LoginFunc">
-            войти
+          <button class="btn btnMain" @click="LoginFunc" :disabled="loading">
+            <span v-show="!loading">войти</span>
+            <div v-show="loading" class="spinner-border" role="status">
+            </div>
           </button>
         </router-link>
       </div>
@@ -70,6 +72,8 @@ import { required, minLength, maxLength } from "vuelidate/lib/validators";
 export default {
   data: function() {
     return {
+      loading: false,
+
       username: "",
       password: "",
     };
@@ -80,6 +84,8 @@ export default {
   },
   methods: {
     LoginFunc() {
+      this.loading = true;
+
       if (this.$v.$invalid) {
         this.$v.$touch();
         return;
@@ -101,6 +107,9 @@ export default {
           localStorage.setItem("token", token);
           this.$store.dispatch("addUserData", token);
           this.$store.commit("setAuth", true);
+
+          this.$router.push("/home");
+          this.loading = false;
         });
     },
     RegisterFunc() {
@@ -121,6 +130,10 @@ export default {
 </script>
 
 <style scoped>
+.spinner-border {
+
+}
+
 .imgLogin {
   position: absolute;
   z-index: -1;
