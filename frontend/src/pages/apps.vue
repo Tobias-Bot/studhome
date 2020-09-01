@@ -22,9 +22,25 @@
       </div>
       <template v-if="currentApp.length">
         <div class="col">
-          <iframe :src="currentApp" align="center">
-            Ваш браузер не поддерживает плавающие фреймы :(
-          </iframe>
+          <div v-show="loading" class="appWindow">
+            <div class="loading">
+              <div class="spinner-border" role="status"></div>
+              <br />
+              <span class="loadingText">секундочку...</span>
+            </div>
+          </div>
+          <div v-show="!loading">
+            <iframe
+              :src="currentApp"
+              class="appWindow"
+              align="center"
+              loading="lazy"
+              ref="frame"
+              @load="loading = false"
+            >
+              Ваш браузер не поддерживает плавающие фреймы :(
+            </iframe>
+          </div>
         </div>
         <div class="col-1 appsOptions">
           <div class="btnApp" title="закрыть приложение" @click="closeApp">
@@ -42,13 +58,17 @@ export default {
   data: function() {
     return {
       currentApp: "",
+
+      loading: true,
     };
   },
   methods: {
     setCurrentApp(url) {
+      this.loading = true;
       this.currentApp = url;
     },
     closeApp() {
+      this.loading = true;
       this.currentApp = "";
     },
   },
@@ -56,9 +76,10 @@ export default {
 </script>
 
 <style scoped>
-iframe {
+.appWindow {
   width: 100%;
   height: 91vh;
+  overflow: hidden;
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 6px;
   border: 2px solid rgba(0, 0, 0, 0.4);
@@ -104,5 +125,11 @@ iframe {
 
 .appsOptions {
   max-width: 3%;
+}
+
+.spinner-border {
+  width: 5rem;
+  height: 5rem;
+  color: white;
 }
 </style>
