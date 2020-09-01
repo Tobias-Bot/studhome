@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-1">
+      <div class="col-1" style="max-width: 3%;">
         <div class="btn-group-vertical btn-group-sm" role="group">
           <router-link
             active-class="btn btn-active"
@@ -42,19 +42,31 @@
         </div>
       </div>
       <div class="col">
-        <router-view></router-view>
+        <iframe src="http://192.168.1.57:8081" align="center">
+          Ваш браузер не поддерживает плавающие фреймы :(
+        </iframe>
       </div>
+      <div class="col-1" style="max-width: 3%;"></div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "apps"
+  name: "apps",
 };
 </script>
 
 <style scoped>
+iframe {
+  width: 100%;
+  height: 91vh;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  border: 2px solid rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 20px rgba(0, 0, 0, 0.7);
+}
+
 .row {
   position: relative;
   top: 70px;

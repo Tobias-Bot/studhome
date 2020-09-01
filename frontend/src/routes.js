@@ -8,7 +8,6 @@ import bookmarks from "./pages/home/bookmarks";
 import settings from "./pages/home/settings";
 
 import apps from "./pages/apps";
-import TextEditor from "./pages/apps/TextEditor"
 
 import news from "./pages/news";
 import all_posts from "./pages/news/pages/all_posts";
@@ -102,13 +101,6 @@ const router = new VueRouter({
       name: "apps",
       path: "/apps",
       component: apps,
-      children: [
-        {
-          name: "text",
-          path: "text",
-          component: TextEditor,
-        },
-      ]
     },
     {
       name: "news",
