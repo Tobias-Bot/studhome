@@ -68,18 +68,18 @@
           </li> -->
           <li class="nav-item">
             <div class="OptionalMainBtns">
-              <router-link tag="span" class="smallBtn" to="/bookmarks">
+              <router-link tag="div" class="smallBtn" to="/bookmarks">
                 <i class="far fa-bookmark"></i>
               </router-link>
-              <div>
-                <i
-                  class="far fa-user-circle smallBtn"
-                  @mouseover="isProfileSection = true"
-                  @mouseout="isProfileSection = false"
-                ></i>
+              <div
+                class="smallBtn"
+                @mouseover="isProfileSection = true"
+                @mouseout="isProfileSection = false"
+              >
+                <i class="far fa-user-circle"></i>
                 <div v-show="isProfileSection" class="slider">
                   <router-link
-                  tag="span"
+                    tag="span"
                     :to="{
                       name: 'profile',
                       params: { username },
@@ -90,7 +90,6 @@
                       профиль
                     </span>
                   </router-link>
-                  <hr />
                   <router-link tag="span" to="/settings">
                     <span class="btnInSlider">
                       <i class="fas fa-sliders-h"></i>
@@ -204,12 +203,12 @@ export default {
 .btnInWritingSection {
   width: 50px;
   height: 50px;
+  display: block;
   position: relative;
   left: 50%;
   transform: translateX(-50%);
   margin: 20% 0 20% 0;
   padding-top: 10%;
-  display: block;
   border-radius: 100px;
   border: 2px solid white;
   background-color: white;

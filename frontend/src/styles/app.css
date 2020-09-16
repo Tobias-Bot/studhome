@@ -145,25 +145,38 @@ body {
 
 .smallBtn {
   color: black;
+  display: inline-block;
   margin-left: 20px;
 }
 
 .slider {
-  width: 100%;
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  display: block;
   z-index: 5;
-  padding-top: 1%;
+  padding: 15px 10px 10px 10px;
   background: white;
+  border-radius: 8px;
+  text-align: center;
+  margin: 1px 0 0 0;
+  font-size: 16px;
+  font-weight: 500;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6);
 }
 
 .btnInSlider {
   width: 100%;
+  display: block;
+  margin-top: 8px;
   border: 1px solid rgba(0, 0, 0, 0.8);
   border-radius: 10px;
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
   padding: 1px 3px 1px 3px;
+  transition: 0.1s all;
+}
+.btnInSlider:hover {
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
 }
 
 .MainTabs {

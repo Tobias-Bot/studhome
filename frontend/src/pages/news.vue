@@ -141,7 +141,7 @@ export default {
   z-index: 5;
   padding: 12% 6% 3% 6%;
   background: white;
-  border-radius: 2px 2px 5px 5px;
+  border-radius: 8px;
   color: white;
   text-align: center;
   margin: 4% 0 0 0;
