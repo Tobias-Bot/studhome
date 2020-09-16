@@ -116,6 +116,7 @@ body {
 
 .WriteBtn {
   width: 65px;
+  display: inline-block;
   text-align: center;
   box-shadow: 2px 1px rgba(0, 0, 0, 0.8);
   color: rgba(0, 0, 0, 0.9);
@@ -130,6 +131,39 @@ body {
   box-shadow: 2px 2px 7px black;
   color: white;
   background-color: rgba(0, 0, 0, 0.9);
+}
+
+.OptionalMainBtns {
+  display: inline-block;
+  font-size: 22px;
+  text-align: center;
+  margin-right: 25px;
+}
+.OptionalMainBtns:hover {
+  cursor: pointer;
+}
+
+.smallBtn {
+  color: black;
+  margin-left: 20px;
+}
+
+.slider {
+  width: 100%;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  padding-top: 1%;
+  background: white;
+}
+
+.btnInSlider {
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
+  padding: 1px 3px 1px 3px;
 }
 
 .MainTabs {

@@ -16,21 +16,11 @@
           <router-link
             active-class="btn btn-active"
             class="btn btn-light"
-            to="/home"
+            to="/search"
           >
             <span class="MainTabs">
-              <i class="fas fa-home"></i>
-              <span>домой</span>
-            </span>
-          </router-link>
-          <router-link
-            active-class="btn btn-active"
-            class="btn btn-light"
-            to="/apps"
-          >
-            <span class="MainTabs">
-              <i class="fas fa-shapes"></i>
-              <span>приложения</span>
+              <i class="fas fa-compass"></i>
+              <span style="margin-left: 3px;">поиск</span>
             </span>
           </router-link>
           <router-link
@@ -40,17 +30,27 @@
           >
             <span class="MainTabs">
               <i class="fas fa-newspaper"></i>
-              <span>публикации</span>
+              <span style="margin-left: 3px;">публикации</span>
             </span>
           </router-link>
           <router-link
             active-class="btn btn-active"
             class="btn btn-light"
-            to="/search"
+            to="/apps"
           >
             <span class="MainTabs">
-              <i class="fas fa-compass"></i>
-              <span>поиск</span>
+              <i class="fas fa-shapes"></i>
+              <span style="margin-left: 3px;">приложения</span>
+            </span>
+          </router-link>
+          <router-link
+            active-class="btn btn-active"
+            class="btn btn-light"
+            to="/rooms"
+          >
+            <span class="MainTabs">
+              <i class="fas fa-home"></i>
+              <span style="margin-left: 3px;">моя комната</span>
             </span>
           </router-link>
         </div>
@@ -67,6 +67,39 @@
             </h4>
           </li> -->
           <li class="nav-item">
+            <div class="OptionalMainBtns">
+              <router-link tag="span" class="smallBtn" to="/bookmarks">
+                <i class="far fa-bookmark"></i>
+              </router-link>
+              <div>
+                <i
+                  class="far fa-user-circle smallBtn"
+                  @mouseover="isProfileSection = true"
+                  @mouseout="isProfileSection = false"
+                ></i>
+                <div v-show="isProfileSection" class="slider">
+                  <router-link
+                  tag="span"
+                    :to="{
+                      name: 'profile',
+                      params: { username },
+                    }"
+                  >
+                    <span class="btnInSlider">
+                      <i class="fas fa-user"></i>
+                      профиль
+                    </span>
+                  </router-link>
+                  <hr />
+                  <router-link tag="span" to="/settings">
+                    <span class="btnInSlider">
+                      <i class="fas fa-sliders-h"></i>
+                      настройки
+                    </span>
+                  </router-link>
+                </div>
+              </div>
+            </div>
             <div
               class="WriteBtn"
               @mouseover="isWritingSection = true"
@@ -102,9 +135,8 @@ export default {
   name: "App",
   data() {
     return {
-      msgOpen: false,
-
       isWritingSection: false,
+      isProfileSection: false,
     };
   },
   methods: {},
@@ -136,6 +168,9 @@ export default {
     },
     IsAuthorized() {
       return this.$store.getters.getAuth;
+    },
+    username() {
+      return this.$store.getters.getUserData.username;
     },
   },
 };
