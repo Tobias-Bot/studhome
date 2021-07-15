@@ -2,13 +2,9 @@
   <span
     class="dropdown-item"
     :class="isSelected ? markSelected : mark"
-    @click="
-      updatePostMark(name);
-      $emit('addMark');
-    "
+    @click="updatePostMark(name); $emit('addMark')"
+    >{{ name }}</span
   >
-    {{ name }}
-  </span>
 </template>
 
 <script>
@@ -16,6 +12,7 @@ export default {
   props: ["name"],
   data: function() {
     return {
+
       markSelected: "markSelected",
       mark: "mark"
     };
@@ -23,9 +20,9 @@ export default {
   computed: {
     isSelected() {
       let marks = this.$store.getters.getCreatedPostMarks.join("|");
-      if (~marks.indexOf(this.name)) return true;
+      if (~marks.indexOf(this.name)) return true
       else return false;
-    },
+    }
   },
   methods: {
     updatePostMark(name) {
@@ -46,7 +43,7 @@ export default {
   left: 50%;
   margin: 3.5% 0 3.5% 0;
   transform: translateX(-50%);
-  border-radius: 50px 15px 15px 50px;
+  border-radius: 50px;
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.3);
   font-size: 18px;
   font-weight: 500;
@@ -67,7 +64,7 @@ export default {
   transform: translateX(-50%);
   margin: 3.5% 0 3.5% 0;
   box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.4);
-  border-radius: 50px 15px 15px 50px;
+  border-radius: 50px;
   font-size: 18px;
   font-weight: 500;
   text-align: center;

@@ -16,7 +16,7 @@
       <span v-show="!tags.length" class="hint"
         >вы не добавили ни одного тега</span
       >
-      <span v-for="(tag, index) in tags" :key="index" class="tag">
+      <span v-for="(tag, index) in tags" class="tag">
         {{ tag }}
         <i
           class="fas fa-times-circle"
@@ -38,9 +38,11 @@ export default {
       spaces: 0,
     };
   },
+  computed: {},
   methods: {
     addPostTag() {
       let tag = this.PostTag;
+      var vm = this;
       
       if (tag && tag !== " ") {
 

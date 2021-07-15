@@ -19,7 +19,6 @@
 </template>
 
 <script>
-
 export default {
   name: "account",
   data() {
@@ -28,7 +27,7 @@ export default {
   computed: {
     username() {
       return this.$store.getters.getUserData.username;
-    },
+    }
   },
   methods: {
     LogoutFunc() {
@@ -36,9 +35,9 @@ export default {
 
       axios
         .options("/api/v1/auth_token/token/logout", {
-          headers: { Authorization: "Token " + token },
+          headers: { Authorization: "Token " + token }
         })
-        .then(() => {
+        .then(response => {
           this.$store.commit("setToken", "");
           this.$store.commit("setAuth", false);
           localStorage.removeItem("token");
@@ -48,9 +47,9 @@ export default {
         });
     },
     DropStorage(objstore) {
-      this.$store.dispatch("DropStorage", objstore);
-    },
-  },
+      this.$store.dispatch('DropStorage', objstore);
+    }
+  }
 };
 </script>
 

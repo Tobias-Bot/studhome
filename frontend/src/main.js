@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import Vuelidate from 'vuelidate'
 import store from './store'
 import App from './App.vue'
 import VueRouter from 'vue-router'
@@ -11,7 +10,6 @@ import router from './routes'
 import './styles/app.css';
 
 Vue.use(VueRouter);
-Vue.use(Vuelidate);
 
 // Vue.component('home', home)
 // Vue.component('news', news)
@@ -19,6 +17,6 @@ Vue.use(Vuelidate);
 new Vue({
   el: '#app',
   store,
-  router,
   render: h => h(App),
+  router,
 })

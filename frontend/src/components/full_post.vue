@@ -17,9 +17,7 @@
               class="username"
               style="text-align: center;"
               :to="{ name: 'profile', params: { username: CurrPost.username } }"
-              ><h5 @click="loadProfile">
-                {{ CurrPost.username }}
-              </h5></router-link
+              ><h5>{{ CurrPost.username }}</h5></router-link
             >
             <template v-if="CurrPost.username !== UserData.username">
               <button
@@ -43,7 +41,6 @@
             </template>
             <template v-else>
               <router-link
-                v-if="isEditable"
                 :to="{
                   name: 'CreatePost',
                   params: { editMode: true, post: CurrPost }
@@ -108,14 +105,14 @@
             </div>
             <template v-if="CurrPost.images">
               <template v-if="CurrPost.images.length <= 3">
-                <template v-for="(img, i) in CurrPost.images">
-                  <pic :item="img" :key="i" :username="CurrPost.username"></pic>
+                <template v-for="img in CurrPost.images">
+                  <pic :item="img" :username="CurrPost.username"></pic>
                 </template>
               </template>
               <template v-else>
                 <div class="card-columns">
-                  <template v-for="(img, i) in CurrPost.images">
-                    <pic :item="img" :key="i" :username="CurrPost.username"></pic>
+                  <template v-for="img in CurrPost.images">
+                    <pic :item="img" :username="CurrPost.username"></pic>
                   </template>
                 </div>
               </template>
@@ -199,6 +196,7 @@ import comment from "./comment";
 import SharePanel from "./SharePanel";
 import pic from "./pic";
 import tag from "./tag";
+import scrollbar from "./scrollbar";
 
 var Cookies = localStorage;
 var token = Cookies.getItem("token");
@@ -208,7 +206,8 @@ export default {
     comment,
     SharePanel,
     pic,
-    tag
+    tag,
+    scrollbar
   },
   data: function() {
     return {
@@ -235,16 +234,12 @@ export default {
       return this.$store.getters.getCurrentComms;
     },
     tags() {
-      let result = '';
-
       if (this.CurrPost.tags) {
         let tags = this.CurrPost.tags.split("|");
         tags.splice(0, 1);
         tags.splice(tags.length - 1, 1);
-        if (tags.length > 1) return result = tags;
+        if (tags.length > 1) return tags;
       }
-
-      return result
     },
     getDate() {
       let date = new Date();
@@ -260,54 +255,35 @@ export default {
       return result;
     },
     PostDate() {
-      let date = '';
-
       if (this.CurrPost.date) {
-        date = this.CurrPost.date
+        let date = this.CurrPost.date
           .substring(0, 10)
           .split("-")
           .reverse()
           .join(".");
-      }
 
-      return date;
+        return date;
+      }
     },
     PostTime() {
-      let date = '';
-
       if (this.CurrPost.date) {
-        date = this.CurrPost.date.substring(11, 16);
+        let date = this.CurrPost.date.substring(11, 16);
+        return date;
       }
-
-      return date;
     },
     inUserSubs() {
       let names = this.$store.getters.getUserProfile.subs_profiles;
       if (names && names.indexOf(this.CurrPost.username) == -1) return false;
       else return true;
-    },
-    isEditable() {
-      let day = parseInt(this.PostDate.substring(0, 2));
-      let month = parseInt(this.PostDate.substring(3, 5));
-      let year = parseInt(this.PostDate.substring(6, 10));
-      let date = new Date();
-      let result = true;
-
-      if (
-        date.getDate() - day >= 1 ||
-        date.getMonth() + 1 - month >= 1 ||
-        date.getFullYear() - year >= 1
-      ) {
-        result = false;
-      }
-
-      return result;
     }
   },
   created() {
     let posts = this.$store.getters.getPosts;
     let myNewsPosts = this.$store.getters.getMyNewsPosts;
     let userPosts = this.$store.getters.getUserPosts;
+    let popularPosts = this.$store.getters.getPopularPosts;
+    let textPosts = this.$store.getters.getTextPosts;
+    let photoPosts = this.$store.getters.getPhotoPosts;
     let searchPosts = this.$store.getters.getSearchPost;
     let post_id = this.$route.params.post_id;
     let post = this.$route.params.post;
@@ -317,16 +293,17 @@ export default {
       (posts.length ||
         userPosts.length ||
         myNewsPosts.length ||
-        searchPosts.length)
+        popularPosts.length ||
+        textPosts.length ||
+        searchPosts.length ||
+        photoPosts.length)
     ) {
       this.$store.commit("setCurrentPost", post);
       this.CommentsLoader(post_id);
     } else {
-      if (!post && !this.CurrPost.id) {
-        let domain = this.$store.getters.getDomain;
-
+      if (!post && !this.CurrPost.id)
         axios
-          .get(`${domain}/api/v1/news/post/${post_id}/`, {
+          .get("http://127.0.0.1:8000/api/v1/news/post/" + post_id + "/", {
             headers: { Authorization: "Token " + token }
           })
           .then(response => {
@@ -337,7 +314,6 @@ export default {
           .catch(function(e) {
             console.log(e);
           });
-      }
     }
   },
   methods: {
@@ -380,11 +356,6 @@ export default {
       };
 
       this.$store.dispatch("deleteUserProfileFromSubs", data);
-    },
-    loadProfile() {
-      this.$store.commit("dropUserPosts");
-      this.$store.commit("dropUserSubs");
-      this.$store.commit("setProfileTab", "description");
     }
   }
 };

@@ -8,7 +8,7 @@
       role="dialog"
       aria-hidden="true"
     >
-      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+      <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h4>Редактирование профиля</h4>
@@ -97,30 +97,34 @@
         <template v-if="profile.username == username">
           <div
             class="btnProfileTools"
-            title="редактировать профиль"
             data-toggle="modal"
             data-target="#profileModal"
             @click="loadUserInterests"
           >
             <i class="far fa-edit"></i>
+            ред.
           </div>
         </template>
         <template v-else>
+          <div class="btnProfileTools">
+            <i class="far fa-heart"></i>
+            лайк
+          </div>
           <div
             v-if="!inUserSubs"
             class="btnProfileTools"
-            title="подписаться"
             @click="Subscribe(profile.username, username)"
           >
-            <i class="fas fa-plus-circle"></i>
+            <i class="far fa-heart"></i>
+            читать
           </div>
           <div
             v-else
             class="btnProfileTools"
-            title="отписаться"
             @click="unSubscribe(profile.username, username)"
           >
-            <i class="far fa-times-circle"></i>
+            <i class="far fa-heart"></i>
+            отписаться
           </div>
         </template>
       </div>
@@ -236,7 +240,7 @@ export default {
       openRequest.onsuccess = function() {
         var DB = openRequest.result;
 
-        DB.transaction("profile", "readwrite")
+        let ob = DB.transaction("profile", "readwrite")
           .objectStore("profile")
           .put(obj, "userprofile");
       };
@@ -275,7 +279,7 @@ export default {
   transform: translateX(-50%);
   text-align: center;
   text-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
-  font-size: 40px;
+  font-size: 25px;
   font-weight: 500;
   border-radius: 5px;
   transition: 0.1s all;
@@ -300,10 +304,9 @@ export default {
   padding: 2% 2% 2% 2%;
 }
 
-.modal-dialog {
+.modal-dialog-centered {
   position: absolute;
-  width: 40%;
-  right: 2%;
-  top: 5%;
+  width: 35%;
+  right: 1%;
 }
 </style>

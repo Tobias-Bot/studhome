@@ -1,24 +1,21 @@
 <template>
-  <div class="card" :id="'post-' + post_index">
+  <div class="card">
     <div class="card-header">
       <router-link
-        style="text-decoration: none;"
+        class="username"
         :to="{ name: 'profile', params: { username: post.username } }"
+        >{{ post.username }}</router-link
       >
-        <span class="username" @click="LoadProfile()">{{ post.username }}</span>
-      </router-link>
       <template v-if="post.username !== UserData.username">
         <span
           v-if="!inUserSubs"
           class="btnSubscribe"
-          title="подписаться"
           @click="Subscribe(post.username, UserData.username)"
           ><i class="fas fa-plus-circle"></i
         ></span>
         <span
           v-else
           class="btnSubscribe"
-          title="отписаться"
           @click="unSubscribe(post.username, UserData.username)"
           ><i class="far fa-times-circle"></i
         ></span>
@@ -28,7 +25,7 @@
           <router-link
             :to="{
               name: 'post',
-              params: { post_id: post.id, post: post, post_index: post_index },
+              params: { post_id: post.id, post: post, post_index: post_index }
             }"
             style="text-decoration: none; color: white; font-weight: 500;"
           >
@@ -38,17 +35,14 @@
           </router-link>
           <template v-if="post.user === UserData.id">
             <router-link
-              v-if="isEditable"
               :to="{ name: 'CreatePost', params: { editMode: true, post } }"
               type="button"
-              title="редактировать"
               class="btn btn-light btn-sm"
             >
               <i class="fas fa-edit"></i>
             </router-link>
             <button
               type="button"
-              title="удалить пост"
               class="btn btn-light btn-sm"
               @click="DeletePost(post_index, post.id, topic)"
             >
@@ -59,7 +53,6 @@
             <button
               type="button"
               class="btn btn-light btn-sm"
-              title="добавить в закладки"
               @click="
                 !inUserBookmarks ? addToBookmarks() : deleteFromBookmarks()
               "
@@ -89,15 +82,14 @@
       </template>
       <template v-if="post.tags.length > 2">
         <hr />
-        <template v-for="(tag, index) in tags">
-          <tag
-            v-if="index < TagsViewCount"
-            :key="index"
-            :text="tag"
-            :textColor="post.text_color"
-            :noteColor="post.note_color"
-          ></tag>
-        </template>
+        <tag
+          v-for="(tag, index) in tags"
+          v-if="index < TagsViewCount"
+          :key="index"
+          :text="tag"
+          :textColor="post.text_color"
+          :noteColor="post.note_color"
+        ></tag>
       </template>
     </div>
     <div class="card-footer">
@@ -118,7 +110,7 @@ export default {
     tag,
     SharePanel,
     pic,
-    NoteText,
+    NoteText
   },
   props: ["post", "post_index", "topic"],
   data: function() {
@@ -131,9 +123,7 @@ export default {
       return this.$store.getters.getUserData;
     },
     tags() {
-      let tags = this.post.tags
-        .substring(1, this.post.tags.length - 1)
-        .split("|");
+      let tags = this.post.tags.substring(1, this.post.tags.length - 1).split("|");
       return tags;
     },
     inUserSubs() {
@@ -151,45 +141,11 @@ export default {
       }
 
       return result;
-    },
-    PostDate() {
-      let date = "";
-
-      if (this.post.date) {
-        date = this.post.date
-          .substring(0, 10)
-          .split("-")
-          .reverse()
-          .join(".");
-      }
-
-      return date;
-    },
-    isEditable() {
-      let day = parseInt(this.PostDate.substring(0, 2));
-      let month = parseInt(this.PostDate.substring(3, 5));
-      let year = parseInt(this.PostDate.substring(6, 10));
-      let date = new Date();
-      let result = true;
-
-      if (
-        date.getDate() - day > 0 ||
-        date.getMonth() + 1 - month > 0 ||
-        date.getFullYear() - year > 0
-      ) {
-        result = false;
-      }
-
-      return result;
-    },
+    }
   },
   methods: {
     DeletePost(post_index, post_id, topic) {
-      this.$store.dispatch("deletePostFromServer", {
-        post_index,
-        post_id,
-        topic,
-      });
+      this.$store.dispatch("deletePostFromServer", { post_index, post_id, topic });
     },
     Subscribe(sub_user, username) {
       let token = localStorage.getItem("token");
@@ -197,7 +153,7 @@ export default {
       let data = {
         token,
         q: sub_user,
-        me: username,
+        me: username
       };
 
       this.$store.dispatch("addUserProfileInSubs", data);
@@ -208,7 +164,7 @@ export default {
       let data = {
         token,
         q: sub_user,
-        me: username,
+        me: username
       };
 
       this.$store.dispatch("deleteUserProfileFromSubs", data);
@@ -217,12 +173,14 @@ export default {
       let token = localStorage.getItem("token");
       let username = this.UserData.username;
       let post_id = this.post.id;
-      let domain = this.$store.getters.getDomain;
 
       axios.get(
-        `${domain}/api/v1/news/post/bookmarks_add/?q=${post_id}&me=${username}`,
+        "http://127.0.0.1:8000/api/v1/news/post/bookmarks_add/?q=" +
+          post_id +
+          "&me=" +
+          username,
         {
-          headers: { Authorization: "Token " + token },
+          headers: { Authorization: "Token " + token }
         }
       );
 
@@ -257,13 +215,15 @@ export default {
       let username = this.UserData.username;
       let post_id = this.post.id;
       let MarkedPosts = this.$store.getters.getUserBookmarks;
-      let domain = this.$store.getters.getDomain;
 
       axios
         .get(
-          `${domain}/api/v1/news/post/bookmarks_delete/?q=${post_id}&me=${username}`,
+          "http://127.0.0.1:8000/api/v1/news/post/bookmarks_delete/?q=" +
+            post_id +
+            "&me=" +
+            username,
           {
-            headers: { Authorization: "Token " + token },
+            headers: { Authorization: "Token " + token }
           }
         )
         .then(() => {
@@ -284,26 +244,42 @@ export default {
         });
     },
     addUserView(post_id) {
-      let post_index = this.post_index;
-      let data = {
-        post_id,
-        post_index,
-      };
+      let token = localStorage.getItem("token");
 
-      this.$store.dispatch("addUserView", data);
-    },
-    LoadProfile() {
-      this.$store.commit("dropUserPosts");
-      this.$store.commit("dropUserSubs");
-      this.$store.commit("setProfileTab", "description");
-    },
-  },
+      axios
+        .get(
+          "http://127.0.0.1:8000/api/v1/news/post_views_update/" +
+            post_id +
+            "/",
+          {
+            headers: {
+              Authorization: "Token " + token
+            }
+          }
+        )
+        .catch(function(e) {
+          console.log(e);
+        });
+    }
+  }
 };
 </script>
 
 <style scoped>
 .card {
-  margin-bottom: 8%;
+  margin-bottom: 5%;
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.btnSubscribe {
+  position: relative;
+  display: inline-block;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+}
+.btnSubscribe:hover {
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.8);
 }
 
 .post_header {

@@ -18,18 +18,7 @@ export default {
   computed: {},
   methods: {
     loadPostsByTag() {
-      let top = 0;
-      let bottom = top + 10;
-
-      let data = {
-        top,
-        bottom,
-      };
-
-      data.text = this.text;
-
-      this.$store.commit("setSearchTag", data.text);
-      this.$store.dispatch("FindData", data);
+      this.$store.dispatch("FindData", "|" + this.text + "|");
     }
   }
 };

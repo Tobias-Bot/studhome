@@ -1,7 +1,6 @@
 export default {
   state: {
     currentProfile: {},
-    currentProfileTab: 'description',
     userProfile: {},
     settings: {},
     userPosts: [],
@@ -12,9 +11,6 @@ export default {
     ImgBlur: 0,
   },
   getters: {
-    getProfileTab(state) {
-      return state.currentProfileTab;
-    },
     getImgBlur(state) {
       return state.ImgBlur;
     },
@@ -44,9 +40,6 @@ export default {
     }
   },
   mutations: {
-    setProfileTab(state, payload) {
-      state.currentProfileTab = payload;
-    },
     setFoundProfiles(state, payload) {
       state.foundProfiles = payload;
     },
@@ -76,12 +69,7 @@ export default {
       state.userProfile = payload;
     },
     setUserPosts(state, payload) {
-      if (!payload.top) {
-        let len = state.userPosts.length;
-        state.userPosts.splice(0, len);
-      }
-
-      state.userPosts = state.userPosts.concat(payload.posts);
+      state.userPosts = payload;
     },
     dropUserPosts(state) {
       state.userPosts.splice(0, state.userPosts.length);
@@ -98,11 +86,12 @@ export default {
   },
   actions: {
     addUserProfileInSubs(context, data) {
-      let domain = context.getters.getDomain;
-
       axios
         .get(
-          `${domain}/api/v1/news/subscribe/?q=${data.q}&me=${data.me}`,
+          "http://127.0.0.1:8000/api/v1/news/subscribe/?q=" +
+            data.q +
+            "&me=" +
+            data.me,
           {
             headers: { Authorization: "Token " + data.token }
           }
@@ -120,11 +109,12 @@ export default {
         });
     },
     deleteUserProfileFromSubs(context, data) {
-      let domain = context.getters.getDomain;
-
       axios
         .get(
-          `${domain}/api/v1/news/unsubscribe/?q=${data.q}&me=${data.me}`,
+          "http://127.0.0.1:8000/api/v1/news/unsubscribe/?q=" +
+            data.q +
+            "&me=" +
+            data.me,
           {
             headers: { Authorization: "Token " + data.token }
           }
@@ -147,11 +137,10 @@ export default {
     loadBookmarksFromServer(context) {
       let token = localStorage.getItem("token");
       let username = context.getters.getUserData.username;
-      let domain = context.getters.getDomain;
 
       axios
         .get(
-          `${domain}/api/v1/news/post/bookmarks/?me=${username}`,
+          "http://127.0.0.1:8000/api/v1/news/post/bookmarks/?me=" + username,
           {
             headers: { Authorization: "Token " + token }
           }
@@ -168,10 +157,9 @@ export default {
     loadSettingsFromServer(context) {
       let token = localStorage.getItem("token");
       let user_id = context.getters.getUserData.id;
-      let domain = context.getters.getDomain;
 
       axios
-        .get(`${domain}/api/v1/home/settings_get/?q=${user_id}`, {
+        .get("http://127.0.0.1:8000/api/v1/home/settings_get/?q=" + user_id, {
           headers: { Authorization: "Token " + token }
         })
         .then(response => {
@@ -186,10 +174,9 @@ export default {
     loadUserProfileFromServer(context) {
       let token = localStorage.getItem("token");
       let username = context.getters.getUserData.username;
-      let domain = context.getters.getDomain;
 
       axios
-        .get(`${domain}/api/v1/home/profile/${username}`, {
+        .get("http://127.0.0.1:8000/api/v1/home/profile/" + username, {
           headers: { Authorization: "Token " + token }
         })
         .then(response => {
@@ -317,28 +304,6 @@ export default {
           }
         };
       };
-    },
-    LoadProfile(context, data) {
-      if (data.blog) {
-        context.commit("setCurrProfile", data.blog);
-      } else if (!data.isAdmin) {
-        let token = localStorage.getItem("token");
-        let domain = context.getters.getDomain;
-        let username = data.username;
-
-        axios
-          .get(`${domain}/api/v1/home/profile/${username}/`, {
-            headers: {
-              Authorization: "Token " + token
-            }
-          })
-          .then(response => {
-            context.commit("setCurrProfile", response.data[0]);
-          })
-          .catch(function(e) {
-            console.log(e);
-          });
-      }
     }
   }
 };

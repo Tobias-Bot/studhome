@@ -13,9 +13,7 @@ SECRET_KEY = 'hvv$*8yn2(+#_08e_vve1x5b5wpiz^3_9*5t20nbi41aqhey3*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    '192.168.1.57',
-]
+ALLOWED_HOSTS = []
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

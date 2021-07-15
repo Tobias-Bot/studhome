@@ -1,18 +1,10 @@
 <template>
-  <router-link
-    :to="{
-      name: 'AllPosts',
-      params: { topic: 'marks' }
-    }"
-    style="text-decoration: none;"
+  <div
+    :class="[selected ? postMarkSelected : postMark]"
+    @click="updatePostMarks(); PostMarksLoader();"
   >
-    <div
-      :class="[selected ? postMarkSelected : postMark]"
-      @click="updatePostMarks()"
-    >
-      {{ name }}
-    </div>
-  </router-link>
+    {{ name }}
+  </div>
 </template>
 
 <script>
@@ -21,34 +13,47 @@ export default {
   name: "postMark",
   data: function() {
     return {
+      selected: false,
+
       postMark: "postMark",
-      postMarkSelected: "postMarkSelected",
+      postMarkSelected: "postMarkSelected"
     };
   },
-  computed: {
-    selected() {
-      let tags = this.$store.getters.getPostMarks;
-      let response = false;
-
-      for (let tag of tags) {
-        if (~tag.name.indexOf(this.name)) response = true;
-      }
-
-      return response;
-    }
-  },  
   methods: {
     updatePostMarks() {
       let vm = this;
 
       if (!this.selected) {
-        this.$store.commit("addPostMark", { name: vm.name, id: vm.index });
+        this.$store.commit("addPostMark", vm.name);
       } else {
         this.$store.commit("deletePostMark", vm.index);
       }
 
-      this.$emit('loadPostsByMarks');
+      this.selected = !this.selected;
     },
+    PostMarksLoader() {
+      let marks = this.$store.getters.getPostMarks;
+
+      if (marks.length) {
+        let token = this.$store.getters.getToken;
+
+        axios
+          .get(
+            "http://127.0.0.1:8000/api/v1/news/post/marks/?q=|" +
+              marks.join("|") +
+              "|",
+            {
+              headers: { Authorization: "Token " + token }
+            }
+          )
+          .then(response => {
+            this.$store.commit("setPost", response.data);
+          })
+          .catch(function(e) {
+            console.log(e);
+          });
+      }
+    }
   }
 };
 </script>
@@ -58,11 +63,10 @@ export default {
   position: relative;
   display: block;
   padding: 0 5% 1% 5%;
-  border-radius: 20px 5px 5px 20px;
+  border-radius: 10px;
   border: 1px solid rgba(0, 0, 0, 0.8);
   margin-bottom: 7%;
   background: white;
-  font-size: 18px;
   color: rgba(0, 0, 0, 0.9);
   box-shadow: 0 2px 1.5px rgba(0, 0, 0, 0.6);
   transition: 0.1s all;
@@ -76,10 +80,9 @@ export default {
   position: relative;
   display: block;
   padding: 0 5% 1% 5%;
-  border-radius: 20px 3px 3px 20px;
+  border-radius: 10px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   margin-bottom: 7%;
-  font-size: 18px;
   background: rgba(0, 0, 0, 0.92);
   box-shadow: 0 2px 1.5px rgba(0, 0, 0, 0.6);
   color: white;

@@ -1,5 +1,5 @@
 <template>
-  <div class="box-with-tools">
+  <div class="box">
     <div class="card-columns">
       <design></design>
       <account></account>
@@ -36,7 +36,7 @@ export default {
   computed: {
     range() {
       let value = this.$store.getters.getRange;
-      () => (this.settingsState.BlackOutRange.value = value);
+      this.settingsState.BlackOutRange.value = value;
       return value;
     },
     UserData() {
@@ -60,9 +60,9 @@ export default {
       };
 
       openRequest.onsuccess = function() {
-        let DB = openRequest.result;
+        var DB = openRequest.result;
 
-        DB.transaction("settings", "readwrite")
+        let ob = DB.transaction("settings", "readwrite")
           .objectStore("settings")
           .put(obj);
       };
@@ -74,7 +74,7 @@ export default {
         .options("/api/v1/auth_token/token/logout", {
           headers: { Authorization: "Token " + token }
         })
-        .then(() => {
+        .then(response => {
           this.$store.commit("setToken", "");
           this.$store.commit("setAuth", false);
           Cookies.removeItem("token");

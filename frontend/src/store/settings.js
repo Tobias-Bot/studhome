@@ -1,7 +1,7 @@
 export default {
     state: {
         maxPictureSize: 5242880,
-        domain: 'http://192.168.1.57:8000',
+        domain: 'http://127.0.0.1:8000',
     },
     mutations: {
     },

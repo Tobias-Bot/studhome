@@ -6,51 +6,43 @@
       id="image"
       :style="'filter: blur(' + ImgBlur + 'px);'"
     />
-    <nav id="main_header" class="navbar navbar-expand-lg navbar-light">
-      <div :class="!IsAuthorized ? 'logoBlock' : ''">
-        <img src="@/static/logo.png" id="logo" />
-        <span class="navbar-brand">studhome</span>
-      </div>
+    <nav
+      id="main_header"
+      class="navbar navbar-expand-lg navbar-light"
+      :style="BGColor"
+    >
+      <img src="./static/logo.png" id="logo" />
+      <span class="navbar-brand" :style="TextColor">studhome</span>
       <template v-if="IsAuthorized">
         <div class="btn-group" role="group">
           <router-link
             active-class="btn btn-active"
-            class="btn btn-light"
-            to="/search"
-          >
-            <span class="MainTabs">
-              <i class="fas fa-compass"></i>
-              <span style="margin-left: 3px;">поиск</span>
-            </span>
-          </router-link>
-          <router-link
-            active-class="btn btn-active"
-            class="btn btn-light"
-            to="/news"
-          >
-            <span class="MainTabs">
-              <i class="fas fa-newspaper"></i>
-              <span style="margin-left: 3px;">публикации</span>
-            </span>
-          </router-link>
-          <router-link
-            active-class="btn btn-active"
-            class="btn btn-light"
-            to="/apps"
-          >
-            <span class="MainTabs">
-              <i class="fas fa-shapes"></i>
-              <span style="margin-left: 3px;">приложения</span>
-            </span>
-          </router-link>
-          <router-link
-            active-class="btn btn-active"
-            class="btn btn-light"
-            to="/rooms"
+            class="btn btn-dark"
+            to="/home"
           >
             <span class="MainTabs">
               <i class="fas fa-home"></i>
-              <span style="margin-left: 3px;">моя комната</span>
+              <span style="color: white;">домой</span>
+            </span>
+          </router-link>
+          <router-link
+            active-class="btn btn-active"
+            class="btn btn-dark"
+            to="/news"
+          >
+            <span class="MainTabs">
+              <i class="far fa-newspaper"></i>
+              <span style="color: white;">публикации</span>
+            </span>
+          </router-link>
+          <router-link
+            active-class="btn btn-active"
+            class="btn btn-dark"
+            to="/search"
+          >
+            <span class="MainTabs">
+              <i class="far fa-compass"></i>
+              <span style="color: white;">поиск</span>
             </span>
           </router-link>
         </div>
@@ -67,44 +59,13 @@
             </h4>
           </li> -->
           <li class="nav-item">
-            <div class="OptionalMainBtns">
-              <router-link tag="div" class="smallBtn" to="/bookmarks">
-                <i class="far fa-bookmark"></i>
-              </router-link>
-              <div
-                class="smallBtn"
-                @mouseover="isProfileSection = true"
-                @mouseout="isProfileSection = false"
-              >
-                <i class="far fa-user-circle"></i>
-                <div v-show="isProfileSection" class="slider">
-                  <router-link
-                    tag="span"
-                    :to="{
-                      name: 'profile',
-                      params: { username },
-                    }"
-                  >
-                    <span class="btnInSlider">
-                      <i class="fas fa-user"></i>
-                      профиль
-                    </span>
-                  </router-link>
-                  <router-link tag="span" to="/settings">
-                    <span class="btnInSlider">
-                      <i class="fas fa-sliders-h"></i>
-                      настройки
-                    </span>
-                  </router-link>
-                </div>
-              </div>
-            </div>
             <div
               class="WriteBtn"
               @mouseover="isWritingSection = true"
               @mouseout="isWritingSection = false"
             >
               <i class="fas fa-pencil-alt"></i>
+              <b>пост</b>
               <div v-show="isWritingSection" class="writeSlider">
                 <router-link
                   tag="div"
@@ -112,10 +73,20 @@
                   style="text-decoration: none;"
                   :to="{ name: 'CreatePost', params: { editMode: false } }"
                 >
-                  <i class="fas fa-file-signature"></i>
+                  <i class="far fa-file-alt"></i>
+                  1
                 </router-link>
                 <div class="btnInWritingSection">
-                  <i class="fas fa-check-square"></i>
+                  <i class="fas fa-list"></i>
+                  2
+                </div>
+                <div class="btnInWritingSection">
+                  <i class="far fa-sticky-note"></i>
+                  3
+                </div>
+                <div class="btnInWritingSection">
+                  <i class="far fa-bell"></i>
+                  4
                 </div>
               </div>
             </div>
@@ -134,8 +105,9 @@ export default {
   name: "App",
   data() {
     return {
-      isWritingSection: false,
-      isProfileSection: false,
+      msgOpen: false,
+
+      isWritingSection: false
     };
   },
   methods: {},
@@ -151,13 +123,36 @@ export default {
   computed: {
     Style() {
       return {
+        width: "100%",
+        height: "100vh",
+        position: "absolute",
         background:
           "rgba(0, 0, 0, " + this.$store.getters.getUserSettings.blackout + ")",
-        "z-index": -1,
+        "z-index": -1
       };
     },
     ImgBlur() {
       return this.$store.getters.getUserSettings.blur;
+    },
+    BGColor() {
+      return {
+        "background-color": this.ProfileColors[0]
+      };
+    },
+    TextColor() {
+      return {
+        color: this.ProfileColors[1]
+      };
+    },
+    ProfileColors() {
+      let str = this.$store.getters.getUserSettings.colors;
+      let colors = "|#FFFFFF|#323232|";
+
+      if (str) {
+        colors = str.substring(1, str.length - 1).split("|");
+      }
+
+      return colors;
     },
     picLocalUrl() {
       return this.$store.getters.getUserSettings.background;
@@ -167,26 +162,18 @@ export default {
     },
     IsAuthorized() {
       return this.$store.getters.getAuth;
-    },
-    username() {
-      return this.$store.getters.getUserData.username;
-    },
-  },
+    }
+  }
 };
 </script>
 
 <style>
-.logoBlock {
-  width: 100%;
-  text-align: center;
-}
-
 .btn-group {
   margin-left: 50px;
 }
 
 .btn-active {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .navbar-brand {
@@ -201,20 +188,18 @@ export default {
 }
 
 .btnInWritingSection {
-  width: 50px;
-  height: 50px;
-  display: block;
+  width: 60%;
   position: relative;
   left: 50%;
   transform: translateX(-50%);
   margin: 20% 0 20% 0;
-  padding-top: 10%;
+  display: block;
   border-radius: 100px;
-  border: 2px solid white;
   background-color: white;
-  color: rgba(0, 0, 0, 0.9);
-  box-shadow: 2px 5px 20px black;
-  font-size: 23px;
+  color: rgba(0, 0, 0, 0.8);
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
+  font-size: 25px;
+  font-weight: 500;
   text-align: center;
   text-decoration: none;
   transition: 0.1s all;

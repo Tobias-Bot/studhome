@@ -18,7 +18,7 @@ class Post(models.Model):
     type = models.CharField(max_length=50)
     marks = models.TextField(max_length=500, default='|', blank=True)
     language = models.CharField(max_length=100, default='ru')
-    username = models.CharField(max_length=50)
+    username = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     # note's fields
@@ -31,8 +31,6 @@ class Image(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='images')
     text = models.TextField(max_length=1500, default='')
     image = models.ImageField(blank=True, upload_to='post_images/')
-    username = models.CharField(max_length=50)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Document(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
@@ -46,7 +44,7 @@ class Comment(models.Model):
     text = models.TextField(max_length=1500)
     date = models.DateTimeField(auto_now=True)
     likes = models.TextField(max_length=5000, default='|')
-    username = models.CharField(max_length=50)
+    username = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 @receiver(post_save, sender=Comment)

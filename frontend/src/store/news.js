@@ -7,21 +7,11 @@ export default {
     searchPosts: [],
 
     currentPost: {},
-    currentImage: {},
     postMarks: [],
-    postTypes: [],
     createdPostMarks: [],
-    currentComments: [],
-
-    hash: ""
+    currentComments: []
   },
   mutations: {
-    setCurrImage(state, payload) {
-      state.currentImage = payload;
-    },
-    setHash(state, payload) {
-      state.hash = payload;
-    },
     dropCreatedPostMarks(state, payload) {
       let len = state.createdPostMarks.length;
       state.createdPostMarks.splice(payload, len);
@@ -42,41 +32,30 @@ export default {
     addPostMark(state, payload) {
       state.postMarks.push(payload);
     },
-    addPostType(state, payload) {
-      state.postTypes.push(payload);
-    },
     deletePostMark(state, payload) {
       let index = state.postMarks.findIndex(mark => mark.id == payload);
       state.postMarks.splice(index, 1);
     },
-    deletePostType(state, payload) {
-      let index = state.postTypes.findIndex(mark => mark.id == payload);
-      state.postTypes.splice(index, 1);
-    },
     dropPostMarks(state) {
       state.postMarks.splice(0, state.postMarks.length);
-    },
-    dropPostTypes(state) {
-      state.postTypes.splice(0, state.postTypes.length);
     },
     setSearchTag(state, payload) {
       state.SearchTag = payload;
     },
     setPost(state, payload) {
-      if (!payload.top) {
-        let len = state.posts.length;
-        state.posts.splice(0, len);
-      }
-
-      state.posts = state.posts.concat(payload.posts);
+      state.posts = payload;
+    },
+    setPhotoPost(state, payload) {
+      state.photoPosts = payload;
+    },
+    setTextPost(state, payload) {
+      state.textPosts = payload;
+    },
+    setPopularPost(state, payload) {
+      state.popularPosts = payload;
     },
     setMyNewsPost(state, payload) {
-      if (!payload.top) {
-        let len = state.myNewsPosts.length;
-        state.myNewsPosts.splice(0, len);
-      }
-
-      state.myNewsPosts = state.myNewsPosts.concat(payload.posts);
+      state.myNewsPosts = payload;
     },
     setPostsByMarks(state, payload) {
       state.postsByMarks = payload;
@@ -85,12 +64,7 @@ export default {
       state.posts.splice(payload, 1);
     },
     setSearchPost(state, payload) {
-      if (!payload.top) {
-        let len = state.searchPosts.length;
-        state.searchPosts.splice(0, len);
-      }
-
-      state.searchPosts = state.searchPosts.concat(payload.posts);
+      state.searchPosts = payload;
     },
     deleteSearchPost(state, payload) {
       state.searchPosts.splice(payload, 1);
@@ -112,17 +86,11 @@ export default {
 
       state.currentPost.comments_count += 1;
     },
-    deleteCurrentComm(state) {
+    deleteCurrentComm(state, payload) {
       state.currentPost.comments_count -= 1;
     }
   },
   getters: {
-    getCurrImage(state) {
-      return state.currentImage;
-    },
-    getHash(state) {
-      return state.hash;
-    },
     getCreatedPostMarks(state) {
       return state.createdPostMarks;
     },
@@ -132,14 +100,20 @@ export default {
     getPostMarks(state) {
       return state.postMarks;
     },
-    getPostTypes(state) {
-      return state.postTypes;
-    },
     getSearchTag(state) {
       return state.SearchTag;
     },
     getPosts(state) {
       return state.posts;
+    },
+    getPhotoPosts(state) {
+      return state.photoPosts;
+    },
+    getTextPosts(state) {
+      return state.textPosts;
+    },
+    getPopularPosts(state) {
+      return state.popularPosts;
     },
     getMyNewsPosts(state) {
       return state.myNewsPosts;
@@ -155,37 +129,35 @@ export default {
     }
   },
   actions: {
-    FindData(context, data) {
+    FindData(context, searchData) {
       let token = context.getters.getToken;
-      let domain = context.getters.getDomain;
+
+      context.commit(
+        "setSearchTag",
+        searchData.substring(1, searchData.length - 1)
+      );
 
       axios
-        .get(
-          `${domain}/api/v1/news/search_posts/?q=|${data.text}|&a=${data.top}&b=${data.bottom}`,
-          {
-            headers: {
-              Authorization: "Token " + token
-            }
+        .get("http://127.0.0.1:8000/api/v1/news/search/?q=" + searchData, {
+          headers: {
+            Authorization: "Token " + token
           }
-        )
+        })
         .then(response => {
-          context.commit("setSearchPost", {
-            top: data.top,
-            posts: response.data
-          });
+          context.commit("setSearchPost", response.data);
         })
         .catch(function(e) {
           console.log(e);
         });
     },
-    FindPeople(context, data) {
+    FindPeople(context, searchData) {
       let token = context.getters.getToken;
       let domain = context.getters.getDomain;
 
-      context.commit("setSearchTag", data);
+      context.commit("setSearchTag", searchData);
 
       axios
-        .get(`${domain}/api/v1/news/search_people/?q=${data}`, {
+        .get(`${domain}/api/v1/news/search_people/?q=${searchData}`, {
           headers: {
             Authorization: "Token " + token
           }
@@ -220,11 +192,14 @@ export default {
       let token = context.getters.getToken;
       let username = context.getters.getUserData.username;
       let profile = context.getters.getUserProfile;
-      let domain = context.getters.getDomain;
 
       axios
         .delete(
-          `${domain}/api/v1/news/post_delete/${data.post_id}/${username}/`,
+          "http://127.0.0.1:8000/api/v1/news/post_delete/" +
+            data.post_id +
+            "/" +
+            username +
+            "/",
           {
             headers: { Authorization: "Token " + token }
           }
@@ -269,133 +244,6 @@ export default {
 
         store.clear();
       };
-    },
-    MyNewsPostLoader(context, data) {
-      let token = context.getters.getToken;
-      let domain = context.getters.getDomain;
-      let username = context.getters.getUserProfile.username;
-
-      axios
-        .get(
-          `${domain}/api/v1/news/post/mysubs/all/?me=${username}&d=${data.date}&a=${data.top}&b=${data.bottom}`,
-          {
-            headers: { Authorization: "Token " + token }
-          }
-        )
-        .then(response => {
-          let posts = response.data;
-
-          context.commit("setMyNewsPost", { top: data.top, posts });
-        })
-        .catch(function(e) {
-          console.log(e);
-        });
-    },
-    AllPostLoader(context, data) {
-      let token = context.getters.getToken;
-      let domain = context.getters.getDomain;
-
-      axios
-        .get(`${domain}/api/v1/news/post/all/?a=${data.top}&b=${data.bottom}`, {
-          headers: { Authorization: "Token " + token }
-        })
-        .then(response => {
-          let posts = response.data;
-          context.commit("setPost", { top: data.top, posts });
-        })
-        .catch(function(e) {
-          console.log(e);
-        });
-    },
-    AllPostByTypeLoader(context, data) {
-      let token = context.getters.getToken;
-      let domain = context.getters.getDomain;
-      let types = context.getters.getPostTypes;
-      let query = [];
-
-      for (let type of types) {
-        console.log(type);
-        query.push(type.name)
-      }
-
-      console.log(query.join('|'));
-
-      axios
-        .get(
-          `${domain}/api/v1/news/post/type/?q=|${query.join('|')}|&a=${data.top}&b=${data.bottom}`,
-          {
-            headers: { Authorization: "Token " + token }
-          }
-        )
-        .then(response => {
-          let posts = response.data;
-
-          context.commit("setPost", { top: data.top, posts });
-        })
-        .catch(function(e) {
-          console.log(e);
-        });
-    },
-    AllPopularPostLoader(context, data) {
-      let token = context.getters.getToken;
-      let domain = context.getters.getDomain;
-
-      axios
-        .get(
-          `${domain}/api/v1/news/post/popular/?a=${data.top}&b=${data.bottom}`,
-          {
-            headers: { Authorization: "Token " + token }
-          }
-        )
-        .then(response => {
-          let posts = response.data;
-
-          context.commit("setPost", { top: data.top, posts });
-        })
-        .catch(function(e) {
-          console.log(e);
-        });
-    },
-    PostsByMarksLoader(context, data) {
-      let marks = context.getters.getPostMarks;
-
-      if (marks.length) {
-        let token = context.getters.getToken;
-        let domain = context.getters.getDomain;
-        let buf = marks.map(mark => mark.name);
-
-        axios
-          .get(
-            `${domain}/api/v1/news/post/marks/?q=|${buf.join("|")}|&a=${
-              data.top
-            }&b=${data.bottom}`,
-            {
-              headers: { Authorization: "Token " + token }
-            }
-          )
-          .then(response => {
-            context.commit("setPost", { posts: response.data, top: data.top });
-          })
-          .catch(function(e) {
-            console.log(e);
-          });
-      }
-    },
-    addUserView(context, data) {
-      let token = localStorage.getItem("token");
-      let domain = context.getters.getDomain;
-
-      axios
-        .get(`${domain}/api/v1/news/post_views_update/${data.post_id}/`, {
-          headers: {
-            Authorization: "Token " + token
-          }
-        })
-        .catch(function(e) {
-          console.log(e);
-        });
-
-      context.commit("setHash", "post-" + data.post_index);
     }
   }
 };

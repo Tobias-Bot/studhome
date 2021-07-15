@@ -73,7 +73,6 @@
           hidden="true"
           @change="handleFileUpload"
         />
-        <template v-if="pic || unsplash_pic">
         <hr />
         <span class="SettingTitle">затемнение фона {{ range }}</span>
         <input
@@ -96,13 +95,30 @@
           max="5"
           step="1"
         />
-        </template>
+        <hr />
+        <span class="SettingTitle">цвета интерфейса</span>
+        <button
+          type="button"
+          class="btn btn-light PicBtn btnOption"
+          :style="'border: 2px solid ' + Colors"
+          @click="$refs.inputBGColor.click()"
+        >
+          фон
+        </button>
+        <input
+          type="color"
+          ref="inputBGColor"
+          style="display: none;"
+          @input="setColors"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+var Cookies = localStorage;
+
 export default {
   name: "design",
   data() {
@@ -113,6 +129,7 @@ export default {
         blur: 0,
         background: "",
         unsplash_background: "",
+        colors: '',
       },
       isChanged: false,
       localPhotoFile: "",
@@ -126,31 +143,30 @@ export default {
   computed: {
     range() {
       let value = this.$store.getters.getUserSettings.blackout;
-      this.setRange(value);
+      this.settings.blackout = value;
       return value;
     },
     blur() {
       let value = this.$store.getters.getUserSettings.blur;
-      this.setBlur(value);
+      this.settings.blur = value;
       return value;
     },
     pic() {
       return this.$store.getters.getUserSettings.background;
     },
-    unsplash_pic() {
-      return this.$store.getters.getUserSettings.unsplash_background;
-    },
     UserData() {
       return this.$store.getters.getUserData;
     },
+    Colors() {
+      let str = this.$store.getters.getUserSettings.colors;
+      let colors = '|#FFFFFF|';
+      
+      str && (colors = str.substring(1, str.length - 1));
+
+      return colors;
+    },
   },
   methods: {
-    setRange(value) {
-      this.settings.blackout = value;
-    },
-    setBlur(value) {
-      this.settings.blur = value;
-    },
     updateSettings() {
       let token = localStorage.getItem("token");
       let user_id = this.$store.getters.getUserData.id;
@@ -160,6 +176,7 @@ export default {
       formData.append("user", user_id);
       formData.append("blackout", this.settings.blackout);
       formData.append("blur", this.settings.blur);
+      this.settings.colors && formData.append("colors", this.settings.colors);
       formData.append("background", this.localPhotoFile);
       formData.append("unsplash_background", this.settings.unsplash_background);
 
@@ -190,16 +207,22 @@ export default {
       openRequest.onsuccess = function() {
         var DB = openRequest.result;
 
-        DB.transaction("settings", "readwrite")
+        let ob = DB.transaction("settings", "readwrite")
           .objectStore("settings")
           .put(obj, "settings");
       };
     },
     changeBlackOut() {
       this.settings.background = this.pic;
-      this.settings.unsplash_background = this.unsplash_pic;
       this.$store.commit("setUserSettings", this.settings);
       this.saveToDB(this.settings);
+    },
+    setColors() {
+      let BGColor = this.$refs.inputBGColor.value;
+
+      this.settings.colors = `|${BGColor}|`;
+
+      this.changeBlackOut();
     },
     changePicFromUnsplash() {
       let w = screen.width;

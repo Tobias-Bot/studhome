@@ -6,25 +6,22 @@
           <router-link
             :to="{
               name: 'profile',
-              params: { username: blog.username }
+              params: { username: blog.username, blog: blog }
             }"
           >
-            <img class="avatar" :src="blog.avatar" @click="LoadProfile(blog)" />
+            <img class="avatar" :src="blog.avatar" />
           </router-link>
         </div>
         <div class="col">
           <div class="block">
             <router-link
+              class="username"
               :to="{
                 name: 'profile',
                 params: { username: blog.username, blog: blog }
               }"
-              style="text-decoration: none;"
+              >{{ blog.username }}</router-link
             >
-              <span class="username" @click="LoadProfile(blog)">{{
-                blog.username
-              }}</span>
-            </router-link>
           </div>
           <div v-if="blog.status" class="block">
             <div class="status">{{ blog.status }}</div>
@@ -32,6 +29,13 @@
           <div v-else-if="blog.bio" class="block">
             <div class="status">{{ blog.bio.substring(0, maxLen) }}</div>
             <span v-if="blog.bio.length > maxLen">...</span>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="btn-group-vertical" role="group">
+            <button class="btn btn-ligth btn-sm btnOption"></button>
+            <button class="btn btn-ligth btn-sm btnOption"></button>
+            <button class="btn btn-ligth btn-sm btnOption"></button>
           </div>
         </div>
       </div>
@@ -42,29 +46,14 @@
 <script>
 export default {
   props: ["blog"],
-  name: "profileView",
+  name: "blog",
   data: function() {
     return {
       maxLen: 100
     };
   },
-  computed: {
-    username() {
-      return this.$store.getters.getUserData.username;
-    }
-  },
-  methods: {
-    LoadProfile(blog) {
-      let isAdmin = blog.username === this.username;
-
-      this.$store.commit("dropUserPosts");
-      this.$store.commit("dropUserSubs");
-      this.$store.commit("setProfileTab", 'description');
-      this.$store.commit("setHash", '');
-
-      this.$store.dispatch("LoadProfile", { blog, isAdmin });
-    }
-  }
+  computed: {},
+  methods: {}
 };
 </script>
 

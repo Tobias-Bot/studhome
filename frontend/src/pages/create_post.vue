@@ -134,7 +134,7 @@
                   <span v-if="!EditMode">опубликовать</span>
                   <span v-else>сохранить изменения</span>
                 </template>
-                <template v-else>
+                <template v-else="isPublishing">
                   <div class="spinner-border spinner-border-sm" role="status">
                     <span class="sr-only">Loading...</span>
                   </div>
@@ -198,7 +198,7 @@ export default {
     createPic,
     PostToolBar,
     WritingToolBar,
-    PostTags,
+    PostTags
   },
   data: function() {
     return {
@@ -215,7 +215,7 @@ export default {
 
       tags: [],
 
-      isPublishing: false,
+      isPublishing: false
     };
   },
   mounted() {
@@ -229,8 +229,7 @@ export default {
             file: "",
             url: domain + i.image,
             text: i.text,
-            image_id: i.id,
-            modified: false,
+            image_id: i.id
           };
 
           this.files.push(img);
@@ -279,15 +278,11 @@ export default {
       );
     },
     ManyImages() {
-      let result = "";
-
-      if (this.files) result = this.files.length > 2;
-
-      return result;
+      if (this.files) return this.files.length > 2;
     },
     EditMode() {
       return this.$route.params.editMode;
-    },
+    }
   },
   methods: {
     loadDraftFromMemory(obj) {
@@ -311,13 +306,13 @@ export default {
         let store = tx.objectStore(obj.store);
         let data = store.get(obj.key);
 
-        tx.oncomplete = () => {
+        let result = (tx.oncomplete = () => {
           if (data.result) this.setSavedPost(data.result);
-        };
+        });
       };
     },
     saveDraftToMemory() {
-      let text = this.$refs.editor.innerHTML;
+      let text = $(".note").html();
       let title = this.$refs.NoteTitle.value;
       let tags = "|" + this.tags.join("|") + "|";
       let video_url = this.youtubeUrl;
@@ -334,13 +329,13 @@ export default {
         note_color,
         text_color,
         marks,
-        files,
+        files
       };
 
       this.$store.dispatch("saveToDB", {
         store: "post-drafts",
         key: "draft",
-        data,
+        data
       });
     },
     setSavedPost(data) {
@@ -388,13 +383,9 @@ export default {
       let video_url = this.youtubeUrl;
       let type = "|";
       let marks = this.$store.getters.getCreatedPostMarks;
-      let date = "";
-      let EditingPost = this.$route.params.post;
-
-      if (EditingPost) date = EditingPost.date;
 
       if (this.isText) {
-        text = this.$refs.editor.innerHTML;
+        text = $(".note").html();
         note_color = this.NoteColor;
         text_color = this.TextColor;
       }
@@ -413,24 +404,16 @@ export default {
         text,
         note_color,
         text_color,
-        marks,
-        date,
+        marks
       };
 
-      if (!(text.length && this.isText) && title.length) {
-        post.type += "заметка|";
-      }
-
       if (text.length && this.isText) {
-        post.type += "текст|";
+        post.type += "note|";
       }
 
       if (this.files.length > 0 && !text.length && !video_url.length)
-        post.type += "фото|";
-
-      if (video_url.length) {
-        post.type += "видео|";
-      }
+        post.type += "photo|";
+      // if () type + "document|";
 
       if (this.EditMode) {
         let post_id = this.$route.params.post.id;
@@ -440,44 +423,47 @@ export default {
       }
     },
     submitEditedPost(post_id, post, token) {
-      let domain = this.$store.getters.getDomain;
-
       axios
-        .put(`${domain}/api/v1/news/post_update/${post_id}/`, post, {
-          headers: {
-            Authorization: "Token " + token,
-          },
-        })
-        .then((response) => {
+        .put(
+          "http://127.0.0.1:8000/api/v1/news/post_update/" + post_id + "/",
+          post,
+          {
+            headers: {
+              Authorization: "Token " + token
+            }
+          }
+        )
+        .then(response => {
           let post_id = response.data.id;
+          let domen = this.$store.getters.getDomen;
 
           if (this.files.length > 0) {
             for (var i = 0; i < this.files.length; i++) {
               if (!this.files[i].image_id) this.submitPhotos(token, post_id, i);
-              else if (this.files[i].modified)
-                this.submitEditedPhotos(token, post_id, i);
             }
 
             this.clearPostData();
           }
-
           this.isPublishing = false;
         })
-        .catch((e) => {
+        .catch(e => {
           console.log(e);
         });
     },
     submitPost(username, post, token) {
       let profile = this.$store.getters.getUserProfile;
-      let domain = this.$store.getters.getDomain;
 
       axios
-        .post(`${domain}/api/v1/news/post_create/${username}/`, post, {
-          headers: {
-            Authorization: "Token " + token,
-          },
-        })
-        .then((response) => {
+        .post(
+          "http://127.0.0.1:8000/api/v1/news/post_create/" + username + "/",
+          post,
+          {
+            headers: {
+              Authorization: "Token " + token
+            }
+          }
+        )
+        .then(response => {
           let post_id = response.data.id;
 
           if (this.files.length > 0) {
@@ -493,65 +479,40 @@ export default {
           this.$store.dispatch("saveToDB", {
             store: "profile",
             key: "userprofile",
-            data: profile,
+            data: profile
           });
 
           this.isPublishing = false;
         })
-        .catch((e) => {
+        .catch(e => {
           console.log(e);
         });
     },
     submitPhotos(token, post_id, img_index) {
       let formData = new FormData();
-      let domain = this.$store.getters.getDomain;
-
       formData.append("post", post_id);
-      formData.append("user", this.UserData.id);
-      formData.append("username", this.UserData.username);
       formData.append("text", this.files[img_index].text);
       formData.append("image", this.files[img_index].file);
 
       axios.post(
-        `${domain}/api/v1/news/post/${post_id}/image/`,
+        "http://127.0.0.1:8000/api/v1/news/post/" + post_id + "/image/",
         formData,
         {
           headers: {
             Authorization: "Token " + token,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-    },
-    submitEditedPhotos(token, post_id, img_index) {
-      let formData = new FormData();
-      let domain = this.$store.getters.getDomain;
-      let img_id = this.files[img_index].image_id;
-
-      formData.append("post", post_id);
-      formData.append("username", this.UserData.username);
-      formData.append("user", this.UserData.id);
-      formData.append("text", this.files[img_index].text);
-
-      axios.put(
-        `${domain}/api/v1/news/post/image_update/${img_id}/`,
-        formData,
-        {
-          headers: {
-            Authorization: "Token " + token,
-            "Content-Type": "multipart/form-data",
-          },
+            "Content-Type": "multipart/form-data"
+          }
         }
       );
     },
     DeleteStyles(event) {
       event.preventDefault();
-      let text = (event.originalEvent || event).clipboardData.getData(
+      var text = (event.originalEvent || event).clipboardData.getData(
         "text/plain"
       );
       document.execCommand("insertText", false, text);
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -604,8 +565,8 @@ export default {
   margin-bottom: 3%;
   border-radius: 5px;
   outline: none;
-  font-size: 20px;
-  color: rgba(0, 0, 0, 0.9);
+  font-size: 18px;
+  color: #323232;
   box-shadow: 0px 3px 10px silver;
 }
 .note[placeholder]:empty:before {

@@ -1,5 +1,5 @@
 <template>
-  <div class="box" ref="container" @scroll="LoadNewPosts">
+  <div class="box">
     <div class="body">
       <div class="row">
         <div class="col-2">
@@ -10,90 +10,93 @@
             alt="avatar"
           />
           <br />
-          <button
-            class="btn btn-light btnMain profileTab"
-            type="button"
-            @click="setTab('description')"
+          <div
+            class="nav flex-column nav-tabs"
+            id="v-pills-tab"
+            role="tablist"
+            aria-orientation="vertical"
           >
-            описание
-          </button>
-          <button
-            v-if="Profile.posts_count"
-            class="btn btn-light btnMain profileTab"
-            type="button"
-            @click="
-              LoadUserPosts();
-              setTab('posts');
-            "
-          >
-            записи
-          </button>
-          <a
-            v-if="Profile.subs_profiles && Profile.subs_profiles.length > 1"
-            class="btn btn-light btnMain profileTab"
-            type="button"
-            @click="
-              LoadUserSubsProfiles();
-              setTab('blogs');
-            "
-            >подписки</a
-          >
-          <button
-            v-if="Profile.contacts"
-            class="btn btn-light btnMain profileTab"
-            type="button"
-            @click="setTab('contacts')"
-          >
-            контакты
-          </button>
+            <a
+              v-if="Profile.bio"
+              class="btn btn-light active btnMain"
+              data-toggle="tab"
+              href="#description"
+              role="tab"
+              aria-selected="true"
+              >описание</a
+            >
+            <a
+              v-if="Profile.posts_count"
+              class="btn btn-light btnMain"
+              type="button"
+              data-toggle="tab"
+              href="#posts"
+              role="tab"
+              aria-selected="false"
+              @click="LoadUserPosts"
+              >записи</a
+            >
+            <a
+              v-if="Profile.subs_profiles && Profile.subs_profiles.length > 1"
+              class="btn btn-light btnMain"
+              data-toggle="tab"
+              href="#blogs"
+              role="tab"
+              aria-selected="false"
+              @click="LoadUserSubsProfiles"
+              >подписки</a
+            >
+            <a
+              v-if="Profile.contacts"
+              class="btn btn-light btnMain"
+              id="v-pills-settings-tab"
+              data-toggle="tab"
+              href="#contacts"
+              role="tab"
+              aria-selected="false"
+              >контакты</a
+            >
+          </div>
         </div>
         <div class="col-8">
-          <span class="username"
-            >{{ Profile.username }}
-            <span class="readersCount"
-              >читают: {{ Profile.readers }}</span
-            ></span
-          >
-          <div v-show="ProfileTab === 'description'" class="block">
-            <div class="card">
-              <div class="card-body">
-                <template v-if="Profile.status">
-                  <span class="status">{{ Profile.status }}</span>
-                  <br />
-                  <br />
-                </template>
-                <div class="bio">
-                  <template v-if="Profile.bio">
-                    <span class="hint" style="text-align: left;">Обо мне</span>
-                    {{ Profile.bio }}
-                    <hr />
+          <div class="tab-content">
+            <div
+              class="tab-pane fade show active"
+              id="description"
+              role="tabpanel"
+            >
+              <span class="username"
+                >{{ Profile.username }}
+                <span class="readersCount"
+                  >читают: {{ Profile.readers }}</span
+                ></span
+              >
+              <div class="card">
+                <div class="card-body">
+                  <template v-if="Profile.status">
+                    <span class="status">{{ Profile.status }}</span>
+                    <br />
+                    <br />
                   </template>
-                  <template v-if="Profile.school">
-                    <span
-                      v-if="Profile.school"
-                      class="hint"
-                      style="text-align: left;"
-                      >Школа/универ</span
-                    >
-                    {{ Profile.school }}
-                    <hr />
+                  <template v-if="Profile.bio || Profile.school">
+                    <div class="bio">
+                      <span class="hint" style="text-align: left;">Обо мне</span>
+                      {{ Profile.bio }}
+                      <hr />
+                      <span class="hint" style="text-align: left;">Школа/универ</span>
+                      {{ Profile.school }}
+                    </div>
+                    <br />
                   </template>
-                  <template
-                    v-if="Profile.interests && Profile.interests.length > 2"
-                  >
-                    <span class="hint" style="text-align: left;">Интересы</span>
-                    <tag
-                      v-for="(tag, i) in userInterests"
-                      :key="tag + i"
-                      :text="tag"
-                    ></tag>
-                  </template>
+                  <tag
+                    v-for="(tag, i) in userInterests"
+                    :key="tag + i"
+                    :text="tag"
+                  ></tag>
                 </div>
               </div>
             </div>
-          </div>
-          <template v-if="Profile.posts_count">
-            <div v-show="ProfileTab === 'posts'" class="block">
+            <div class="tab-pane fade" id="posts" role="tabpanel">
               <div class="infoBar">
                 записи: {{ Profile.posts_count }}
                 <template v-if="isLoading">
@@ -103,43 +106,22 @@
                   ></div>
                 </template>
               </div>
-              <div ref="container_posts" class="row">
-                <!-- <post
+              <div class="card-columns">
+                <post
                   v-for="(post, id) in UserPosts"
                   :key="id"
                   :post="post"
                   :post_index="id"
                   :topic="'profile'"
-                ></post> -->
-                <div class="col-6">
-                  <template v-for="(post, id) in UserPosts">
-                    <post
-                      :key="id"
-                      v-if="id % 2 == 0"
-                      :post="post"
-                      :post_index="id"
-                      :topic="'profile'"
-                    ></post>
-                  </template>
-                </div>
-                <div class="col-6">
-                  <template v-for="(post, id) in UserPosts">
-                    <post
-                      :key="id"
-                      v-if="id % 2 !== 0"
-                      :post="post"
-                      :post_index="id"
-                      :topic="'profile'"
-                    ></post>
-                  </template>
-                </div>
+                ></post>
               </div>
             </div>
-          </template>
-          <template
-            v-if="Profile.subs_profiles && Profile.subs_profiles.length > 1"
-          >
-            <div v-show="ProfileTab === 'blogs'" class="block">
+            <div
+              v-if="Profile.subs_profiles && Profile.subs_profiles.length > 1"
+              class="tab-pane fade"
+              id="blogs"
+              role="tabpanel"
+            >
               <div class="infoBar">
                 подписки: {{ UserSubs.length }}
                 <template v-if="isLoading">
@@ -150,18 +132,16 @@
                 </template>
               </div>
               <div class="card-columns">
-                <profileView
+                <blog
                   v-for="(blog, id) in UserSubs"
                   :key="id"
                   :blog="blog"
-                ></profileView>
+                ></blog>
               </div>
             </div>
-          </template>
-          <template v-if="Profile.contacts">
-            <div v-show="ProfileTab === 'contacts'" class="block">
-              <template v-for="(contact, i) in Profile.contacts.split('|')">
-                <div :key="i">
+            <div class="tab-pane fade" id="contacts" role="tabpanel">
+              <template v-if="Profile.contacts">
+                <template v-for="contact in Profile.contacts.split('|')">
                   <a
                     v-if="contact.indexOf('instagram.com/') > -1"
                     class="contact"
@@ -189,11 +169,11 @@
                     <i class="fab fa-youtube"></i>
                     {{ contact.substring(8) }}
                   </a>
-                </div>
+                  <br />
+                </template>
               </template>
-              <br />
             </div>
-          </template>
+          </div>
         </div>
         <div class="col">
           <profileTools
@@ -207,49 +187,29 @@
 </template>
 
 <script>
-import post from "@/components/post";
-import tag from "@/components/tag";
-import profileTools from "@/components/Profile/profileTools";
-import profileView from "@/components/Profile/profileView";
+import post from "../../components/post";
+import tag from "../../components/tag";
+import profileTools from "../../components/Profile/profileTools";
+import blog from "../../components/Profile/profileView";
 
 export default {
   components: {
     post,
     profileTools,
     tag,
-    profileView,
+    blog
   },
   data() {
     return {
-      isLoading: false,
-      PostsLoadCount: 8,
-      load: true,
-      postsCountOld: 0,
+      isLoading: false
     };
   },
   created() {
-    let isAdmin = this.isAdmin;
-    let username = this.$route.params.username;
-
-    let data = {
-      isAdmin,
-      username,
-    };
-
-    this.$store.dispatch("LoadProfile", data);
+    this.LoadProfile();
   },
-  mounted() {
-    let elem = this.$refs.container_posts;
-    let posts = this.$store.getters.getUserPosts;
-    let hash = this.$store.getters.getHash;
-
-    if (elem && hash) {
-      elem.querySelector("#" + hash).scrollIntoView({
-        block: "center",
-        inline: "center",
-        behavior: posts.length < 30 ? "smooth" : "auto",
-      });
-    }
+  beforeDestroy() {
+    this.$store.commit("dropUserPosts");
+    this.$store.commit("dropUserSubs");
   },
   computed: {
     Profile() {
@@ -266,90 +226,37 @@ export default {
       let username = this.$route.params.username;
       let user = this.UserData.username;
 
-      return user === username;
+      return user == username ? true : false;
     },
     UserPosts() {
-      // let elem = this.$refs.container_posts;
-      let posts = this.$store.getters.getUserPosts;
-      // let hash = this.$store.getters.getHash;
-
-      // if (hash) {
-      //   let timerId = setInterval(() => {
-      //     elem = this.$refs.container_posts;
-
-      //     if (elem) {
-      //       elem.querySelector("#" + hash).scrollIntoView({
-      //         block: "center",
-      //         inline: "center",
-      //         behavior: posts.length < 40 ? "smooth" : "auto"
-      //       });
-
-      //       clearInterval(timerId);
-
-      //       this.load && this.$store.commit("setHash", "");
-      //     }
-      //   }, 100);
-      // }
-
-      if (posts.length > this.postsCountOld) {
-        () => (this.load = true);
-        () => (this.postsCountOld = posts.length);
-      }
-
-      return posts;
+      return this.$store.getters.getUserPosts;
     },
     UserSubs() {
       return this.$store.getters.getUserSubs;
     },
     userInterests() {
-      let result = '';
-
       if (this.Profile.interests) {
         let len = this.Profile.interests.length;
-        result = this.Profile.interests.substring(1, len - 1).split("|");
+        return this.Profile.interests.substring(1, len - 1).split("|");
       }
-
-      return result;
-    },
-    ProfileTab() {
-      return this.$store.getters.getProfileTab;
-    },
+    }
   },
   methods: {
-    LoadNewPosts() {
-      let block = this.$refs.container;
-      let Hmax =
-        block && Math.floor((block.scrollHeight - block.clientHeight) * 0.3);
-      let h = block.scrollTop;
-
-      if (h > Hmax) {
-        if (this.load) {
-          this.load = false;
-          this.LoadUserPosts();
-        }
-      } else {
-        this.load = true;
-      }
-    },
     LoadUserPosts() {
       if (this.Profile.posts_count) {
         this.isLoading = true;
-
-        let top = this.UserPosts.length;
-        let bottom = top + this.PostsLoadCount;
         let token = localStorage.getItem("token");
         let username = this.Profile.username;
-        let domain = this.$store.getters.getDomain;
 
         axios
           .get(
-            `${domain}/api/v1/news/post/list/${username}/?a=${top}&b=${bottom}`,
+            "http://127.0.0.1:8000/api/v1/news/post/list/" + username + "/",
             {
-              headers: { Authorization: "Token " + token },
+              headers: { Authorization: "Token " + token }
             }
           )
-          .then((response) => {
-            this.$store.commit("setUserPosts", { top, posts: response.data });
+          .then(response => {
+            this.$store.commit("setUserPosts", response.data);
             this.isLoading = false;
           });
       }
@@ -362,17 +269,40 @@ export default {
 
       axios
         .get(`${domain}/api/v1/home/profile/get_profiles/${users}`, {
-          headers: { Authorization: "Token " + token },
+          headers: { Authorization: "Token " + token }
         })
-        .then((response) => {
+        .then(response => {
           this.$store.commit("setUserSubs", response.data);
           this.isLoading = false;
         });
     },
-    setTab(tabName) {
-      this.$store.commit("setProfileTab", tabName);
-    },
-  },
+    LoadProfile() {
+      if (!this.isAdmin) {
+        let blog = this.$route.params.blog;
+
+        if (blog) {
+          this.$store.commit("setCurrProfile", blog);
+        } else {
+          let token = localStorage.getItem("token");
+          let domain = this.$store.getters.getDomain;
+          let username = this.$route.params.username;
+
+          axios
+            .get(`${domain}/api/v1/home/profile/${username}/`, {
+              headers: {
+                Authorization: "Token " + token
+              }
+            })
+            .then(response => {
+              this.$store.commit("setCurrProfile", response.data[0]);
+            })
+            .catch(function(e) {
+              console.log(e);
+            });
+        }
+      }
+    }
+  }
 };
 </script>
 
@@ -383,8 +313,15 @@ export default {
   }
 }
 
-.profileTab {
-  width: 100%;
+.nav-tabs {
+  border: none;
+}
+
+.nav-link {
+  color: white;
+  background-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.8);
+  text-align: center;
 }
 
 .avatar {
@@ -411,10 +348,9 @@ export default {
 }
 
 .body {
-  position: relative;
   width: 100%;
   height: auto;
-  padding-top: 3%;
+  position: relative;
 }
 
 .readersCount {
@@ -474,13 +410,13 @@ export default {
 
 .infoBar {
   width: 100%;
-  display: inline-block;
-  margin-bottom: 3%;
-  background-color: #f8f8ff;
+  display: block;
+  margin-bottom: 2%;
+  background-color: white;
   border-radius: 5px;
   color: rgba(0, 0, 0, 0.8);
-  box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.7);
-  font-size: 20px;
+  box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.7);
+  font-size: 18px;
   font-weight: 500;
   padding: 1% 2% 1% 2%;
 }
@@ -493,9 +429,5 @@ export default {
   position: relative;
   margin-bottom: 1%;
   text-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
-}
-
-.card {
-  margin-bottom: 6%;
 }
 </style>

@@ -12,8 +12,6 @@ from rest_framework.authentication import TokenAuthentication, SessionAuthentica
 from django.db.models import F
 from django.db.models import Q
 
-import datetime
-
 from . models import Post, Comment, Image
 from userprofile.models import Profile
 
@@ -24,21 +22,16 @@ class SearchPostList(generics.ListAPIView):
 
     def get_queryset(self):
         tag = self.request.GET.get('q')
-        a = int(self.request.GET.get("a"))
-        b = int(self.request.GET.get("b"))
-
         title = tag[1:-1]
-
-        queryset = Post.objects.filter(Q(tags__icontains=tag) | Q(title__icontains=title))[a:b]
-        return queryset
+        post_list = Post.objects.filter(Q(tags__icontains=tag) | Q(title__icontains=title))[:PostsPerPage]
+        return post_list
 
 class SearchProfilesList(generics.ListAPIView):
     serializer_class = ProfileSerializer
 
     def get_queryset(self):
         name = self.request.GET.get('q')
-
-        queryset = Profile.objects.filter(username=name)[:PostsPerPage]
+        queryset = Profile.objects.filter(username__icontains=name)
         return queryset
 
 class SearchByTypePostList(generics.ListAPIView):
@@ -46,14 +39,8 @@ class SearchByTypePostList(generics.ListAPIView):
 
     def get_queryset(self):
         query = self.request.GET.get('q')
-        a = int(self.request.GET.get("a"))
-        b = int(self.request.GET.get("b"))
-        queryset = Post.objects.none()
-
-        for tag in query[1:-1].split('|'):
-            queryset = queryset | Post.objects.filter(type__icontains=tag)
-            
-        return queryset.order_by('-date')[a:b]
+        post_list = Post.objects.filter(type__icontains=query).order_by("-date")[:PostsPerPage]
+        return post_list
 
 class SubscribeUserView(APIView):
     serializer_class = ProfileSerializer
@@ -100,31 +87,9 @@ class PostUpdateView(generics.UpdateAPIView):
     lookup_field = 'id'
     queryset = Post.objects.all()
 
-    def perform_update(self, serializer):
-        if (serializer.is_valid()):
-            date = serializer.initial_data.get('date')[0:10].split('-')
-            dateNow = str(datetime.datetime.now())[0:10].split('-')
-            day = int(date[2])
-            month = int(date[1])
-            year = int(date[0])
-            dayNow = int(dateNow[2])
-            monthNow = int(dateNow[1])
-            yearNow = int(dateNow[0])
-
-            if ((dayNow - day > 0) or (monthNow - month > 0) or (yearNow - year > 0)):
-                return Response(status=501)
-            else:
-                instance = serializer.save()
-
 class ImageCreateView(generics.CreateAPIView):
     serializer_class = ImageSerializer
     permission_classes = (IsAuthenticated, )
-
-class ImageUpdateView(generics.UpdateAPIView):
-    serializer_class = ImageSerializer
-    permission_classes = (IsAuthenticated, IsOwnerOrReadOnly, )
-    lookup_field = 'id'
-    queryset = Image.objects.all()
 
 class ImageDestroyView(generics.DestroyAPIView):
     serializer_class = ImageSerializer
@@ -139,7 +104,6 @@ class ImageDestroyView(generics.DestroyAPIView):
 class CommentCreateView(generics.CreateAPIView):
     serializer_class = CommentSerializer
     permission_classes = (IsAuthenticated, )
-    
     # lookup_field = 'post_id'
     # queryset = Comment.objects.all()
 
@@ -166,13 +130,7 @@ class CommentDestroyView(generics.DestroyAPIView):
 class PostListView(generics.ListAPIView):
     serializer_class = PostListSerializer
     model = serializer_class.Meta.model
-
-    def get_queryset(self):
-        a = int(self.request.GET.get("a"))
-        b = int(self.request.GET.get("b"))
-
-        queryset = Post.objects.all().order_by('-date')[a:b]
-        return queryset
+    queryset = Post.objects.all().order_by('-date')[:PostsPerPage]
 
 class PostByMarksListView(generics.ListAPIView):
     serializer_class = PostListSerializer
@@ -180,25 +138,23 @@ class PostByMarksListView(generics.ListAPIView):
 
     def get_queryset(self):
         query = self.request.GET.get('q')
-        a = int(self.request.GET.get("a"))
-        b = int(self.request.GET.get("b"))
-        queryset = Post.objects.none()
-
-        for tag in query[1:-1].split('|'):
-            queryset = queryset | Post.objects.filter(marks__icontains=tag)
+        if (query):
+            marks = query[1:-1].split("|")
+            if (len(marks) == 1):
+                queryset = Post.objects.filter(marks__icontains=marks[0])[:PostsPerPage]
+            if (len(marks) == 2):
+                queryset = Post.objects.filter(Q(marks__icontains=marks[0]) | Q(marks__icontains=marks[1]))[:PostsPerPage]
+            if (len(marks) == 3):
+                queryset = Post.objects.filter(Q(marks__icontains=marks[0]) | Q(marks__icontains=marks[1]) | Q(marks__icontains=marks[2]))[:PostsPerPage]
+        else:
+            queryset = Post.objects.all().order_by('-date')[:PostsPerPage]
             
-        return queryset.order_by('-date')[a:b]
+        return queryset
     
 class PopularPostListView(generics.ListAPIView):
     serializer_class = PostListSerializer
     model = serializer_class.Meta.model
-
-    def get_queryset(self):
-        a = int(self.request.GET.get("a"))
-        b = int(self.request.GET.get("b"))
-
-        queryset = Post.objects.order_by('-views', '-comments_count')[a:b]
-        return queryset
+    queryset = Post.objects.order_by('-views', '-comments_count')[:PostsPerPage]
 
 class UserPostsListView(generics.ListAPIView):
     serializer_class = PostListSerializer
@@ -207,10 +163,7 @@ class UserPostsListView(generics.ListAPIView):
 
     def get_queryset(self):
         username = self.kwargs['username']
-        a = int(self.request.GET.get("a"))
-        b = int(self.request.GET.get("b"))
-
-        queryset = Post.objects.filter(username=username).order_by('-date')[a:b]
+        queryset = Post.objects.filter(username=username).order_by('-date')[:PostsPerPage]
         return queryset
 
 class BookMarksPostsListView(generics.ListAPIView):
@@ -271,12 +224,9 @@ class SubsPostsListView(generics.ListAPIView):
     def get_queryset(self):
         username = self.request.GET.get("me")
         date = self.request.GET.get("d")
-        a = int(self.request.GET.get("a"))
-        b = int(self.request.GET.get("b"))
-
         str = Profile.objects.get(username=username).subs_profiles[1:-1]
         names = str.split("|")
-        queryset = Post.objects.filter(username__in=names, date__gt=date).order_by("-date")[a:b]
+        queryset = Post.objects.filter(username__in=names, date__gt=date).order_by("-date")[:PostsPerPage]
         return queryset
 
 class CommentListView(generics.ListAPIView):
@@ -308,19 +258,8 @@ class PostDetailView(generics.ListAPIView):
 
     def get_queryset(self):
         post_id = self.kwargs['post_id']
-        
         Post.objects.filter(id=post_id).update(views = F("views") + 1)
         queryset = Post.objects.filter(id=post_id)
-        return queryset
-
-class ImageDetailView(generics.ListAPIView):
-    serializer_class = ImageSerializer
-    permission_classes = (IsAuthenticated, )
-
-    def get_queryset(self):
-        img_id = self.kwargs['img_id']
-
-        queryset = Image.objects.filter(id=img_id)
         return queryset
 
 class PostViewsUpdate(APIView):

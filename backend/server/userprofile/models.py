@@ -8,7 +8,7 @@ import datetime
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    username = models.TextField(max_length=50)
+    username = models.TextField(max_length=500)
     bio = models.TextField(max_length=3000, blank=True, default="Описание профиля")
     status = models.TextField(max_length=500, blank=True)
     avatar = models.ImageField(blank=True, upload_to='profile_avatars/', default="http://127.0.0.1:8000/media/profile_avatars/default_avatar.png")
@@ -24,7 +24,8 @@ class Settings(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     blackout = models.CharField(max_length=4, default='0')
     blur = models.CharField(max_length=3, default='0')
-    background = models.ImageField(blank=True, null=True, upload_to='setting_covers/', default="")
+    background = models.ImageField(blank=True, upload_to='setting_covers/', default="")
+    colors = models.CharField(max_length=17, default="|#FFFFFF|")
     unsplash_background = models.TextField(max_length=300, default="", blank=True)
 
 @receiver(post_save, sender=User)

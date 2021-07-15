@@ -4,6 +4,7 @@ import home from './home'
 import news from './news'
 import settings from './settings'
 import authorization from './authorization'
+import notes from './apps/notes'
 
 Vue.use(Vuex)
 
@@ -13,5 +14,6 @@ export default new Vuex.Store({
         authorization,
         home,
         news,
+        notes,
     }
 });

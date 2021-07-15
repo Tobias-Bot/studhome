@@ -3,7 +3,7 @@
     <!-- update comment modal -->
     <div
       class="modal fade"
-      :id="'UpdateCommentModal' + args.id"
+      id="UpdateCommentModal"
       tabindex="-1"
       role="dialog"
       aria-hidden="true"
@@ -41,17 +41,14 @@
         </div>
       </div>
     </div>
-
     <div class="comment">
       <div class="row">
         <div class="col-10">
           <router-link
+            class="username"
             :to="{ name: 'profile', params: { username: args.username } }"
+            >{{ args.username }} - {{ args.id }}</router-link
           >
-            <span class="username" @click="LoadProfile">{{
-              args.username
-            }}</span>
-          </router-link>
           <br />
           <span class="commentText">{{ args.text }}</span>
         </div>
@@ -76,7 +73,7 @@
                 type="button"
                 title="редактировать"
                 data-toggle="modal"
-                :data-target="'#UpdateCommentModal' + args.id"
+                data-target="#UpdateCommentModal"
                 class="btn btn-light btn-sm"
               >
                 <i class="fas fa-pen"></i>
@@ -167,7 +164,7 @@ export default {
     return {
       CommentArea: false,
       ReplyCommText: "",
-      EditCommText: ""
+      EditCommText: "",
     };
   },
   mounted() {
@@ -259,7 +256,7 @@ export default {
 
         this.UpdateComment(this.args);
 
-        this.EditCommText = "";
+        this.EditCommText = '';
       }
     },
     UpdateComment(comm) {
@@ -273,12 +270,6 @@ export default {
         .catch(function(e) {
           console.log(e);
         });
-    },
-    LoadProfile() {
-      this.$store.commit("dropUserPosts");
-      this.$store.commit("dropUserSubs");
-      this.$store.commit("setProfileTab", 'description');
-      this.$store.commit("setHash", '');
     }
   }
 };

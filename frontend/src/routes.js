@@ -1,11 +1,11 @@
 import VueRouter from "vue-router";
 
 import login from "./pages/login";
+
+import home from "./pages/home";
 import profile from "./pages/home/profile";
 import bookmarks from "./pages/home/bookmarks";
 import settings from "./pages/home/settings";
-
-import apps from "./pages/apps";
 
 import news from "./pages/news";
 import all_posts from "./pages/news/pages/all_posts";
@@ -66,32 +66,34 @@ const router = new VueRouter({
     {
       name: "CreatePost",
       path: "/whatsnew",
-      component: create_post,
+      component: create_post
     },
     {
       name: "login",
       path: "/login",
-      component: login,
+      component: login
     },
     {
-      name: "bookmarks",
-      path: "/bookmarks",
-      component: bookmarks,
-    },
-    {
-      name: "settings",
-      path: "/settings",
-      component: settings,
+      name: "home",
+      path: "/home",
+      component: home,
+      children: [
+        {
+          name: "bookmarks",
+          path: "bookmarks",
+          component: bookmarks
+        },
+        {
+          name: "settings",
+          path: "settings",
+          component: settings
+        },
+      ]
     },
     {
       name: "profile",
       path: "/profile_:username",
-      component: profile,
-    },
-    {
-      name: "apps",
-      path: "/apps",
-      component: apps,
+      component: profile
     },
     {
       name: "news",
@@ -101,37 +103,37 @@ const router = new VueRouter({
         {
           name: "MyNews",
           path: "me",
-          component: my_news,
+          component: my_news
         },
         {
           name: "AllPosts",
-          path: ":topic",
-          component: all_posts,
+          path: "main",
+          component: all_posts
         },
-      ],
+      ]
     },
     {
       name: "post",
       path: "/post_:post_id",
-      component: full_post,
+      component: full_post
     },
     {
       name: "pic",
-      path: "/pic_:pic_id",
-      component: full_pic,
+      path: "/pic_:post_id:pic_id",
+      component: full_pic
     },
     {
       name: "GlobalSearch",
       path: "/search",
-      component: GlobalSearch,
+      component: GlobalSearch
     },
     {
       name: "others",
       path: "*",
-      redirect: "",
-    },
+      redirect: ""
+    }
   ],
-  mode: "history",
+  mode: "history"
 });
 
 router.beforeEach((to, from, next) => {
@@ -140,7 +142,8 @@ router.beforeEach((to, from, next) => {
   if (!isAuthenticated) {
     if (to.name !== "login") next({ name: "login" });
     else next();
-  } else {
+  }
+  else {
     if (to.name == "login" && from.name !== "settings") next({ name: "home" });
     else next();
   }

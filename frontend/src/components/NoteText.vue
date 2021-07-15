@@ -14,7 +14,6 @@
             post.note_color +
             ' 0);'
         "
-        @click="addUserView(post.id, index)"
       >
         <template
           v-if="
@@ -29,25 +28,17 @@
               !post.text.includes('</script>')
           "
         >
-          <span
-            v-html="post.text.substring(0, NoteHeight)"
-            :style="'color:' + post.text_color + ';'"
-          ></span>
-          <span
-            v-if="post.text.length > NoteHeight"
-            :style="'color:' + post.text_color + ';'"
-            >. . .</span
-          >
+            <span
+              v-html="post.text.substring(0, NoteHeight)"
+              :style="'color:' + post.text_color + ';'"
+            ></span>
+            <span v-if="post.text.length > NoteHeight">...</span>
         </template>
         <template v-else>
           <span :style="'color:' + post.text_color + ';'">
             {{ post.text.substring(0, NoteHeight) }}
           </span>
-          <span
-            v-if="post.text.length > NoteHeight"
-            :style="'color:' + post.text_color + ';'"
-            >. . .</span
-          >
+          <span v-if="post.text.length > NoteHeight">...</span>
         </template>
       </div>
     </template>
@@ -59,36 +50,22 @@ export default {
   props: ["post", "index"],
   data: function() {
     return {
-      MinLen: 350
+      PostLen: 0.15,
+      MinLen: 50,
     };
   },
   computed: {
     NoteHeight() {
-      let H;
-
-      if (this.post.text.length < this.MinLen)
-        H = Math.round(this.post.text.length + this.MinLen);
-      else H = Math.round((this.post.text.length + this.MinLen) * 0.1);
-
-      return H;
-    },
+      return Math.round((this.post.text.length + this.MinLen) * this.PostLen);
+    }
   },
   methods: {
-    addUserView(post_id, post_index) {
-      let data = {
-        post_id,
-        post_index
-      }
-
-      console.log(data);
-
-      this.$store.dispatch('addUserView', data);
-    },
   }
 };
 </script>
 
 <style scoped>
+
 .text {
   width: 100%;
   height: auto;
@@ -118,4 +95,5 @@ export default {
   height: 15px;
   transform: rotate(180deg);
 }
+
 </style>
