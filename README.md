@@ -4,7 +4,7 @@ Social network for students. The application implements all the main functions o
 
 # Used
 
-React.js, HTML5, CSS3, Django, DRF, Django Channels and other
+Vue.js, HTML5, CSS3, Django, DRF, Django Channels and other
 
 # Review
 
